@@ -51,6 +51,17 @@ const L = KO
       launchpad: "시작",
       snapLayouts: "스냅 레이아웃",
       separateWindows: "앱마다 따로 창 열기",
+      pinTaskbar: "작업 표시줄에 고정",
+      unpinTaskbar: "작업 표시줄에서 제거",
+      moveLeft: "왼쪽으로 이동",
+      moveRight: "오른쪽으로 이동",
+      resetTaskbar: "작업 표시줄 초기화",
+      folderNew: "새 폴더에 넣기",
+      folderAdd: (name) => `'${name}' 폴더에 넣기`,
+      folderOut: "폴더에서 빼기",
+      folderName: "폴더 이름",
+      folderDefault: "새 폴더",
+      folderDelete: "폴더 삭제 (앱은 그대로)",
       recommended: "추천",
       noRecent: "최근 채팅이 여기에 표시돼요.",
       showDesktop: "바탕 화면 보기",
@@ -413,6 +424,17 @@ const L = KO
       launchpad: "Start",
       snapLayouts: "Snap layouts",
       separateWindows: "Open each app in its own window",
+      pinTaskbar: "Pin to taskbar",
+      unpinTaskbar: "Unpin from taskbar",
+      moveLeft: "Move left",
+      moveRight: "Move right",
+      resetTaskbar: "Reset taskbar",
+      folderNew: "Add to new folder",
+      folderAdd: (name) => `Add to '${name}'`,
+      folderOut: "Remove from folder",
+      folderName: "Folder name",
+      folderDefault: "New folder",
+      folderDelete: "Delete folder (keeps the apps)",
       recommended: "Recommended",
       noRecent: "Your recent chats show up here.",
       showDesktop: "Show desktop",
@@ -1032,6 +1054,28 @@ const bookmarkApps = () =>
 const shownApps = () => APPS.filter((a) => !a.hidden);
 const allApps = () => [...APPS, ...UTIL_APPS, ...homeApps(), ...bookmarkApps(), ...TAIL_APPS, ...EXTRA_APPS];
 const appById = (id) => allApps().find((a) => a.id === id);
+// Taskbar: the apps the user pinned, in their order (null = the default set).
+const defaultTaskbar = () => [...shownApps(), ...UTIL_APPS].map((a) => a.id);
+const taskbarIds = () => (Array.isArray(state.taskbar) ? state.taskbar : defaultTaskbar());
+const canPin = (app) => !!app && !TAIL_APPS.includes(app);
+function setTaskbar(ids) {
+  state.taskbar = ids;
+  save();
+  dockSignature = "";
+  renderDock();
+}
+const togglePin = (id) => {
+  const ids = taskbarIds();
+  setTaskbar(ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]);
+};
+function movePin(id, step) {
+  const ids = [...taskbarIds()];
+  const i = ids.indexOf(id);
+  const j = i + step;
+  if (i < 0 || j < 0 || j >= ids.length) return;
+  [ids[i], ids[j]] = [ids[j], ids[i]];
+  setTaskbar(ids);
+}
 
 // ── State ─────────────────────────────────────────────────────
 
@@ -1045,7 +1089,7 @@ const DEFAULTS = {
   dockRecents: true,
   bootSplash: true,
   sceneBarTop: true,
-  messengerPane: true,
+  messengerPane: false,
   listW: 320,
   lockerOn: true,
   lockerEngine: "builtin", // "builtin" | "bgh" (the 확장 보관함 extension)
@@ -1153,7 +1197,12 @@ if (!state.paneChatOnly) {
   }
   state.paneChatOnly = true;
 }
-for (const key of ["apps", "bookmarks", "sbOrder", "sbHidden", "readerHosts"]) if (!Array.isArray(state[key])) state[key] = [];
+// 2.19: the chat list is its own window by default; switch saved layouts once.
+if (!state.paneOffDefault) {
+  state.messengerPane = false;
+  state.paneOffDefault = true;
+}
+for (const key of ["apps", "bookmarks", "sbOrder", "sbHidden", "readerHosts", "startFolders"]) if (!Array.isArray(state[key])) state[key] = [];
 state.chat = { convo: { ...(state.chat?.convo || {}) }, rp: { ...(state.chat?.rp || {}) } };
 state.yt = { mode: "link", apiKey: "", ...(state.yt || {}) };
 if (state.yt.mode === "api") state.yt.mode = "link";
@@ -2402,6 +2451,7 @@ const MENUS = {
   ],
   dock: () => [
     { label: L.separateWindows, checked: !frameDenied && state.separateWindows !== false, disabled: frameDenied, action: () => updateSetting("separateWindows", state.separateWindows === false) },
+    { label: L.resetTaskbar, disabled: !Array.isArray(state.taskbar), action: () => setTaskbar(null) },
     { label: L.autohide, checked: state.dockAutohide, action: () => updateSetting("dockAutohide", !state.dockAutohide) },
     { label: L.recents, checked: state.dockRecents, action: () => updateSetting("dockRecents", !state.dockRecents) },
     "-",
@@ -2551,7 +2601,10 @@ function renderDock() {
     state.iconStyle,
     Object.keys(images.icons),
     recents.map((r) => [r.id, r.img, r.title]),
-    APPS.map(appLabel),
+    taskbarIds().map((id) => {
+      const app = appById(id);
+      return app ? [id, appLabel(app), app.img] : id;
+    }),
   ]);
   if (signature === dockSignature) return;
   dockSignature = signature;
@@ -2563,8 +2616,7 @@ function renderDock() {
     if (app.id === "launchpad") item.querySelector(".mdos-app-icon")?.insertAdjacentHTML("afterbegin", START_GLYPH);
     return item;
   });
-  const kids = [...lead, ...shownApps().map(dockItem)];
-  kids.push(h("div", { class: "mdos-dock-sep", "aria-hidden": "true" }), ...UTIL_APPS.map(dockItem));
+  const kids = [...lead, ...taskbarIds().map(appById).filter(Boolean).map(dockItem)];
   if (recents.length) {
     kids.push(h("div", { class: "mdos-dock-sep", "aria-hidden": "true" }));
     for (const chat of recents) {
@@ -2693,6 +2745,18 @@ function isAppRunning(id) {
 }
 
 function dockMenuItems(id) {
+  const items = dockMenuBase(id);
+  const pins = taskbarIds();
+  const at = pins.indexOf(id);
+  if (at >= 0) {
+    items.push(
+      { label: L.moveLeft, disabled: at === 0, action: () => movePin(id, -1) },
+      { label: L.moveRight, disabled: at === pins.length - 1, action: () => movePin(id, 1) },
+    );
+  }
+  return items;
+}
+function dockMenuBase(id) {
   const app = appById(id);
   const running = isAppRunning(id);
   const items = [];
@@ -2727,6 +2791,7 @@ function appMenuExtras(app, deskEntry) {
   else if (isDesktop() && !state.desk.some((d) => d.app === app.id)) {
     items.push({ label: L.addToDesktop, action: () => addDeskIcon(app.id) });
   }
+  if (canPin(app)) items.push({ label: taskbarIds().includes(app.id) ? L.unpinTaskbar : L.pinTaskbar, action: () => togglePin(app.id) });
   items.push({ label: L.editIcon, action: () => openIconEditor(app) });
   return items;
 }
@@ -3023,7 +3088,7 @@ function toggleLaunchpad() {
 function launchpadApps() {
   return allApps().filter((a) => !a.hidden && a.id !== "launchpad" && !(isTouch() && ["classic", "search"].includes(a.id)));
 }
-function appTile(a, i, onPick) {
+function appTile(a, i, onPick, menuHead = null) {
   return h(
     "button",
     {
@@ -3037,7 +3102,8 @@ function appTile(a, i, onPick) {
         if (!isDesktop()) return;
         event.preventDefault();
         event.stopPropagation();
-        showMenuAt(appMenuExtras(a).slice(1), event.clientX, event.clientY);
+        const head = menuHead?.(a) || [];
+        showMenuAt([...head, ...appMenuExtras(a).slice(head.length ? 0 : 1)], event.clientX, event.clientY);
       },
     },
     appIcon(a),
@@ -3056,13 +3122,90 @@ function openLaunchpad() {
     autocomplete: "off",
   });
   const grid = h("div", { class: "mdos-lp-grid", role: "list" });
+  // Folders: each holds app ids; their apps leave the top-level grid.
+  const folders = state.startFolders;
+  let openFolder = null;
+  const headTitle = h("h2", { text: L.pinned });
+  const backBtn = h("button", {
+    type: "button",
+    class: "mdos-start-back",
+    "aria-label": L.back,
+    title: L.back,
+    text: "‹",
+    hidden: true,
+    onclick: () => ((openFolder = null), render()),
+  });
+  const saveFolders = () => {
+    // Empty folders go away; edit the saved array in place.
+    folders.splice(0, folders.length, ...folders.filter((f) => f.apps.length));
+    if (openFolder && !folders.includes(openFolder)) openFolder = null;
+    save();
+    render();
+  };
+  const moveToFolder = (id, folder) => {
+    for (const f of folders) f.apps = f.apps.filter((x) => x !== id);
+    folder?.apps.push(id);
+    saveFolders();
+  };
+  const folderMenu = (a) => {
+    if (folders.some((f) => f.apps.includes(a.id))) return [{ label: L.folderOut, action: () => moveToFolder(a.id, null) }];
+    return [
+      {
+        label: L.folderNew,
+        action: () => {
+          const name = window.prompt(L.folderName, L.folderDefault);
+          if (name == null) return;
+          const folder = { id: newId(), name: name.trim().slice(0, 40) || L.folderDefault, apps: [] };
+          folders.push(folder);
+          moveToFolder(a.id, folder);
+        },
+      },
+      ...folders.map((f) => ({ label: L.folderAdd(f.name), action: () => moveToFolder(a.id, f) })),
+    ];
+  };
+  const folderApps = (f) => f.apps.map((id) => apps.find((a) => a.id === id)).filter(Boolean);
+  const folderTile = (f, i) =>
+    h(
+      "button",
+      {
+        type: "button",
+        role: "listitem",
+        class: "mdos-lp-app mdos-lp-folder",
+        style: `--i:${i}`,
+        onclick: () => ((openFolder = f), render()),
+        oncontextmenu: (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          showMenuAt(
+            [
+              {
+                label: L.rename,
+                action: () => {
+                  const name = window.prompt(L.folderName, f.name);
+                  if (!name?.trim()) return;
+                  f.name = name.trim().slice(0, 40);
+                  saveFolders();
+                },
+              },
+              { label: L.folderDelete, action: () => ((f.apps = []), saveFolders()) },
+            ],
+            event.clientX,
+            event.clientY,
+          );
+        },
+      },
+      h("span", { class: "mdos-app-icon mdos-folder-icon" }, ...folderApps(f).slice(0, 4).map(appIcon)),
+      h("span", { class: "mdos-lp-label", text: f.name }),
+    );
   const render = () => {
     const q = input.value.trim().toLowerCase();
-    grid.replaceChildren(
-      ...apps
-        .filter((a) => !q || appLabel(a).toLowerCase().includes(q) || a.id.includes(q))
-        .map((a, i) => appTile(a, i, (picked) => launch(picked.id))),
-    );
+    const tile = (a, i) => appTile(a, i, (picked) => launch(picked.id), folderMenu);
+    const inFolder = new Set(folders.flatMap((f) => f.apps));
+    backBtn.hidden = !openFolder || !!q;
+    headTitle.textContent = openFolder && !q ? openFolder.name : L.pinned;
+    if (q) grid.replaceChildren(...apps.filter((a) => appLabel(a).toLowerCase().includes(q) || a.id.includes(q)).map(tile));
+    else if (openFolder) grid.replaceChildren(...folderApps(openFolder).map(tile));
+    else grid.replaceChildren(...folders.map(folderTile), ...apps.filter((a) => !inFolder.has(a.id)).map((a, i) => tile(a, i + folders.length)));
   };
   input.addEventListener("input", render);
   input.addEventListener("keydown", (event) => {
@@ -3085,7 +3228,7 @@ function openLaunchpad() {
       "div",
       { class: "mdos-start" },
       input,
-      h("div", { class: "mdos-start-head" }, h("h2", { text: L.pinned })),
+      h("div", { class: "mdos-start-head" }, backBtn, headTitle),
       grid,
       h("div", { class: "mdos-start-head mdos-start-head--rec" }, h("h2", { text: L.recommended })),
       startRecommended(),
