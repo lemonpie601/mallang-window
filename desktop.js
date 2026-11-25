@@ -1058,8 +1058,36 @@ const appById = (id) => allApps().find((a) => a.id === id);
 const defaultTaskbar = () => [...shownApps(), ...UTIL_APPS].map((a) => a.id);
 const taskbarIds = () => (Array.isArray(state.taskbar) ? state.taskbar : defaultTaskbar());
 const canPin = (app) => !!app && !TAIL_APPS.includes(app);
+// A chat row's id, avatar and title (the row also carries the chat's
+// background thumbnail; skip it for the avatar).
+const chatRowInfo = (row) => ({
+  chatId: row.getAttribute("data-chat-id"),
+  img: $$("img", row).find((i) => !/\/backgrounds\//.test(i.getAttribute("src") || ""))?.getAttribute("src") || null,
+  title: row.getAttribute("title") || row.textContent.trim().split("\n")[0] || "",
+});
+// Pinned chats ("chat:<id>") keep their title and avatar in state.chatPins,
+// so they show even when the chat list isn't loaded.
+function chatApp(id) {
+  const chatId = id.slice(5);
+  const pin = state.chatPins[chatId];
+  if (!pin) return null;
+  return { id, chatId, img: pin.img, icon: "chat", g: ["#6ef08d", "#17a84d"], label: () => pin.title || L.chats };
+}
+const taskbarApp = (id) => (id.startsWith("chat:") ? chatApp(id) : appById(id));
+function toggleChatPin(info) {
+  const id = `chat:${info.chatId}`;
+  if (state.chatPins[info.chatId]) delete state.chatPins[info.chatId];
+  else state.chatPins[info.chatId] = { title: info.title, img: info.img };
+  const ids = taskbarIds().filter((x) => x !== id);
+  setTaskbar(state.chatPins[info.chatId] ? [...ids, id] : ids);
+}
+const chatPinItem = (info) => ({
+  label: state.chatPins[info.chatId] ? L.unpinTaskbar : L.pinTaskbar,
+  action: () => toggleChatPin(info),
+});
 function setTaskbar(ids) {
   state.taskbar = ids;
+  for (const chatId of Object.keys(state.chatPins)) if (!ids?.includes(`chat:${chatId}`)) delete state.chatPins[chatId];
   save();
   dockSignature = "";
   renderDock();
@@ -1203,6 +1231,7 @@ if (!state.paneOffDefault) {
   state.paneOffDefault = true;
 }
 for (const key of ["apps", "bookmarks", "sbOrder", "sbHidden", "readerHosts", "startFolders"]) if (!Array.isArray(state[key])) state[key] = [];
+if (!state.chatPins || typeof state.chatPins !== "object" || Array.isArray(state.chatPins)) state.chatPins = {};
 state.chat = { convo: { ...(state.chat?.convo || {}) }, rp: { ...(state.chat?.rp || {}) } };
 state.yt = { mode: "link", apiKey: "", ...(state.yt || {}) };
 if (state.yt.mode === "api") state.yt.mode = "link";
@@ -2512,6 +2541,13 @@ function onContextMenu(event) {
     event.preventDefault();
     return showMenuAt(dockMenuItems(dockItem.dataset.app), event.clientX, event.clientY - 10);
   }
+  // A chat in the chat list: open it, or pin it to the taskbar.
+  const chatRow = isDesktop() && target.closest(SEL.chatRows);
+  if (chatRow?.getAttribute("data-chat-id")) {
+    event.preventDefault();
+    const info = chatRowInfo(chatRow);
+    return showMenuAt([{ label: L.open, action: () => launch(`chat:${info.chatId}`) }, chatPinItem(info)], event.clientX, event.clientY);
+  }
   const deskIcon = target.closest(".mdos-dicon");
   if (deskIcon) {
     event.preventDefault();
@@ -2563,13 +2599,7 @@ function recentChats() {
   const list = doc.querySelectorAll(SEL.chatRows);
   return [list[0], list[1], list[2]]
     .filter(Boolean)
-    .map((row) => ({
-      id: `chat:${row.getAttribute("data-chat-id")}`,
-      chatId: row.getAttribute("data-chat-id"),
-      // The row also carries the chat's background thumbnail; skip it for the avatar.
-      img: $$("img", row).find((i) => !/\/backgrounds\//.test(i.getAttribute("src") || ""))?.getAttribute("src") || null,
-      title: row.getAttribute("title") || "",
-    }))
+    .map((row) => ({ id: `chat:${row.getAttribute("data-chat-id")}`, ...chatRowInfo(row) }))
     .filter((c) => c.chatId);
 }
 // Touch: the tablet taskbar shows Start and Search, then these apps.
@@ -2595,14 +2625,23 @@ function dockItem(app) {
   return item;
 }
 function renderDock() {
-  const recents = recentChats();
+  const pinned = taskbarIds();
+  const recents = recentChats().filter((r) => !pinned.includes(r.id));
+  // Pinned chats follow renames and new avatars while their row is loaded.
+  for (const [chatId, pin] of Object.entries(state.chatPins)) {
+    const row = $(`${SEL.chatRows}[data-chat-id="${CSS.escape(chatId)}"]`);
+    if (!row) continue;
+    const info = chatRowInfo(row);
+    if (info.title) pin.title = info.title;
+    if (info.img) pin.img = info.img;
+  }
   const signature = JSON.stringify([
     state.icons,
     state.iconStyle,
     Object.keys(images.icons),
     recents.map((r) => [r.id, r.img, r.title]),
-    taskbarIds().map((id) => {
-      const app = appById(id);
+    pinned.map((id) => {
+      const app = taskbarApp(id);
       return app ? [id, appLabel(app), app.img] : id;
     }),
   ]);
@@ -2616,7 +2655,12 @@ function renderDock() {
     if (app.id === "launchpad") item.querySelector(".mdos-app-icon")?.insertAdjacentHTML("afterbegin", START_GLYPH);
     return item;
   });
-  const kids = [...lead, ...taskbarIds().map(appById).filter(Boolean).map(dockItem)];
+  const kids = [...lead];
+  for (const app of pinned.map(taskbarApp).filter(Boolean)) {
+    const item = dockItem(app);
+    if (app.chatId) item.classList.add("mdos-dock-item--recent");
+    kids.push(item);
+  }
   if (recents.length) {
     kids.push(h("div", { class: "mdos-dock-sep", "aria-hidden": "true" }));
     for (const chat of recents) {
@@ -2767,7 +2811,13 @@ function dockMenuBase(id) {
     if (app) items.push(...appMenuExtras(app));
     return items;
   }
-  if (id.startsWith("chat:")) items.push({ label: L.open, action: () => launch(id) });
+  if (id.startsWith("chat:")) {
+    const chatId = id.slice(5);
+    const row = $(`${SEL.chatRows}[data-chat-id="${CSS.escape(chatId)}"]`);
+    const pin = state.chatPins[chatId];
+    items.push({ label: L.open, action: () => launch(id) });
+    if (row || pin) items.push(chatPinItem(row ? chatRowInfo(row) : { chatId, ...pin }));
+  }
   else if (app) {
     items.push({ label: running && (id === "chats" || PANEL_IDS.includes(id)) ? L.close : L.open, action: () => launch(id, { toggle: true }) });
     if (APP_TYPES[id] && running) {
@@ -2831,9 +2881,8 @@ function launch(id, { toggle = false } = {}) {
     focusWin("main");
     bounce(id);
   } else if (id.startsWith("chat:")) {
-    const row = $(`${SEL.chatRows}[data-chat-id="${CSS.escape(id.slice(5))}"]`);
     if (state.mainMinimized) setMainMinimized(false);
-    click(row);
+    openChatRow(id.slice(5));
     focusWin("main");
   } else if (id.startsWith("mode:")) {
     openChatMode(id.slice(5), toggle);
@@ -2960,6 +3009,25 @@ function followApp(mode) {
     // The list re-renders for the new mode a moment after its tab is pressed.
     const go = () => {
       const row = activeChatMode() === mode ? $(`${SEL.chatRows}[data-chat-id="${CSS.escape(id)}"]`) : null;
+      if (row) click(row);
+      else if (++tries < 20) marinara.setTimeout(go, 100);
+    };
+    go();
+  });
+}
+// Open a chat by clicking its row. The list only holds the rows of its
+// current tab, so a pinned chat of another mode switches the tab first.
+function openChatRow(chatId) {
+  const rowOf = () => $(`${SEL.chatRows}[data-chat-id="${CSS.escape(chatId)}"]`);
+  if (rowOf()) return click(rowOf());
+  loadChatInfo().then(() => {
+    const mode = chatInfo.get(chatId)?.mode;
+    const tab = mode && $(`[data-chat-mode-tab="${mode}"]`);
+    if (!tab) return;
+    if (tab.getAttribute("aria-pressed") !== "true") tab.click();
+    let tries = 0;
+    const go = () => {
+      const row = activeChatMode() === mode ? rowOf() : null;
       if (row) click(row);
       else if (++tries < 20) marinara.setTimeout(go, 100);
     };
@@ -3283,13 +3351,7 @@ function openLaunchpad() {
 // Start's Recommended: the latest chats from Marinara's list (two columns).
 function startRecommended() {
   const rows = [...doc.querySelectorAll(SEL.chatRows)].slice(0, 6);
-  const items = rows
-    .map((row) => ({
-      chatId: row.getAttribute("data-chat-id"),
-      img: $$("img", row).find((i) => !/\/backgrounds\//.test(i.getAttribute("src") || ""))?.getAttribute("src") || null,
-      title: row.getAttribute("title") || row.textContent.trim().split("\n")[0] || "",
-    }))
-    .filter((c) => c.chatId);
+  const items = rows.map(chatRowInfo).filter((c) => c.chatId);
   if (!items.length) return h("div", { class: "mdos-start-rec mdos-start-rec--empty", text: L.noRecent });
   return h(
     "div",
@@ -3304,6 +3366,12 @@ function startRecommended() {
           onclick: () => {
             closeLaunchpad();
             launch(`chat:${c.chatId}`);
+          },
+          oncontextmenu: (event) => {
+            if (!isDesktop()) return;
+            event.preventDefault();
+            event.stopPropagation();
+            showMenuAt([chatPinItem(c)], event.clientX, event.clientY);
           },
         },
         c.img

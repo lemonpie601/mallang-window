@@ -12,7 +12,7 @@
    ────────────────────────────────────────────────────────────── */
 
 /* The windows' red light already closes them; drop the duplicate X buttons. */
-html.mdos [data-mdos-win] :is(.mari-sidebar-header, .mari-right-panel-header) button:has(> .lucide-x) {
+html.mdos [data-mdos-win] :is(.mari-sidebar-header, .mari-right-panel-header) button[data-mh-x] {
   display: none !important;
 }
 
@@ -22,7 +22,7 @@ html.mdos [data-mdos-win="chats"] .mari-chat-sidebar {
   position: relative;
 }
 /* New / import / select move up into the title bar as small icon buttons. */
-html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode-action) {
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div[data-mh-actions] {
   position: absolute !important;
   z-index: 5;
   top: calc((var(--mdos-side-header-h) - 26px) / 2);
@@ -30,7 +30,7 @@ html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode
   padding: 0 !important;
   gap: 4px !important;
 }
-html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button {
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div[data-mh-actions] > button {
   flex: none !important;
   width: 26px !important;
   height: 26px !important;
@@ -41,17 +41,17 @@ html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode
   box-shadow: none !important;
   color: var(--mdos-fg-2) !important;
 }
-html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button:hover {
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div[data-mh-actions] > button:hover {
   background: var(--mdos-fill-2) !important;
   color: var(--mdos-fg) !important;
 }
-html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button svg {
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div[data-mh-actions] > button svg {
   width: 16px !important;
   height: 16px !important;
   color: currentColor !important;
 }
 /* "New chat" keeps a filled accent so it reads as the main action. */
-html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > .mari-chat-mode-action {
+html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div[data-mh-actions] > .mari-chat-mode-action {
   background: var(--mdos-accent) !important;
   color: #fff !important;
 }
@@ -206,12 +206,12 @@ html.mdos [data-mdos-win="panel"] {
 
 /* ── Character & persona libraries: icon grid ────────────────── */
 
-/* :has() is limited to the library's own list containers inside the panel.
+/* data-mh-chars / data-mh-personas (hasless.js) mark the library's own list containers inside the panel.
    Desktop windows only: the icon styling below needs the panel window, and on
    a tablet the grid alone squeezed each full row (actions and all) into 92px. */
 html.mdos-desktop.mdos-icon-view [data-component="RightPanel"] :is(
-    .flex-col:has(> [data-drag-kind="character"]),
-    .flex-col:has(> [data-drag-kind="persona"])
+    .flex-col[data-mh-chars],
+    .flex-col[data-mh-personas]
   ) {
   display: grid !important;
   grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
@@ -424,7 +424,7 @@ html.mdos.mdos-hub-app[data-mdos-hub-tone="dark"] [data-mdos-win="main"] .mdos-l
    in grouped cards below it — like System Settings. The colours stay
    Marinara's editor (theme) colours. */
 @container (min-width: 760px) {
-  html.mdos .mari-editor-shell:has(> .mari-editor-header--with-nav) {
+  html.mdos .mari-editor-shell[data-mh-nav] {
     display: grid !important;
     grid-template-columns: 208px minmax(0, 1fr) auto;
     grid-template-rows: auto minmax(0, 1fr);
@@ -462,7 +462,7 @@ html.mdos.mdos-hub-app[data-mdos-hub-tone="dark"] [data-mdos-win="main"] .mdos-l
     border-bottom: 1px solid var(--marinara-editor-divider);
     background: color-mix(in srgb, var(--marinara-editor-surface-bg) 76%, transparent);
   }
-  html.mdos .mari-editor-shell:has(> .mari-editor-header--with-nav) > .mari-editor-body {
+  html.mdos .mari-editor-shell[data-mh-nav] > .mari-editor-body {
     grid-column: 2 / 4;
     grid-row: 2;
     min-height: 0;
@@ -510,10 +510,10 @@ html.mdos.mdos-hub-app[data-mdos-hub-tone="dark"] [data-mdos-win="main"] .mdos-l
     color: #fff;
   }
   /* Content: a wider column of grouped cards with air between sections. */
-  html.mdos .mari-editor-shell:has(> .mari-editor-header--with-nav) .mari-editor-content {
+  html.mdos .mari-editor-shell[data-mh-nav] .mari-editor-content {
     padding: 24px 28px 48px !important;
   }
-  html.mdos .mari-editor-shell:has(> .mari-editor-header--with-nav) .mari-editor-content-inner {
+  html.mdos .mari-editor-shell[data-mh-nav] .mari-editor-content-inner {
     max-width: 760px !important;
   }
   html.mdos .mari-editor-shell [data-editor-section] {
@@ -545,7 +545,7 @@ html.mdos .mari-editor-shell .mari-editor-action--primary {
 /* ── Chat list: Messages ─────────────────────────────────────── */
 /* Conversation, Roleplay and Game are separate apps now (Dock), so the
    window's own mode switcher goes; its unread counts are still read. */
-html.mdos-desktop [data-mdos-win="chats"] .mari-chrome-segmented:has(> [data-chat-mode-tab]) {
+html.mdos-desktop [data-mdos-win="chats"] .mari-chrome-segmented[data-mh-tabs] {
   display: none !important;
 }
 /* Rows: a round 42px picture, bold name, grey detail, time top-right. */
@@ -600,12 +600,12 @@ html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .tabular-nums {
 html.mdos .mari-chat-sidebar [data-drag-kind="chat"] > .mari-chrome-accent-progress {
   display: none !important;
 }
-html.mdos .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) {
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"][data-mh-current] {
   background: var(--mdos-accent) !important;
   box-shadow: none !important;
   --tw-ring-shadow: 0 0 #0000 !important;
 }
-html.mdos .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) :is(span, svg, button) {
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"][data-mh-current] :is(span, svg, button) {
   color: #fff !important;
 }
 /* Delete shows on hover only (touch keeps it, there is no hover). */

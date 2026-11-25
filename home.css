@@ -311,11 +311,11 @@ html.mdos-edit .mdos-launch {
   display: none !important;
 }
 /* Cards without a balance (usage-only sites) show their today / this-month lines instead. */
-:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:has(.mlh-cr-big)) .mlh-cr > .mlh-rc-line {
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not([data-mh-big]) .mlh-cr > .mlh-rc-line {
   display: flex !important;
   font-size: 12px !important;
 }
-:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:has(.mlh-cr-big)) .mlh-cr-brand {
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not([data-mh-big]) .mlh-cr-brand {
   margin-bottom: auto;
 }
 :is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:nth-child(4n + 2) .mlh-cr-big b {

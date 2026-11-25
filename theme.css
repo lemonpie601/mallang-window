@@ -317,7 +317,7 @@ html.mdos .mari-chrome-control--danger {
 }
 
 /* The chat list's three big action buttons become one compact toolbar row. */
-html.mdos .mari-chat-sidebar > div:has(> .mari-chat-mode-action) {
+html.mdos .mari-chat-sidebar > div[data-mh-actions] {
   gap: 6px !important;
 }
 html.mdos .mari-chat-sidebar .mari-chat-mode-action {

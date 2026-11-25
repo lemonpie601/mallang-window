@@ -275,7 +275,7 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-messa
 }
 /* Only the name row: a grouped message has no name row, so its bubble is
    the first child and must keep the passage size (2.22.7). */
-html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-body > div:first-child:has(> .mari-message-name) span:not(.mari-message-name) {
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-body > div:first-child[data-mh-name] span:not(.mari-message-name) {
   font-size: 11px !important;
   color: var(--mdos-ink-3) !important;
 }
@@ -379,7 +379,7 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari
   html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row {
     margin-bottom: 22px !important;
   }
-  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-body > div:first-child:has(> .mari-message-name) span:not(.mari-message-name, :nth-child(2)) {
+  html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-body > div:first-child[data-mh-name] span:not(.mari-message-name, :nth-child(2)) {
     display: none;
   }
   html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell {
@@ -1090,7 +1090,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
 /* ── Composer: the Claude app's input bar ────────────────────── */
 /* A big rounded card: the text on the first line, below it round grey
    buttons (+, tools) on the left and the round accent send on the right. */
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
+html.mdos .marinara-chat-input-shell[data-mh-composer] {
   flex-wrap: wrap !important;
   align-items: center !important;
   column-gap: 6px !important;
@@ -1101,7 +1101,7 @@ html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
   background: var(--mdos-win-bg, #fff) !important;
   box-shadow: 0 6px 24px -10px rgba(0, 0, 0, 0.22) !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]):focus-within {
+html.mdos .marinara-chat-input-shell[data-mh-composer]:focus-within {
   border-color: color-mix(in srgb, var(--mdos-fg, #000) 22%, transparent) !important;
   box-shadow: 0 8px 28px -10px rgba(0, 0, 0, 0.28) !important;
 }
@@ -1116,10 +1116,10 @@ html.mdos .marinara-chat-input-shell > textarea[data-chat-composer] {
 }
 /* Round grey buttons (+, translate, emoji…) — also inside the conversation
    composer's left/right button groups. */
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > :is(button, div > button, .mdos-qp-plus):not(:last-child),
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:not(:last-child),
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > div > button,
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:not(:last-child) > button {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > :is(button, div > button, .mdos-qp-plus):not(:last-child),
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:last-child > button:not(:last-child),
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:last-child > div > button,
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:not(:last-child) > button {
   width: 38px !important;
   height: 38px !important;
   min-width: 38px;
@@ -1128,13 +1128,13 @@ html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:n
   color: color-mix(in srgb, var(--mdos-fg, #000) 78%, transparent) !important;
   box-shadow: none !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > :last-child {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > :last-child {
   margin-left: auto !important;
 }
 /* Send / stop: a solid dark round button (the text colour), with an up
    arrow in place of Marinara's paper plane — like the Claude app. */
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child,
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > button:last-child,
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:last-child > button:last-child {
   width: 38px !important;
   height: 38px !important;
   border-radius: 999px !important;
@@ -1144,33 +1144,33 @@ html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:l
   opacity: 1 !important;
   transition: transform 120ms ease, background 150ms ease;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:active,
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child:active {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > button:last-child:active,
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:last-child > button:last-child:active {
   transform: scale(0.92);
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:disabled,
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child:disabled {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > button:last-child:disabled,
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:last-child > button:last-child:disabled {
   background: color-mix(in srgb, var(--mdos-fg, #000) 12%, transparent) !important;
   color: color-mix(in srgb, var(--mdos-fg, #000) 40%, transparent) !important;
   box-shadow: none !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child svg,
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child svg {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > button:last-child svg,
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:last-child > button:last-child svg {
   width: 18px !important;
   height: 18px !important;
   color: inherit !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child svg:is(.lucide-send, .lucide-send-horizontal, .lucide-send-horizontal-icon),
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child svg:is(.lucide-send, .lucide-send-horizontal, .lucide-send-horizontal-icon) {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > button:last-child svg:is(.lucide-send, .lucide-send-horizontal, .lucide-send-horizontal-icon),
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:last-child > button:last-child svg:is(.lucide-send, .lucide-send-horizontal, .lucide-send-horizontal-icon) {
   display: none !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal)),
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal)) {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > button:last-child[data-mh-send],
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:last-child > button:last-child[data-mh-send] {
   display: grid !important;
   place-items: center !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal))::after,
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child > button:last-child:has(svg:is(.lucide-send, .lucide-send-horizontal))::after {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > button:last-child[data-mh-send]::after,
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:last-child > button:last-child[data-mh-send]::after {
   content: "";
   display: block;
   width: 18px;
@@ -1184,7 +1184,7 @@ html.mdos .marinara-chat-input-shell .mdos-qp-plus svg {
   height: 20px;
 }
 /* Phones: the side margin stays; the card keeps its round corners. */
-html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
+html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell[data-mh-composer] {
   border-radius: 8px 8px 0 0 !important;
 }
 
@@ -1289,8 +1289,8 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
 /* ── Model picker: the Claude app's ──────────────────────────── */
 /* The composer's model button shows the model's name as a grey pill
    (Marinara keeps the name in the button's title) instead of a link icon. */
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button[aria-haspopup="dialog"]:has(svg.lucide-link),
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div > button[aria-haspopup="dialog"]:has(svg.lucide-link) {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > button[aria-haspopup="dialog"][data-mh-link],
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div > button[aria-haspopup="dialog"][data-mh-link] {
   height: 38px !important;
   border-radius: 999px !important;
   background: color-mix(in srgb, var(--mdos-fg, #000) 7%, transparent) !important;
@@ -1307,12 +1307,12 @@ html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"] svg.lucide
 html.mdos .marinara-chat-input-shell > div > button[aria-haspopup="dialog"] svg.lucide-link {
   display: none;
 }
-html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"]:has(svg.lucide-link) > span:first-child,
-html.mdos .marinara-chat-input-shell > div > button[aria-haspopup="dialog"]:has(svg.lucide-link) > span:first-child {
+html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"][data-mh-link] > span:first-child,
+html.mdos .marinara-chat-input-shell > div > button[aria-haspopup="dialog"][data-mh-link] > span:first-child {
   width: 0 !important;
 }
-html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"]:has(svg.lucide-link)::after,
-html.mdos .marinara-chat-input-shell > div > button[aria-haspopup="dialog"]:has(svg.lucide-link)::after {
+html.mdos .marinara-chat-input-shell > button[aria-haspopup="dialog"][data-mh-link]::after,
+html.mdos .marinara-chat-input-shell > div > button[aria-haspopup="dialog"][data-mh-link]::after {
   content: attr(title);
   min-width: 0;
   overflow: hidden;
@@ -1358,7 +1358,7 @@ html.mdos .mari-chat-sidebar [data-drag-kind="chat"]::after {
   background: color-mix(in srgb, var(--mdos-fg, #000) 9%, transparent);
   pointer-events: none;
 }
-html.mdos .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress)::after {
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"][data-mh-current]::after {
   display: none;
 }
 html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"] {
@@ -1381,12 +1381,12 @@ html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]::after {
   left: 72px;
 }
 
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:last-child {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:last-child {
   display: flex !important;
   align-items: center !important;
   gap: 6px !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:not(:last-child) {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div:not(:last-child) {
   display: flex !important;
   align-items: center !important;
   gap: 6px !important;
@@ -1424,7 +1424,7 @@ html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="cha
   white-space: normal;
   word-break: break-all;
 }
-html.mdos .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) .mdos-preview {
+html.mdos .mari-chat-sidebar [data-drag-kind="chat"][data-mh-current] .mdos-preview {
   color: rgba(255, 255, 255, 0.8);
 }
 html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"]::after {
@@ -1600,23 +1600,23 @@ html.mdos-touch:not(.mdos-tablet) #mdos-toast.is-on {
 
 /* Phone composer: a little tighter so the bottom row fits; the row scrolls
    sideways if a chat has many tools. */
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell[data-mh-composer] {
   padding: 12px 10px 8px !important;
   column-gap: 4px !important;
 }
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > :is(button, div > button, .mdos-qp-plus):not(:last-child),
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div > button {
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell[data-mh-composer] > :is(button, div > button, .mdos-qp-plus):not(:last-child),
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell[data-mh-composer] > div > button {
   width: 36px !important;
   height: 36px !important;
   min-width: 36px;
 }
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > button[aria-haspopup="dialog"]:has(svg.lucide-link),
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div > button[aria-haspopup="dialog"]:has(svg.lucide-link) {
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell[data-mh-composer] > button[aria-haspopup="dialog"][data-mh-link],
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell[data-mh-composer] > div > button[aria-haspopup="dialog"][data-mh-link] {
   width: auto !important;
   max-width: 30vw;
   padding: 0 12px !important;
 }
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div {
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell[data-mh-composer] > div {
   gap: 4px !important;
 }
 
@@ -1661,10 +1661,10 @@ html.mdos-touch .mari-chat-sidebar .mari-sidebar-header h2[data-mdos-title]:not(
   letter-spacing: -0.025em;
   color: var(--foreground, var(--mdos-fg));
 }
-html.mdos-touch .mari-chat-sidebar .mari-sidebar-header button:not(:has(.lucide-x)) {
+html.mdos-touch .mari-chat-sidebar .mari-sidebar-header button:not([data-mh-x]) {
   display: none !important;
 }
-html.mdos-touch .mari-chat-sidebar .mari-sidebar-header button:has(.lucide-x) {
+html.mdos-touch .mari-chat-sidebar .mari-sidebar-header button[data-mh-x] {
   width: 34px !important;
   height: 34px !important;
   min-height: 34px !important;
@@ -1675,7 +1675,7 @@ html.mdos-touch .mari-chat-sidebar .mari-sidebar-header button:has(.lucide-x) {
   box-shadow: none !important;
 }
 /* New / import / select: small round buttons in the title row. */
-html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) {
+html.mdos-touch .mari-chat-sidebar > div[data-mh-actions] {
   position: absolute !important;
   z-index: 5;
   /* Level with the header's ✕: header 58px tall from a 12px top padding,
@@ -1687,7 +1687,7 @@ html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) {
   padding: 0 !important;
   margin: 0 !important;
 }
-html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button {
+html.mdos-touch .mari-chat-sidebar > div[data-mh-actions] > button {
   flex: none !important;
   width: 34px !important;
   height: 34px !important;
@@ -1699,18 +1699,18 @@ html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button 
   box-shadow: none !important;
   color: var(--foreground, var(--mdos-fg)) !important;
 }
-html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > .mari-chat-mode-action {
+html.mdos-touch .mari-chat-sidebar > div[data-mh-actions] > .mari-chat-mode-action {
   background: var(--mdos-accent, #0078d4) !important;
   color: #fff !important;
   order: 9;
 }
-html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button svg {
+html.mdos-touch .mari-chat-sidebar > div[data-mh-actions] > button svg {
   width: 17px !important;
   height: 17px !important;
   color: currentColor !important;
 }
 /* Mode switcher: an iOS segmented control. */
-html.mdos-touch .mari-chat-sidebar .mari-chrome-segmented:has(> [data-chat-mode-tab]) {
+html.mdos-touch .mari-chat-sidebar .mari-chrome-segmented[data-mh-tabs] {
   margin: 6px 16px 8px !important;
   padding: 2px !important;
   height: 34px;
@@ -1754,7 +1754,7 @@ html.mdos-touch .mari-chat-sidebar select.mari-chrome-sort-field {
   font-size: 13px !important;
 }
 html.mdos-touch .mari-chat-sidebar :is(input.mari-chrome-field, select.mari-chrome-sort-field) ~ button.mari-chrome-control--small,
-html.mdos-touch .mari-chat-sidebar div:has(> input.mari-chrome-field) ~ button.mari-chrome-control--small {
+html.mdos-touch .mari-chat-sidebar div[data-mh-field] ~ button.mari-chrome-control--small {
   width: 38px !important;
   height: 38px !important;
   min-height: 38px !important;
@@ -1764,7 +1764,7 @@ html.mdos-touch .mari-chat-sidebar div:has(> input.mari-chrome-field) ~ button.m
   box-shadow: none !important;
 }
 /* "New folder": a small text button instead of a full-width bar. */
-html.mdos-touch .mari-chat-sidebar button.mari-chrome-control--small:has(svg.lucide-folder-plus) {
+html.mdos-touch .mari-chat-sidebar button.mari-chrome-control--small[data-mh-folderplus] {
   width: auto !important;
   height: 28px !important;
   min-height: 28px !important;
@@ -1782,16 +1782,16 @@ html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"] {
   border-radius: 8px !important;
   box-shadow: none !important;
 }
-html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) {
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"][data-mh-current] {
   background: color-mix(in srgb, var(--mdos-accent, #0078d4) 14%, transparent) !important;
 }
-html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) :is(span, svg, button) {
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"][data-mh-current] :is(span, svg, button) {
   color: inherit !important;
 }
-html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) > .min-w-0.flex-1 > span:first-child {
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"][data-mh-current] > .min-w-0.flex-1 > span:first-child {
   color: var(--mdos-accent, #0078d4) !important;
 }
-html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) .mdos-preview {
+html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"][data-mh-current] .mdos-preview {
   color: var(--muted-foreground, inherit) !important;
 }
 
@@ -1864,10 +1864,10 @@ html.mdos .mari-chat-sidebar[data-mdos-list] [data-drag-kind="chat"] > .relative
 /* Phones got Marinara's combined quick switcher (^) as well as the model pill
    (shown by this theme): the quick switcher goes, the model pill and the
    persona button show on every screen size, in conversation and roleplay. */
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div[class~="sm:hidden"] {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > div[class~="sm:hidden"] {
   display: none !important;
 }
-html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > [class~="sm:flex"] {
+html.mdos .marinara-chat-input-shell[data-mh-composer] > [class~="sm:flex"] {
   display: flex !important;
 }
 
@@ -1924,15 +1924,15 @@ html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="gam
 /* Messages: "new" is a compose glyph like the Mac app (drawn with a mask on
    the button: themes may switch its pseudo-elements off); Books and Games
    keep the small filled accent "+". */
-html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="conversation"] > div:has(> .mari-chat-mode-action) > .mari-chat-mode-action {
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="conversation"] > div[data-mh-actions] > .mari-chat-mode-action {
   background: var(--app-muted) !important;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.9%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M12 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6%27/%3E%3Cpath d=%27M17.6 3.4a2 2 0 0 1 2.9 2.9L12 14.8l-3.6.8.8-3.6z%27/%3E%3C/svg%3E") center / 17px no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.9%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M12 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6%27/%3E%3Cpath d=%27M17.6 3.4a2 2 0 0 1 2.9 2.9L12 14.8l-3.6.8.8-3.6z%27/%3E%3C/svg%3E") center / 17px no-repeat;
 }
-html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="conversation"] > div:has(> .mari-chat-mode-action) > .mari-chat-mode-action:hover {
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="conversation"] > div[data-mh-actions] > .mari-chat-mode-action:hover {
   background: var(--app-ink) !important;
 }
-html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="conversation"] > div:has(> .mari-chat-mode-action) > .mari-chat-mode-action > * {
+html.mdos-desktop [data-mdos-win="chats"] .mari-chat-sidebar[data-mdos-list="conversation"] > div[data-mh-actions] > .mari-chat-mode-action > * {
   opacity: 0;
 }
 /* Search: one rounded field, sort as quiet text. */
@@ -1995,18 +1995,18 @@ html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="cha
   background: var(--app-line);
 }
 /* (Phones keep their light accent tint for the open chat.) */
-html.mdos-desktop .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) {
+html.mdos-desktop .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"][data-mh-current] {
   background: var(--app-accent) !important;
 }
 
 /* Groups: Marinara overlaps small square pictures; in Messages and Games
    they are round (no circle cut out of a rounded square), the status dot too. */
-html.mdos .mari-chat-sidebar[data-mdos-list] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child:has(> :nth-child(2) img) {
+html.mdos .mari-chat-sidebar[data-mdos-list] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child[data-mh-duo] {
   border-radius: 0 !important;
   overflow: visible !important;
 }
-html.mdos .mari-chat-sidebar:is([data-mdos-list="conversation"], [data-mdos-list="game"]) [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child:has(> :nth-child(2) img) > *,
-html.mdos .mari-chat-sidebar:is([data-mdos-list="conversation"], [data-mdos-list="game"]) [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child:has(> :nth-child(2) img) > * > img {
+html.mdos .mari-chat-sidebar:is([data-mdos-list="conversation"], [data-mdos-list="game"]) [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child[data-mh-duo] > *,
+html.mdos .mari-chat-sidebar:is([data-mdos-list="conversation"], [data-mdos-list="game"]) [data-drag-kind="chat"] > .relative.flex-shrink-0 > :first-child[data-mh-duo] > * > img {
   border-radius: 50% !important;
 }
 
@@ -2060,16 +2060,16 @@ html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"]:
   right: 14px;
   background: var(--app-line);
 }
-html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) {
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"][data-mh-current] {
   background: color-mix(in srgb, var(--app-accent) 15%, transparent) !important;
 }
-html.mdos .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"]) [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) :is(span, svg, button) {
+html.mdos .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"]) [data-drag-kind="chat"][data-mh-current] :is(span, svg, button) {
   color: var(--app-ink) !important;
 }
-html.mdos .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"]) [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) .mdos-sub {
+html.mdos .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"]) [data-drag-kind="chat"][data-mh-current] .mdos-sub {
   color: var(--app-muted) !important;
 }
-html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress)::before {
+html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"][data-mh-current]::before {
   content: "";
   position: absolute;
   top: 0;
@@ -2083,7 +2083,7 @@ html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"]:
 
 /* The open chat's background art behind the row would grey out the ribbon
    and the ring; Books and Games mark the open chat their own way. */
-html.mdos .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"]) [data-drag-kind="chat"] > span.pointer-events-none.absolute:has(> img) {
+html.mdos .mari-chat-sidebar:is([data-mdos-list="roleplay"], [data-mdos-list="game"]) [data-drag-kind="chat"] > span.pointer-events-none.absolute[data-mh-img] {
   display: none !important;
 }
 
@@ -2110,7 +2110,7 @@ html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .m
   font-size: 14.5px !important;
   font-weight: 750 !important;
 }
-html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) {
+html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"][data-mh-current] {
   background: color-mix(in srgb, var(--card, #fff) 92%, var(--app-accent)) !important;
   border-color: var(--app-accent) !important;
   box-shadow: 0 0 0 1.5px var(--app-accent), 0 8px 18px -12px var(--app-accent) !important;
@@ -2145,7 +2145,7 @@ html.mdos .mari-chat-input-box > textarea {
    button. It used to turn into a tall white box: it now keeps the open
    composer's place, colour, top corners and height (desktop.js measures the
    open one into --mdos-composer-h), with the placeholder where the text goes. */
-html.mdos-touch:not(.mdos-tablet) :is(.mari-chat-input, .chat-input-container):has(> button.marinara-chat-input-shell) {
+html.mdos-touch:not(.mdos-tablet) :is(.mari-chat-input, .chat-input-container)[data-mh-folded] {
   padding: 0 !important;
 }
 html.mdos-touch:not(.mdos-tablet) button.marinara-chat-input-shell {
@@ -2469,7 +2469,7 @@ html.mdos [data-quick-connection-menu] .mari-connection-model::before {
 html.mdos [data-quick-connection-menu] .mari-connection-model:hover {
   background: var(--mp-fill) !important;
 }
-html.mdos [data-quick-connection-menu] [data-switcher-section]:not([data-switcher-section="now"]) .mari-connection-model:has(.mari-connection-model-choice[aria-current="true"]) {
+html.mdos [data-quick-connection-menu] [data-switcher-section]:not([data-switcher-section="now"]) .mari-connection-model[data-mh-chosen] {
   background: color-mix(in srgb, var(--mp-accent) 13%, transparent) !important;
 }
 html.mdos [data-quick-connection-menu] .mari-connection-model-choice {
@@ -2513,7 +2513,7 @@ html.mdos [data-quick-connection-menu] .mari-connection-model-choice[aria-curren
   color: var(--mp-accent) !important;
 }
 /* Role badges (Agents…) go, warnings (no key…) stay; the price is text. */
-html.mdos [data-quick-connection-menu] [data-connection-badges] > [data-connection-role]:not(:has(.mari-connection-pill--warn)) {
+html.mdos [data-quick-connection-menu] [data-connection-badges] > [data-connection-role]:not([data-mh-warn]) {
   display: none !important;
 }
 html.mdos [data-quick-connection-menu] [data-model-cost] {
@@ -2592,7 +2592,7 @@ html.mdos [data-quick-connection-menu] [data-switcher-pane] > span:first-child s
   width: 15px !important;
   height: 15px !important;
 }
-html.mdos [data-quick-connection-menu] [data-switcher-pane] > span:first-child:has(> .mari-provider-icon) {
+html.mdos [data-quick-connection-menu] [data-switcher-pane] > span:first-child[data-mh-provider] {
   width: 20px !important;
 }
 html.mdos [data-quick-connection-menu] [data-switcher-section="accounts"] > p {
@@ -3236,7 +3236,7 @@ html.mdos-touch:not(.mdos-tablet) :is(.mari-right-panel-header, .mari-sidebar-he
 /* ══ Phones & tablets, round 2 ═════════════════════════════════ */
 /* Chat apps are separate apps: the list doesn't switch between them (the
    menu sheet and the home screen do). */
-html.mdos-touch .mari-chat-sidebar .mari-chrome-segmented:has(> [data-chat-mode-tab]) {
+html.mdos-touch .mari-chat-sidebar .mari-chrome-segmented[data-mh-tabs] {
   display: none !important;
 }
 /* The list / menu buttons stay at the top left, where they are easy to find;
@@ -3249,11 +3249,11 @@ html.mdos-touch:not(.mdos-touch-home):not(.mdos-touch-app):not(.mdos-touch-panel
 
 /* Phone composer: the bottom row stays one line — the model pill takes only
    the room that is left (the round buttons keep their 36px). */
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) :is(> button, > div > button)[aria-haspopup="dialog"]:has(svg.lucide-link) {
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell[data-mh-composer] :is(> button, > div > button)[aria-haspopup="dialog"][data-mh-link] {
   flex: 1 1 56px !important;
   min-width: 0 !important;
 }
-html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data-chat-composer]) > div:not(:last-child):has(> button[aria-haspopup="dialog"]) {
+html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell[data-mh-composer] > div:not(:last-child)[data-mh-dialogbtn] {
   flex: 1 1 56px !important;
   min-width: 0 !important;
 }
@@ -3263,12 +3263,80 @@ html.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell:has(> textarea[data
 html.mdos-touch:not(.mdos-tablet) [data-chat-mode="conversation"] :is(.mari-chat-input, .chat-input-container) {
   padding: 0 !important;
 }
-html.mdos-touch:not(.mdos-tablet) [data-chat-mode="conversation"] .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
+html.mdos-touch:not(.mdos-tablet) [data-chat-mode="conversation"] .marinara-chat-input-shell[data-mh-composer] {
   margin: 0 !important;
   border-radius: 8px 8px 0 0 !important;
   border-width: 1px 0 0 !important;
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px) !important;
   box-shadow: 0 -6px 20px -14px rgba(0, 0, 0, 0.35) !important;
+}
+/* ── Composer surroundings: see-through ─────────────────────── */
+/* The composer card stays opaque; the fade band around the roleplay
+   composer goes, so the page shows around the card. */
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari-roleplay-input-column,
+html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night"]) [data-chat-mode="roleplay"] .mari-roleplay-input-column {
+  background: none !important;
+}
+
+/* ── Character count (charcount.js) ──────────────────────────── */
+/* The token receipt's rows on one line: quiet labels, tabular figures,
+   hairline rules between the three cells. */
+.mcc-meter[data-mcc-owned] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  row-gap: 2px;
+  max-width: 100%;
+  min-width: 0;
+  margin: 4px 0 0;
+  padding: 0;
+  color: inherit;
+  font: 400 11px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Pretendard", system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  user-select: none;
+  pointer-events: none;
+}
+.mcc-meter[data-mcc-owned] > span {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+  padding: 0 8px;
+}
+.mcc-meter[data-mcc-owned] > span:last-child {
+  padding-right: 2px;
+}
+.mcc-meter[data-mcc-owned] > span + span {
+  border-left: 0.5px solid color-mix(in srgb, currentColor 28%, transparent);
+}
+.mcc-meter[data-mcc-owned] i {
+  font-style: normal;
+  opacity: 0.6;
+}
+.mcc-meter[data-mcc-owned] b {
+  font-weight: 600;
+  opacity: 0.85;
+}
+.mcc-meter.mcc-input[data-mcc-owned] {
+  padding: 0 4px;
+  color: var(--mdos-fg-2, inherit);
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mcc-meter.mcc-input[data-mcc-owned] {
+  color: var(--mdos-ink-2, inherit);
+}
+@media (max-width: 380px) {
+  .mcc-meter[data-mcc-owned] {
+    font-size: 10px;
+  }
+  .mcc-meter[data-mcc-owned] > span {
+    padding: 0 5px;
+  }
 }
 `,
 ].join("\n");

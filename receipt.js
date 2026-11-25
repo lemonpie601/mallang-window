@@ -7,8 +7,10 @@
 //     first. The theme fetches /api/chats/{id}/messages for list previews,
 //     and on phones/iPad the sidebar is closed, so the old fallback (last
 //     /messages request) picked another chat and the receipt had no price.
-//   - macOS look (glass sheet), above the Dock / home indicator on touch.
-//   - skips itself when the standalone extension is already running.
+//   - Windows 11 flyout look (styled below); a bottom sheet on touch.
+//   - Gemini 4 Neon preset (receipt-presets.js), otherwise the same 3.1.0.
+//   - skips itself when the standalone extension is already running, so
+//     turn the standalone off to get this one.
 // ──────────────────────────────────────────────────────────────
 ((marinara) => {
   "use strict";
@@ -77,31 +79,47 @@
 #${ROOT} *{box-sizing:border-box} #${ROOT} .tr-head{display:flex;flex:0 0 auto;align-items:center;gap:6px;padding:9px 10px 9px 12px;border-bottom:1px solid var(--border,#444);font-weight:700} #${ROOT} .tr-head span{margin-right:auto} #${ROOT} button{border:1px solid var(--border,#555);background:var(--secondary,#292929);color:inherit;border-radius:7px;padding:5px 8px;cursor:pointer;font:inherit} #${ROOT} .tr-icon-btn{display:grid;width:28px;height:28px;place-items:center;border-color:transparent;background:transparent;padding:0;font-size:15px} #${ROOT} .tr-icon-btn:hover,#${ROOT} .tr-icon-btn[aria-pressed="true"]{border-color:var(--border,#555);background:var(--secondary,#292929)} #${ROOT} .tr-icon-btn:focus-visible{outline:2px solid var(--primary,#ffb3d9);outline-offset:1px} #${ROOT} .tr-body{min-height:0;flex:1;padding:12px;overflow:auto;overscroll-behavior:contain} #${ROOT} .tr-muted{opacity:.67} #${ROOT} .tr-title{font-size:13px;font-weight:700;word-break:break-all;margin-bottom:8px} #${ROOT} .tr-row{display:flex;justify-content:space-between;gap:12px;padding:3px 0} #${ROOT} .tr-usage{display:grid;grid-template-columns:minmax(0,1fr) 82px auto;align-items:baseline;gap:8px} #${ROOT} .tr-tokens{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap} #${ROOT} .tr-total{border-top:1px solid var(--border,#444);margin-top:7px;padding-top:8px;font-weight:800;font-size:14px} #${ROOT} details{margin-top:10px;border-top:1px solid var(--border,#444);padding-top:8px} #${ROOT} input,#${ROOT} select{width:100%;margin:3px 0 7px;padding:6px;border:1px solid var(--border,#555);border-radius:7px;background:var(--background,#181818);color:inherit} #${ROOT} input[type="checkbox"]{width:16px;height:16px;margin:0;accent-color:var(--primary,#ffb3d9)} #${ROOT} .tr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 8px} #${ROOT} .tr-preset{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:8px;margin:8px 0} #${ROOT} .tr-preset select{margin-bottom:0} #${ROOT} .tr-preset button{min-height:31px;white-space:nowrap} #${ROOT} label{display:block;font-size:11px;opacity:.82} #${ROOT} .tr-toggle{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--border,#444) 60%,transparent)} #${ROOT} .tr-toggle span{display:grid;gap:2px} #${ROOT} .tr-toggle small{color:var(--muted-foreground,#aaa);font-size:10px;line-height:1.35} #${ROOT} .tr-settings-title{margin:0 0 5px;font-size:13px} #${ROOT} .tr-settings-actions{display:flex;gap:7px;margin-top:10px} #${ROOT} .tr-help h3{margin:0 0 8px;font-size:13px} #${ROOT} .tr-help h4{margin:12px 0 4px;font-size:12px} #${ROOT} .tr-help ol,#${ROOT} .tr-help ul{margin:4px 0;padding-left:18px} #${ROOT} .tr-help li{margin:5px 0} #${ROOT} .tr-help-note{margin-top:10px;padding:8px;border:1px solid var(--border,#444);border-radius:8px;background:color-mix(in srgb,var(--secondary,#292929) 55%,transparent)} #${ROOT} .tr-warn{color:#f5b84b;margin-top:8px} #${ROOT} .tr-error{color:var(--destructive,#ff6b9d)} #${ROOT} .tr-tier{margin:7px 0 3px;padding:7px 8px;border:1px solid color-mix(in srgb,#f5b84b 38%,var(--border,#444));border-radius:8px;background:color-mix(in srgb,#f5b84b 8%,var(--background,#171717));color:#f5c66d;font-weight:650}
 @media(max-width:520px){#${ROOT}{left:12px!important;right:12px!important;bottom:calc(12px + env(safe-area-inset-bottom))!important;top:auto!important;width:auto;max-height:70vh}}
   `);
-  // Marinara Desktop look: a macOS popover sheet; a bottom sheet on phones.
+  // Windows 11 flyout: acrylic surface, caption-style tool buttons, the
+  // usage lines in a card, a dashed tear line above the total, and the
+  // won estimate in the accent colour (the char counts share its look).
   addStyle(`
-html.mdos #${ROOT}{z-index:2147483001;color:var(--mdos-fg,var(--foreground,#111));background:var(--mdos-popover,var(--card,#fff));-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);border:.5px solid var(--mdos-sep-strong,var(--border,#ccc));border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.28),0 0 0 .5px rgba(0,0,0,.08);font:13px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Pretendard",system-ui,sans-serif}
-html.mdos #${ROOT} .tr-head{padding:10px 10px 10px 14px;border-bottom:.5px solid var(--mdos-sep,var(--border,#ddd));font-weight:600;font-size:13px}
-html.mdos #${ROOT} .tr-body{padding:12px 14px}
-html.mdos #${ROOT} button{border:0;background:var(--mdos-fill-2,var(--secondary,#eee));border-radius:7px;padding:5px 10px;font-weight:500}
-html.mdos #${ROOT} .tr-icon-btn{border-radius:50%;width:26px;height:26px;background:transparent;color:var(--mdos-fg-2,inherit);font-size:14px}
-html.mdos #${ROOT} .tr-icon-btn:hover,html.mdos #${ROOT} .tr-icon-btn[aria-pressed="true"]{background:var(--mdos-fill-2,#eee);border-color:transparent}
-html.mdos #${ROOT} .tr-row,html.mdos #${ROOT} .tr-tokens{font-variant-numeric:tabular-nums}
-html.mdos #${ROOT} .tr-total{border-top:.5px solid var(--mdos-sep,#ddd);font-weight:700;font-size:15px}
-html.mdos #${ROOT} .tr-total>:last-child{color:var(--mdos-accent,inherit)}
-html.mdos #${ROOT} details{border-top:.5px solid var(--mdos-sep,#ddd)}
-html.mdos #${ROOT} input,html.mdos #${ROOT} select{border:.5px solid var(--mdos-sep-strong,#ccc);border-radius:7px;background:var(--mdos-card,var(--background,#fff))}
-html.mdos #${ROOT} input[type="checkbox"]{accent-color:var(--mdos-accent,#007aff)}
-html.mdos #${ROOT} .tr-muted,html.mdos #${ROOT} .tr-toggle small{color:var(--mdos-fg-2,inherit);opacity:1}
-html.mdos #${ROOT} .tr-usage{grid-template-columns:minmax(0,1fr) auto auto}
+html.mdos #${ROOT}{z-index:2147483001;width:min(380px,calc(100vw - 24px));color:var(--w-fg,var(--foreground,#111));background:var(--w-acrylic,var(--card,#f9f9f9));-webkit-backdrop-filter:blur(30px) saturate(125%);backdrop-filter:blur(30px) saturate(125%);border:1px solid var(--w-stroke-strong,var(--border,#ccc));border-radius:8px;box-shadow:var(--w-shadow-flyout,0 8px 16px rgba(0,0,0,.14));font:12px/1.5 var(--mdos-font,"Segoe UI Variable Text","Segoe UI",Pretendard,system-ui,sans-serif)}
+html.mdos #${ROOT} .tr-head{gap:2px;height:40px;padding:0 4px 0 14px;border-bottom:1px solid var(--w-stroke,#ddd);font-weight:400;font-size:12px}
+html.mdos #${ROOT} .tr-body{padding:12px 14px 14px}
+html.mdos #${ROOT} button{border:1px solid var(--w-ctl-stroke,#ddd);border-bottom-color:var(--w-ctl-stroke-b,#ccc);background:var(--w-ctl,#fff);border-radius:4px;padding:5px 11px;font-weight:400}
+html.mdos #${ROOT} button:hover{background:var(--w-ctl-hover,#f6f6f6)}
+html.mdos #${ROOT} .tr-icon-btn{width:32px;height:28px;border:0;border-radius:4px;background:transparent;color:var(--w-fg-2,inherit)}
+html.mdos #${ROOT} .tr-icon-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+html.mdos #${ROOT} .tr-icon-btn:hover,html.mdos #${ROOT} .tr-icon-btn[aria-pressed="true"]{background:var(--w-hover,#eee);color:var(--w-fg,inherit)}
+html.mdos #${ROOT} .tr-icon-btn[data-act="close"]:hover{background:#c42b1c;color:#fff}
+html.mdos #${ROOT} .tr-title{margin:0 0 10px;font-size:13px;font-weight:600}
+html.mdos #${ROOT} .tr-card{padding:4px 12px;border:1px solid var(--w-stroke,#e5e5e5);border-radius:6px;background:var(--w-card,rgba(255,255,255,.6))}
+html.mdos #${ROOT} .tr-card .tr-row+.tr-row{border-top:1px solid var(--w-stroke,#eee)}
+html.mdos #${ROOT} .tr-row{padding:5px 0;font-variant-numeric:tabular-nums}
+html.mdos #${ROOT} .tr-usage{grid-template-columns:minmax(0,1fr) auto auto;gap:12px}
+html.mdos #${ROOT} .tr-tokens{color:var(--w-fg-2,inherit)}
+html.mdos #${ROOT} .tr-usage>b{font-weight:600;min-width:84px;text-align:right}
+html.mdos #${ROOT} .tr-total{margin-top:12px;padding-top:12px;border-top:1px dashed var(--w-stroke-strong,#ccc);font-weight:600;font-size:16px}
+html.mdos #${ROOT} .tr-krw>:last-child{color:var(--w-accent,var(--mdos-accent,inherit));font-size:16px;font-weight:600}
+html.mdos #${ROOT} details{margin-top:12px;padding:0;border:1px solid var(--w-stroke,#e5e5e5);border-radius:6px;background:var(--w-card,rgba(255,255,255,.6))}
+html.mdos #${ROOT} summary{padding:9px 12px;cursor:pointer;list-style-position:inside}
+html.mdos #${ROOT} summary:hover{background:var(--w-hover,#f3f3f3)}
+html.mdos #${ROOT} details[open]>:not(summary){margin-inline:12px}
+html.mdos #${ROOT} details[open]>:last-child{margin-bottom:12px}
+html.mdos #${ROOT} input,html.mdos #${ROOT} select{border:1px solid var(--w-ctl-stroke,#ddd);border-bottom-color:var(--w-ctl-stroke-b,#999);border-radius:4px;background:var(--w-ctl,#fff);color:inherit}
+html.mdos #${ROOT} input:focus,html.mdos #${ROOT} select:focus{outline:0;border-bottom:2px solid var(--w-accent,#0067c0)}
+html.mdos #${ROOT} input[type="checkbox"]{accent-color:var(--w-accent,#0067c0)}
+html.mdos #${ROOT} .tr-muted,html.mdos #${ROOT} .tr-toggle small{color:var(--w-fg-3,var(--w-fg-2,inherit));opacity:1;font-size:11px}
+html.mdos #${ROOT} .tr-help-note{border-color:var(--w-stroke,#ddd);border-radius:6px;background:var(--w-card,transparent)}
 html.mdos #${ROOT} .tr-row>*{min-width:0}
 html.mdos #${ROOT} .tr-row>:last-child{flex:0 0 auto;text-align:right;white-space:nowrap}
-html.mdos.mdos-touch #${ROOT}{left:8px!important;right:8px!important;top:auto!important;bottom:calc(10px + env(safe-area-inset-bottom,0px) + 22px)!important;width:auto!important;max-width:520px;margin:0 auto;max-height:min(72vh,640px);border-radius:18px;font-size:14px}
-html.mdos.mdos-touch #${ROOT} .tr-icon-btn{width:32px;height:32px}
+html.mdos.mdos-touch #${ROOT}{left:8px!important;right:8px!important;top:auto!important;bottom:calc(10px + env(safe-area-inset-bottom,0px) + 22px)!important;width:auto!important;max-width:520px;margin:0 auto;max-height:min(72vh,640px);font-size:14px}
+html.mdos.mdos-touch #${ROOT} .tr-icon-btn{width:40px;height:36px}
 html.mdos .${MESSAGE_BUTTON}{opacity:1!important;visibility:visible!important}
 `);
   const root = addElement(document.body, 'section', { id:ROOT, hidden:'', role:'dialog', 'aria-label':'메시지 토큰 영수증' });
   if (!root) return;
-  root.innerHTML = `<div class="tr-head"><span>메시지 영수증</span><button type="button" class="tr-icon-btn" data-act="help" title="사용법" aria-label="사용법" aria-pressed="false">?</button><button type="button" class="tr-icon-btn" data-act="settings" title="조회 방식 설정" aria-label="조회 방식 설정" aria-pressed="false">⚙</button><button type="button" class="tr-icon-btn" data-act="close" title="닫기" aria-label="닫기">×</button></div><div class="tr-body"><div class="tr-muted">메시지의 영수증 아이콘을 눌러 주세요.</div></div>`;
+  root.innerHTML = `<div class="tr-head"><span>메시지 영수증</span><button type="button" class="tr-icon-btn" data-act="help" title="사용법" aria-label="사용법" aria-pressed="false"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.3"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.5.2-.8.6-.8 1.1v.4"/><path d="M8 11.6v.1"/></svg></button><button type="button" class="tr-icon-btn" data-act="settings" title="조회 방식 설정" aria-label="조회 방식 설정" aria-pressed="false"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v1.6M8 12.6v1.6M1.8 8h1.6M12.6 8h1.6M3.6 3.6l1.1 1.1M11.3 11.3l1.1 1.1M3.6 12.4l1.1-1.1M11.3 4.7l1.1-1.1"/></svg></button><button type="button" class="tr-icon-btn" data-act="close" title="닫기" aria-label="닫기"><svg viewBox="0 0 16 16"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg></button></div><div class="tr-body"><div class="tr-muted">메시지의 영수증 아이콘을 눌러 주세요.</div></div>`;
   const body = root.querySelector('.tr-body');
   const defaults = { currency:'USD', input:0, read:0, write:0, output:0, adjustment:'none', cacheTtl:'5m', profiles:{}, fx:null, sources:{rpScreen:true,rpPeekFallback:false,conversationPeek:true} };
   const CHAT_MESSAGES_TTL = 15 * 1000;
@@ -433,15 +451,15 @@ html.mdos .${MESSAGE_BUTTON}{opacity:1!important;visibility:visible!important}
     const suggested=currentPreset(g);
     const presetOptions=PRESET_GROUPS.map(group=>`<optgroup label="${esc(group.label)}">${group.items.filter(item=>presetIsActive(item)).map(item=>`<option value="${esc(item.id)}" ${suggested?.id===item.id?'selected':''}>${esc(item.label)}${suggested?.id===item.id?' (현재 모델)':''}</option>`).join('')}</optgroup>`).join('');
     body.innerHTML=`<div class="tr-title">${esc(g.provider||'unknown')} · ${esc(g.model||'unknown model')}</div>
-      <div class="tr-row tr-usage"><span>일반 입력</span><span class="tr-tokens">${c.ordinary.toLocaleString()} tok</span><b>${money(c.parts.input,currency)}</b></div>
+      <div class="tr-card"><div class="tr-row tr-usage"><span>일반 입력</span><span class="tr-tokens">${c.ordinary.toLocaleString()} tok</span><b>${money(c.parts.input,currency)}</b></div>
       <div class="tr-row tr-usage"><span>캐시 읽기(hit)</span><span class="tr-tokens">${c.read.toLocaleString()} tok</span><b>${money(c.parts.read,currency)}</b></div>
       <div class="tr-row tr-usage"><span>캐시 쓰기(created)${String(g.provider||'').toLowerCase()==='anthropic'||String(g.model||'').toLowerCase().includes('claude-')?` · ${p.cacheTtl==='1h'?'1h':'5m'}`:''}</span><span class="tr-tokens">${c.write.toLocaleString()} tok</span><b>${money(c.parts.write,currency)}</b></div>
       <div class="tr-row tr-usage"><span>출력 (추론 포함)</span><span class="tr-tokens">${c.out.toLocaleString()} tok</span><b>${money(c.parts.output,currency)}</b></div>
-      <div class="tr-row tr-total"><span>턴 합계</span><span>${money(c.total,currency)}</span></div>
+      </div><div class="tr-row tr-total"><span>턴 합계</span><span>${money(c.total,currency)}</span></div>
       ${c.tier?`<div class="tr-tier">장문 요금 적용: 입력 ${c.raw.toLocaleString()} &gt; ${c.tier.threshold.toLocaleString()}토큰</div>`:''}
       ${g.messageTimestampSource==='current-time-estimate'?'<div class="tr-warn">메시지 작성 시각 확인 실패 · 조회 시점의 현재 요금 기준 추정값입니다.</div>':''}
       ${c.deepSeekPricing?`<div class="tr-tier">${c.deepSeekPricing.period==='legacy'?'DeepSeek 인상 전 요금 적용 · 2026-08-17 00:00 BJT 이전':c.deepSeekPricing.weekend?'DeepSeek 오프피크 요금 적용 · 베이징 주말':`DeepSeek ${c.deepSeekPricing.period==='peak'?'피크':'오프피크'} 요금 적용 · KST ${c.deepSeekPricing.period==='peak'?'10:00–13:00 / 15:00–19:00':'그 외 시간'}`}</div>`:''}
-      ${supportsFx(currency)?`<div class="tr-row"><span>현재 환율 원화 예상액</span><b>${won(c.total,currency)}</b></div><div class="tr-muted">${esc(currency)} 1 = ₩${num(fx?.rate).toLocaleString('ko-KR')} · 기준 ${esc(fx?.marketDate||'')} · 갱신 ${esc(fxTime(currency))}</div>${fx?.error?`<div class="tr-warn">환율 갱신 실패: ${esc(fx.error)}</div>`:''}`:''}
+      ${supportsFx(currency)?`<div class="tr-row tr-krw"><span>현재 환율 원화 예상액</span><b>${won(c.total,currency)}</b></div><div class="tr-muted">${esc(currency)} 1 = ₩${num(fx?.rate).toLocaleString('ko-KR')} · 기준 ${esc(fx?.marketDate||'')} · 갱신 ${esc(fxTime(currency))}</div>${fx?.error?`<div class="tr-warn">환율 갱신 실패: ${esc(fx.error)}</div>`:''}`:''}
       ${configured?'':'<div class="tr-warn">단가가 0입니다. 아래에서 공급자 가격표를 입력하세요.</div>'}
       <div class="tr-muted">기록된 input: ${c.raw.toLocaleString()} · 메시지 ${esc(m.id||'')}</div>
       <details><summary>이 모델 단가 설정 (1M 토큰당)</summary><div class="tr-preset"><label>모델 단가 프리셋<select name="preset">${presetOptions}</select></label><button data-act="load-preset">값 불러오기</button></div><label data-field="cache-ttl">Claude 캐시 쓰기 TTL<select name="cacheTtl"><option value="5m" ${p.cacheTtl!=='1h'?'selected':''}>5분</option><option value="1h" ${p.cacheTtl==='1h'?'selected':''}>1시간</option></select></label><div class="tr-muted" data-field="cache-ttl-note">실제 TTL은 Marinara의 Anthropic 연결 설정에서 별도로 선택합니다.</div><div class="tr-grid">

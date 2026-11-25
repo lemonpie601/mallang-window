@@ -259,7 +259,7 @@ html.mdos-desktop.mdos-pane [data-mdos-win="chats"] .mari-sidebar-header {
 }
 /* A chat list in its own window keeps its caption buttons: the new / import /
    select icons sit to their left instead of under them. */
-html.mdos-desktop:not(.mdos-pane) [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode-action) {
+html.mdos-desktop:not(.mdos-pane) [data-mdos-win="chats"] .mari-chat-sidebar > div[data-mh-actions] {
   right: 146px;
 }
 html.mdos-desktop [data-mdos-win="main"] [data-component="TopBar"] {
