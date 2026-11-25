@@ -37,6 +37,11 @@ const L = KO
       settings: "설정",
       search: "검색",
       launchpad: "시작",
+      snapLayouts: "스냅 레이아웃",
+      recommended: "추천",
+      noRecent: "최근 채팅이 여기에 표시돼요.",
+      showDesktop: "바탕 화면 보기",
+      focusSession: "집중 세션",
       pinned: "고정됨",
       power: "전원",
       wallpaper: "배경화면",
@@ -391,6 +396,11 @@ const L = KO
       settings: "Settings",
       search: "Search",
       launchpad: "Start",
+      snapLayouts: "Snap layouts",
+      recommended: "Recommended",
+      noRecent: "Your recent chats show up here.",
+      showDesktop: "Show desktop",
+      focusSession: "Focus session",
       pinned: "Pinned",
       power: "Power",
       wallpaper: "Wallpaper",
@@ -1453,11 +1463,48 @@ function maxRect() {
   const a = area();
   return { x: a.left, y: a.top, w: a.right - a.left, h: a.bottom - a.top };
 }
-function halfRect(side) {
+// Windows 11 snap zones as fractions of the work area: [x, y, w, h].
+const SNAPS = {
+  max: [0, 0, 1, 1],
+  left: [0, 0, 1 / 2, 1],
+  right: [1 / 2, 0, 1 / 2, 1],
+  tl: [0, 0, 1 / 2, 1 / 2],
+  tr: [1 / 2, 0, 1 / 2, 1 / 2],
+  bl: [0, 1 / 2, 1 / 2, 1 / 2],
+  br: [1 / 2, 1 / 2, 1 / 2, 1 / 2],
+  l3: [0, 0, 1 / 3, 1],
+  c3: [1 / 3, 0, 1 / 3, 1],
+  r3: [2 / 3, 0, 1 / 3, 1],
+  l23: [0, 0, 2 / 3, 1],
+  r23: [1 / 3, 0, 2 / 3, 1],
+  l4: [0, 0, 1 / 4, 1],
+  c24: [1 / 4, 0, 1 / 2, 1],
+  r4: [3 / 4, 0, 1 / 4, 1],
+};
+// The layouts the maximize button offers (hover it), like Windows 11.
+const SNAP_LAYOUTS = [
+  ["left", "right"],
+  ["l23", "r3"],
+  ["l3", "c3", "r3"],
+  ["left", "tr", "br"],
+  ["tl", "tr", "bl", "br"],
+  ["l4", "c24", "r4"],
+];
+function snapRect(kind) {
   const m = maxRect();
-  const w = Math.round(m.w / 2) - 4;
-  return { x: side === "left" ? m.x : m.x + m.w - w, y: m.y, w, h: m.h };
+  const [fx, fy, fw, fh] = SNAPS[kind] || SNAPS.max;
+  const gap = 4;
+  let x0 = m.x + m.w * fx;
+  let x1 = m.x + m.w * (fx + fw);
+  let y0 = m.y + m.h * fy;
+  let y1 = m.y + m.h * (fy + fh);
+  if (fx > 0) x0 += gap;
+  if (fx + fw < 0.999) x1 -= gap;
+  if (fy > 0) y0 += gap;
+  if (fy + fh < 0.999) y1 -= gap;
+  return { x: Math.round(x0), y: Math.round(y0), w: Math.round(x1 - x0), h: Math.round(y1 - y0) };
 }
+const halfRect = (side) => snapRect(side);
 function clampRect(r) {
   const w = Math.min(Math.max(r.w, MIN_W), innerWidth - 8);
   const hh = Math.min(Math.max(r.h, MIN_H), innerHeight - MENUBAR_H - 8);
@@ -1513,11 +1560,17 @@ function rectOf(id) {
 function baseRect(id) {
   const saved = savedRect(id);
   if (saved?.snap === "max") return maxRect();
-  if (saved?.snap === "left" || saved?.snap === "right") return halfRect(saved.snap);
+  if (saved?.snap && SNAPS[saved.snap]) return snapRect(saved.snap);
   return clampRect(validRect(saved) ? saved : defaultRect(id));
 }
 function applyRect(id) {
   const r = rectOf(id);
+  const snapped = savedRect(id)?.snap || "";
+  const winEl = isAppWin(id) ? appWins.get(id)?.el : doc.querySelector(`[data-mdos-win="${id}"]`);
+  if (winEl && (winEl.dataset.mdosSnap || "") !== snapped) {
+    if (snapped) winEl.dataset.mdosSnap = snapped;
+    else delete winEl.dataset.mdosSnap;
+  }
   if (isAppWin(id)) {
     const w = appWins.get(id);
     if (w) Object.assign(w.el.style, { left: `${r.x}px`, top: `${r.y}px`, width: `${r.w}px`, height: `${r.h}px` });
@@ -1566,12 +1619,14 @@ function focusWin(id) {
   focused = id;
   applyZ();
   updateMenubar();
+  refreshDockFocus();
 }
 function focusTopVisible() {
   const next = [...zOrder].reverse().find((id) => windowVisible(id));
   focused = next || null;
   applyZ();
   updateMenubar();
+  refreshDockFocus();
 }
 function cycleWindows() {
   const visible = winIds().filter(windowVisible);
@@ -1597,6 +1652,79 @@ function zoomWin(id) {
   applyRect(id);
   save();
 }
+// Put a window into one snap zone (Snap layouts, Ctrl Alt arrows).
+function snapTo(id, kind) {
+  if (!id) return;
+  if (id === "chats" && paneOn()) id = "main";
+  const saved = savedRect(id);
+  // A snapped record still holds the size to restore to.
+  const restore = validRect(saved) ? saved : rectOf(id);
+  writeRect(id, { x: restore.x, y: restore.y, w: restore.w, h: restore.h, snap: kind });
+  animateGeometry();
+  applyRect(id);
+  if (id === "main" && paneOn()) applyRect("chats");
+  focusWin(id);
+  save();
+}
+let snapFly = null;
+let snapFlyTimer = 0;
+function closeSnapFly() {
+  marinara.clearTimeout(snapFlyTimer);
+  snapFlyTimer = 0;
+  snapFly?.el.remove();
+  snapFly = null;
+}
+function openSnapFly(button) {
+  const host = button.closest("[data-mdos-win]");
+  let id = host?.getAttribute("data-mdos-win");
+  if (!id || !isDesktop()) return;
+  if (id === "chats" && paneOn()) id = "main";
+  closeSnapFly();
+  const el = h(
+    "div",
+    { class: "mdos-snapfly", role: "menu", "aria-label": L.snapLayouts },
+    ...SNAP_LAYOUTS.map((layout) =>
+      h(
+        "div",
+        { class: "mdos-snapfly-layout" },
+        ...layout.map((kind) => {
+          const [fx, fy, fw, fh] = SNAPS[kind];
+          return h("button", {
+            type: "button",
+            class: "mdos-snapfly-zone",
+            role: "menuitem",
+            "aria-label": `${L.snapLayouts} ${kind}`,
+            style: `left:calc(${fx * 100}% + 2px);top:calc(${fy * 100}% + 2px);width:calc(${fw * 100}% - 4px);height:calc(${fh * 100}% - 4px)`,
+            onclick: () => {
+              closeSnapFly();
+              snapTo(id, kind);
+            },
+          });
+        }),
+      ),
+    ),
+  );
+  ui.append(el);
+  const r = button.getBoundingClientRect();
+  el.style.left = `${Math.max(8, Math.min(r.left + r.width / 2 - el.offsetWidth / 2, innerWidth - el.offsetWidth - 8))}px`;
+  el.style.top = `${r.bottom + 6}px`;
+  el.addEventListener("pointerenter", () => marinara.clearTimeout(snapFlyTimer));
+  el.addEventListener("pointerleave", () => (snapFlyTimer = marinara.setTimeout(closeSnapFly, 300)));
+  snapFly = { el, button };
+}
+on(doc, "pointerover", (event) => {
+  const button = event.target instanceof Element ? event.target.closest(".mdos-light--zoom") : null;
+  if (!button || snapFly?.button === button) return;
+  marinara.clearTimeout(snapFlyTimer);
+  snapFlyTimer = marinara.setTimeout(() => openSnapFly(button), 450);
+  const leave = () => {
+    button.removeEventListener("pointerleave", leave);
+    marinara.clearTimeout(snapFlyTimer);
+    snapFlyTimer = snapFly ? marinara.setTimeout(closeSnapFly, 300) : 0;
+  };
+  button.addEventListener("pointerleave", leave);
+});
+
 function setMainMinimized(min) {
   if (state.mainMinimized === min) return;
   state.mainMinimized = min;
@@ -1791,6 +1919,8 @@ function onPointerDown(event) {
   if (!target) return;
   if (openMenu && !target.closest(".mdos-menu, #mdos-menubar")) closeMenu();
   if (ccEl && !target.closest("#mdos-cc, [data-mdos-cc-toggle]")) closeCC();
+  if (calEl && !target.closest("#mdos-cal, .mdos-mb-clock")) closeCal();
+  if (snapFly && !target.closest(".mdos-snapfly")) closeSnapFly();
   if (popEl && !target.closest(".mdos-pop")) closePop();
   if (event.button !== 0) return;
 
@@ -1910,8 +2040,13 @@ function applyGestureFrame() {
   if (g.mode === "move") {
     setTranslate(g.id, g.dx, Math.max(g.dy, TOP_H + 2 - s.y));
     if (g.frame) setTranslate("chats", g.dx, Math.max(g.dy, TOP_H + 2 - s.y));
-    g.snap =
-      g.cy <= TOP_H + SNAP_EDGE ? "max" : g.cx <= SNAP_EDGE ? "left" : g.cx >= innerWidth - SNAP_EDGE ? "right" : null;
+    // Edges snap to halves (top: maximize), corners to quarters.
+    const C = 90;
+    const bottom = area().bottom;
+    if (g.cy <= TOP_H + SNAP_EDGE) g.snap = g.cx <= C ? "tl" : g.cx >= innerWidth - C ? "tr" : "max";
+    else if (g.cx <= SNAP_EDGE) g.snap = g.cy <= TOP_H + C ? "tl" : g.cy >= bottom - C ? "bl" : "left";
+    else if (g.cx >= innerWidth - SNAP_EDGE) g.snap = g.cy <= TOP_H + C ? "tr" : g.cy >= bottom - C ? "br" : "right";
+    else g.snap = null;
     showSnapPreview(g.snap);
     return;
   }
@@ -2025,7 +2160,7 @@ function showSnapPreview(snap) {
     snapPreview.classList.remove("is-visible");
     return;
   }
-  const r = snap === "max" ? maxRect() : halfRect(snap);
+  const r = snap === "max" ? maxRect() : snapRect(snap);
   snapPreview.style.cssText = `left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px`;
   snapPreview.classList.add("is-visible");
 }
@@ -2141,7 +2276,8 @@ const mbMenus = [
   h("button", { type: "button", class: "mdos-mb-item", "data-menu": id, "aria-haspopup": "menu", text: label }),
 );
 mbLeft.append(mbLogo, mbApp, ...mbMenus);
-const mbClock = h("button", { type: "button", class: "mdos-mb-item mdos-mb-clock", "data-mdos-cc-toggle": "", onclick: () => toggleCC() });
+// Windows 11: the clock opens the calendar; Quick Settings has its own button.
+const mbClock = h("button", { type: "button", class: "mdos-mb-item mdos-mb-clock", "aria-haspopup": "dialog", onclick: () => toggleCal() });
 const mbLocker = h("button", {
   type: "button",
   class: "mdos-mb-item mdos-mb-icon mdos-mb-locker",
@@ -2170,6 +2306,8 @@ mbRight.append(
     onclick: () => toggleCC(),
   }),
   mbClock,
+  // The sliver at the far right: Show desktop.
+  h("button", { type: "button", class: "mdos-mb-showdesk", "aria-label": L.showDesktop, title: L.showDesktop, onclick: () => showDesktop() }),
 );
 menubar.append(mbLeft, mbRight);
 ui.append(menubar);
@@ -2406,8 +2544,33 @@ function renderDock() {
   dockCenters = null;
   updateDockState();
 }
+// Focus can change before the taskbar exists (start-up); skip it then.
+function refreshDockFocus() {
+  try {
+    updateDockState();
+  } catch {
+    /* taskbar not built yet */
+  }
+}
+// The app whose window has focus gets the long accent pill (Windows 11).
+function focusedAppId() {
+  if (!focused || desktopHome) return null;
+  if (isAppWin(focused)) return appRec(focused)?.type || null;
+  if (focused === "panel") return activePanelId() || null;
+  if (focused === "chats" || focused === "main") {
+    const mode = chatsOpen() || paneOn() ? activeChatMode() : null;
+    if (mode) return `mode:${mode}`;
+    return homePageVisible() ? "home" : null;
+  }
+  return null;
+}
 function updateDockState() {
-  for (const [id, { item }] of dockItems) item.classList.toggle("is-running", isAppRunning(id));
+  const active = focusedAppId();
+  for (const [id, { item }] of dockItems) {
+    const running = isAppRunning(id);
+    item.classList.toggle("is-running", running);
+    item.classList.toggle("is-focused", running && id === active);
+  }
 }
 
 let dockCenters = null;
@@ -2847,6 +3010,8 @@ function openLaunchpad() {
       input,
       h("div", { class: "mdos-start-head" }, h("h2", { text: L.pinned })),
       grid,
+      h("div", { class: "mdos-start-head mdos-start-head--rec" }, h("h2", { text: L.recommended })),
+      startRecommended(),
       h(
         "div",
         { class: "mdos-start-foot" },
@@ -2894,6 +3059,40 @@ function openLaunchpad() {
     launchpadEl?.classList.add("is-open");
     if (isDesktop()) input.focus();
   });
+}
+// Start's Recommended: the latest chats from Marinara's list (two columns).
+function startRecommended() {
+  const rows = [...doc.querySelectorAll(SEL.chatRows)].slice(0, 6);
+  const items = rows
+    .map((row) => ({
+      chatId: row.getAttribute("data-chat-id"),
+      img: $$("img", row).find((i) => !/\/backgrounds\//.test(i.getAttribute("src") || ""))?.getAttribute("src") || null,
+      title: row.getAttribute("title") || row.textContent.trim().split("\n")[0] || "",
+    }))
+    .filter((c) => c.chatId);
+  if (!items.length) return h("div", { class: "mdos-start-rec mdos-start-rec--empty", text: L.noRecent });
+  return h(
+    "div",
+    { class: "mdos-start-rec" },
+    ...items.map((c) =>
+      h(
+        "button",
+        {
+          type: "button",
+          class: "mdos-start-rec-item",
+          title: c.title,
+          onclick: () => {
+            closeLaunchpad();
+            launch(`chat:${c.chatId}`);
+          },
+        },
+        c.img
+          ? h("img", { class: "mdos-start-rec-img", src: c.img, alt: "", draggable: "false" })
+          : appIcon({ id: "mode:conversation", icon: "chat", g: ["#6ef08d", "#17a84d"] }),
+        h("span", { class: "mdos-start-rec-text" }, h("span", { class: "mdos-start-rec-title", text: c.title }), h("span", { class: "mdos-start-rec-sub", text: L.chats })),
+      ),
+    ),
+  );
 }
 function closeLaunchpad() {
   if (!launchpadEl) return;
@@ -5287,6 +5486,95 @@ function refreshCC() {
   }
 }
 
+// ── Calendar (the clock's flyout, Windows 11) ─────────────────
+
+let calEl = null;
+function closeCal() {
+  calEl?.remove();
+  calEl = null;
+  mbClock.classList.remove("is-open");
+}
+function toggleCal() {
+  if (calEl) return closeCal();
+  closeMenu();
+  closeCC();
+  closeLaunchpad();
+  const today = new Date();
+  let view = new Date(today.getFullYear(), today.getMonth(), 1);
+  const monthFmt = new Intl.DateTimeFormat(undefined, { year: "numeric", month: "long" });
+  const longFmt = new Intl.DateTimeFormat(undefined, { month: "long", day: "numeric", weekday: "long" });
+  const dayFmt = new Intl.DateTimeFormat(undefined, { weekday: "narrow" });
+  const title = h("span", { class: "mdos-cal-month" });
+  const grid = h("div", { class: "mdos-cal-grid", role: "grid" });
+  const render = () => {
+    title.textContent = monthFmt.format(view);
+    const start = new Date(view);
+    start.setDate(1 - view.getDay());
+    const cells = [];
+    // Weekday names (Sunday first, as Windows shows by default in Korea/US).
+    for (let i = 0; i < 7; i++) cells.push(h("span", { class: "mdos-cal-wd", text: dayFmt.format(new Date(2023, 0, 1 + i)) }));
+    for (let i = 0; i < 42; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      const cls = ["mdos-cal-day"];
+      if (d.getMonth() !== view.getMonth()) cls.push("is-other");
+      if (d.toDateString() === today.toDateString()) cls.push("is-today");
+      cells.push(h("span", { class: cls.join(" "), role: "gridcell", text: String(d.getDate()) }));
+    }
+    grid.replaceChildren(...cells);
+  };
+  const nav = (delta) =>
+    h("button", {
+      type: "button",
+      class: "mdos-cal-nav",
+      "aria-label": delta < 0 ? "‹" : "›",
+      svg: `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${delta < 0 ? "M4 10l4-4 4 4" : "M4 6l4 4 4-4"}"/></svg>`,
+      onclick: () => {
+        view = new Date(view.getFullYear(), view.getMonth() + delta, 1);
+        render();
+      },
+    });
+  calEl = h(
+    "div",
+    { id: "mdos-cal", role: "dialog", "aria-label": longFmt.format(today) },
+    h(
+      "div",
+      { class: "mdos-cal-card" },
+      h("button", {
+        type: "button",
+        class: "mdos-cal-today",
+        text: longFmt.format(today),
+        onclick: () => {
+          view = new Date(today.getFullYear(), today.getMonth(), 1);
+          render();
+        },
+      }),
+      h("div", { class: "mdos-cal-head" }, title, h("span", { class: "mdos-cal-navs" }, nav(-1), nav(1))),
+      grid,
+    ),
+    isDesktop()
+      ? h(
+          "div",
+          { class: "mdos-cal-card mdos-cal-focus" },
+          h("span", { text: L.focusSession }),
+          h("button", {
+            type: "button",
+            class: "mdos-cc-btn mdos-cc-btn--accent",
+            text: "Ctrl Alt F",
+            onclick: () => {
+              closeCal();
+              setFocusMode(true);
+            },
+          }),
+        )
+      : null,
+  );
+  render();
+  ui.append(calEl);
+  mbClock.classList.add("is-open");
+  raf(() => calEl?.classList.add("is-open"));
+}
+
 // ── Control Center (quick settings) ───────────────────────────
 
 let ccEl = null;
@@ -5303,16 +5591,45 @@ function toggleCC(forceOpen, section) {
 }
 function buildCC() {
   const card = (title, ...kids) => h("section", { class: "mdos-cc-card" }, title ? h("h3", { text: title }) : null, ...kids);
+  // Windows 11 Quick Settings: a grid of toggle tiles, then the details,
+  // then a footer with settings and power.
+  const tile = ({ key, label, icon, run, onChange }) => {
+    const btn = h(
+      "button",
+      {
+        type: "button",
+        class: "mdos-qs-tile",
+        title: label,
+        "aria-pressed": key ? String(!!state[key]) : null,
+        onclick: () => {
+          if (run) return run();
+          const next = !state[key];
+          updateSetting(key, next);
+          onChange?.(next);
+          btn.setAttribute("aria-pressed", String(next));
+        },
+      },
+      h("span", { class: "mdos-qs-tile-btn", svg: svg(icon) }),
+      h("span", { class: "mdos-qs-tile-label", text: label }),
+    );
+    return btn;
+  };
+  const tiles = [
+    { key: "themeSync", label: L.themeSync, icon: "brush", onChange: (on) => on && updateSetting("accent", "theme") },
+    { key: "dockAutohide", label: L.autohide, icon: "launchpad" },
+    { key: "realGlass", label: L.realGlass, icon: "wallpaper" },
+    isDesktop() ? { label: L.focusSession, icon: "star", run: () => (closeCC(), setFocusMode(true)) } : null,
+    { label: L.editWidgets, icon: "widgets", run: () => setEditMode(true) },
+    isDesktop() ? { label: L.tile, icon: "classic", run: tileWindows } : null,
+  ].filter(Boolean);
   ccEl = h(
     "div",
     { id: "mdos-cc", role: "dialog", "aria-label": L.controlCenter },
+    h("section", { class: "mdos-qs-tiles" }, ...tiles.map(tile)),
     card(L.accent, accentRow()),
     card(L.wallpaper, wallpaperSwatches()),
     card(
-      L.quick,
-      settingToggle("themeSync", L.themeSync, (on) => on && updateSetting("accent", "theme")),
-      settingToggle("dockAutohide", L.autohide),
-      settingToggle("realGlass", L.realGlass),
+      null,
       h(
         "label",
         { class: "mdos-cc-slider" },
@@ -5321,12 +5638,15 @@ function buildCC() {
       ),
     ),
     h(
-      "section",
-      { class: "mdos-cc-card mdos-cc-actions" },
-      h("button", { type: "button", class: "mdos-cc-btn mdos-cc-btn--accent", text: L.openSettings, onclick: () => { closeCC(); openApp("customize"); } }),
-      h("button", { type: "button", class: "mdos-cc-btn", text: L.editWidgets, onclick: () => setEditMode(true) }),
-      isDesktop() ? h("button", { type: "button", class: "mdos-cc-btn", text: L.tile, onclick: tileWindows }) : null,
-      h("button", { type: "button", class: "mdos-cc-btn", text: L.classic, onclick: () => setEnabled(false) }),
+      "div",
+      { class: "mdos-qs-foot" },
+      h("span", { class: "mdos-qs-foot-name" }, h("span", { svg: LOGO }), h("span", { text: "Marinara" })),
+      h(
+        "span",
+        { class: "mdos-qs-foot-actions" },
+        h("button", { type: "button", class: "mdos-start-btn", "aria-label": L.openSettings, title: L.openSettings, svg: svg("settings"), onclick: () => { closeCC(); openApp("customize"); } }),
+        h("button", { type: "button", class: "mdos-start-btn", "aria-label": L.classic, title: L.classic, svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5v8"/><path d="M7.2 6.6a7.5 7.5 0 1 0 9.6 0"/></svg>', onclick: () => setEnabled(false) }),
+      ),
     ),
     isTouch() ? h("button", { type: "button", class: "mdos-cc-btn mdos-cc-done", text: L.done, onclick: () => closeCC() }) : null,
   );
@@ -5831,6 +6151,8 @@ function closeOverlays() {
   closeMenu();
   closeLaunchpad();
   closeCC();
+  closeCal();
+  closeSnapFly();
   closeAbout();
   closePop();
 }
@@ -6831,6 +7153,20 @@ on(
       } else if (event.code === "KeyH") {
         event.preventDefault();
         showDesktop();
+      } else if (/^Arrow(Left|Right|Up|Down)$/.test(event.code) && focused && isDesktop()) {
+        // Windows' Win + arrows: halves, maximize, then restore / minimize.
+        event.preventDefault();
+        const cur = savedRect(focused === "chats" && paneOn() ? "main" : focused)?.snap || null;
+        const k = event.code.slice(5);
+        if (k === "Left") snapTo(focused, cur === "right" ? null : cur === "tr" ? "tl" : cur === "br" ? "bl" : "left");
+        else if (k === "Right") snapTo(focused, cur === "left" ? null : cur === "tl" ? "tr" : cur === "bl" ? "br" : "right");
+        else if (k === "Up") snapTo(focused, cur === "left" ? "tl" : cur === "right" ? "tr" : cur === "bl" ? "left" : cur === "br" ? "right" : "max");
+        else if (cur === "max") snapTo(focused, null);
+        else if (cur === "left") snapTo(focused, "bl");
+        else if (cur === "right") snapTo(focused, "br");
+        else if (cur === "tl") snapTo(focused, "left");
+        else if (cur === "tr") snapTo(focused, "right");
+        else minimizeWin(focused);
       } else if (event.code === "KeyM" && focused && isDesktop()) {
         event.preventDefault();
         minimizeWin(focused);
@@ -6864,7 +7200,7 @@ on(
       return;
     }
     if (event.key === "Escape" && mode !== "off") {
-      if (launchpadEl || openMenu || ccEl || aboutEl || popEl || editMode) {
+      if (launchpadEl || openMenu || ccEl || calEl || snapFly || aboutEl || popEl || editMode) {
         event.stopPropagation();
         if (popEl) closePop();
         else if (editMode) setEditMode(false);

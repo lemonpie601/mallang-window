@@ -1060,3 +1060,378 @@ html.mdos-desktop[data-mdos-icon-style="fluent"] .mdos-lp-app .mdos-app-icon.has
   width: 34px;
   height: 34px;
 }
+
+/* ── Maximized windows lose their corners and shadow edge ────── */
+
+html.mdos-desktop [data-mdos-win][data-mdos-snap="max"] {
+  border-radius: 0 !important;
+  outline: none;
+}
+
+/* ── Snap layouts (hover the maximize button) ────────────────── */
+
+.mdos-snapfly {
+  position: fixed;
+  z-index: 8650;
+  display: grid;
+  grid-template-columns: repeat(3, 84px);
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  color: var(--w-fg);
+  background: var(--w-acrylic);
+  border: 1px solid var(--w-stroke);
+  box-shadow: var(--w-shadow-flyout);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  animation: w-drop 167ms var(--mdos-ease);
+}
+.mdos-snapfly-layout {
+  position: relative;
+  height: 52px;
+  border-radius: 4px;
+  background: var(--w-card);
+  border: 1px solid var(--w-stroke);
+}
+.mdos-snapfly-zone {
+  all: unset;
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 3px;
+  background: var(--w-ctl);
+  border: 1px solid var(--w-stroke-strong);
+  cursor: var(--mdos-cur, default);
+  transition: background 83ms linear;
+}
+.mdos-snapfly-zone:hover,
+.mdos-snapfly-zone:focus-visible {
+  background: var(--w-accent);
+  border-color: var(--w-accent);
+}
+@keyframes w-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* ── Taskbar: the focused app's long accent pill ─────────────── */
+
+html.mdos-desktop .mdos-dock-item.is-focused {
+  background: var(--w-hover);
+}
+html.mdos-desktop .mdos-dock-item.is-focused .mdos-dock-dot,
+html.mdos-desktop .mdos-dock-item.is-running:hover .mdos-dock-dot {
+  width: 16px;
+  margin-left: -8px;
+  background: var(--w-accent);
+}
+
+/* Show desktop: a thin sliver at the far right of the taskbar. */
+.mdos-mb-showdesk {
+  all: unset;
+  align-self: stretch;
+  width: 8px;
+  margin: 0 -8px 0 4px;
+  border-left: 1px solid transparent;
+  cursor: var(--mdos-cur, default);
+}
+.mdos-mb-showdesk:hover {
+  border-left-color: var(--w-stroke-strong);
+}
+html.mdos-desktop .mdos-mb-right {
+  align-self: stretch;
+}
+html.mdos-desktop .mdos-mb-clock.is-open {
+  background: var(--w-hover);
+}
+
+/* ── Start: Recommended ──────────────────────────────────────── */
+
+/* Pinned shows three rows at a time and scrolls by rows, like Start's pages. */
+html.mdos-desktop .mdos-lp-grid {
+  flex: 0 0 auto;
+  grid-auto-rows: 82px;
+  max-height: calc(82px * 3 + 4px * 2);
+  scroll-snap-type: y mandatory;
+  padding-bottom: 0;
+}
+html.mdos-desktop .mdos-lp-app {
+  scroll-snap-align: start;
+  box-sizing: border-box;
+  height: 82px;
+}
+html.mdos-desktop .mdos-start-head--rec {
+  margin-top: 8px;
+}
+.mdos-start-rec {
+  display: none;
+}
+html.mdos-desktop .mdos-start-rec {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: start;
+  gap: 4px 16px;
+  margin: 0 8px 16px;
+  overflow-y: auto;
+}
+html.mdos-desktop .mdos-start-rec--empty {
+  display: block;
+  padding: 8px 16px;
+  color: var(--w-fg-2);
+  font-size: 12px;
+}
+.mdos-start-rec-item {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: var(--mdos-cur, default);
+}
+.mdos-start-rec-item:hover {
+  background: var(--w-hover);
+}
+.mdos-start-rec-item:active {
+  background: var(--w-press);
+}
+.mdos-start-rec-item:focus-visible {
+  outline: 2px solid var(--w-fg);
+  outline-offset: -2px;
+}
+.mdos-start-rec-img,
+.mdos-start-rec-item .mdos-app-icon {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.mdos-start-rec-text {
+  display: grid;
+  min-width: 0;
+}
+.mdos-start-rec-title,
+.mdos-start-rec-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.mdos-start-rec-sub {
+  color: var(--w-fg-2);
+}
+
+/* ── Calendar (clock flyout) ─────────────────────────────────── */
+
+#mdos-cal {
+  position: fixed;
+  right: 12px;
+  bottom: calc(var(--w-tb-h) + 12px);
+  z-index: 8500;
+  width: 334px;
+  display: grid;
+  gap: 12px;
+  color: var(--w-fg);
+  font: 13px var(--mdos-font);
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 167ms linear,
+    transform 250ms var(--mdos-ease);
+}
+html.mdos-dock-autohide #mdos-cal {
+  bottom: 12px;
+}
+#mdos-cal.is-open {
+  opacity: 1;
+  transform: none;
+}
+.mdos-cal-card {
+  border-radius: 8px;
+  background: var(--w-acrylic);
+  border: 1px solid var(--w-stroke);
+  box-shadow: var(--w-shadow-flyout), 0 32px 64px rgba(0, 0, 0, 0.22);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  overflow: hidden;
+}
+.mdos-cal-today {
+  all: unset;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px 16px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--w-stroke);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-cal-today:hover {
+  background: var(--w-hover);
+}
+.mdos-cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 10px 4px 16px;
+}
+.mdos-cal-month {
+  font-weight: 600;
+}
+.mdos-cal-navs {
+  display: flex;
+  gap: 2px;
+}
+.mdos-cal-nav {
+  all: unset;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 30px;
+  border-radius: 4px;
+  color: var(--w-fg-2);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-cal-nav:hover {
+  background: var(--w-hover);
+  color: var(--w-fg);
+}
+.mdos-cal-nav svg {
+  width: 14px;
+  height: 14px;
+}
+.mdos-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  padding: 4px 12px 14px;
+  text-align: center;
+}
+.mdos-cal-wd {
+  padding: 6px 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+.mdos-cal-day {
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.mdos-cal-day:hover {
+  background: var(--w-hover);
+}
+.mdos-cal-day.is-other {
+  color: var(--w-fg-3);
+}
+.mdos-cal-day.is-today {
+  background: var(--w-accent);
+  color: var(--w-on-accent);
+  font-weight: 600;
+}
+.mdos-cal-focus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+}
+
+/* ── Quick Settings: toggle tiles and footer ─────────────────── */
+
+html.mdos #mdos-cc {
+  padding-bottom: 0;
+}
+.mdos-qs-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 12px;
+  padding: 4px 0 6px;
+}
+.mdos-qs-tile {
+  all: unset;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-width: 0;
+  cursor: var(--mdos-cur, default);
+}
+.mdos-qs-tile-btn {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 48px;
+  border-radius: 4px;
+  color: var(--w-fg);
+  background: var(--w-ctl);
+  border: 1px solid var(--w-ctl-stroke);
+  border-bottom-color: var(--w-ctl-stroke-b);
+  transition: background 83ms linear;
+}
+.mdos-qs-tile:hover .mdos-qs-tile-btn {
+  background: var(--w-ctl-hover);
+}
+.mdos-qs-tile:active .mdos-qs-tile-btn {
+  background: var(--w-press);
+}
+.mdos-qs-tile[aria-pressed="true"] .mdos-qs-tile-btn {
+  color: var(--w-on-accent);
+  background: var(--w-accent);
+  border-color: var(--w-accent);
+}
+.mdos-qs-tile:focus-visible .mdos-qs-tile-btn {
+  outline: 2px solid var(--w-fg);
+  outline-offset: 1px;
+}
+.mdos-qs-tile-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.mdos-qs-tile-label {
+  max-width: 100%;
+  font-size: 12px;
+  line-height: 15px;
+  text-align: center;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.mdos-qs-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  margin: 0 -16px;
+  padding: 0 12px 0 20px;
+  background: var(--w-footer);
+  border-top: 1px solid var(--w-stroke);
+  position: sticky;
+  bottom: 0;
+}
+.mdos-qs-foot-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.mdos-qs-foot-name svg {
+  width: 16px;
+  height: 16px;
+  color: #ff5a4a;
+}
+.mdos-qs-foot-actions {
+  display: flex;
+  gap: 2px;
+}
+html.mdos-touch .mdos-qs-foot {
+  margin: 0 -10px;
+}
