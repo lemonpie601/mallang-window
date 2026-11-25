@@ -1,0 +1,534 @@
+/* ──────────────────────────────────────────────────────────────
+   Marinara Desktop — design system for everything inside the windows.
+
+   Marinara's look comes from CSS tokens (--background, --card,
+   --marinara-chat-chrome-*, --marinara-editor-*, …). We swap the whole
+   token set for a neutral desktop palette, then reshape the shared
+   controls (buttons, fields, segmented controls, lists, bubbles,
+   composer, modals). Tokens use !important because Marinara writes
+   some of them inline on <html>.
+
+   Light/dark follows Marinara's own theme (Settings → Appearance).
+   The accent colour comes from Control Center (--mdos-accent).
+   ────────────────────────────────────────────────────────────── */
+
+/* ── Palettes ────────────────────────────────────────────────── */
+
+html.mdos[data-theme="light"] {
+  --mdos-win-bg: #ffffff;
+  --mdos-card: #f5f5f7;
+  --mdos-card-raised: #ffffff;
+  --mdos-sidebar-vib: rgba(238, 236, 243, 0.74);
+  --mdos-panel-bg: #fafafc;
+  --mdos-popover: rgba(252, 252, 254, 0.9);
+  --mdos-fg: #1d1d1f;
+  --mdos-fg-2: #6e6e73;
+  --mdos-fg-3: #a1a1a6;
+  --mdos-sep: rgba(0, 0, 0, 0.1);
+  --mdos-sep-strong: rgba(0, 0, 0, 0.16);
+  --mdos-fill: rgba(0, 0, 0, 0.05);
+  --mdos-fill-2: rgba(0, 0, 0, 0.085);
+  --mdos-field: #ffffff;
+  --mdos-control: #ffffff;
+  --mdos-control-hover: #f6f6f8;
+  --mdos-control-active: #ececef;
+  --mdos-control-shadow: 0 0.5px 1.5px rgba(0, 0, 0, 0.16), 0 0 0 0.5px rgba(0, 0, 0, 0.1);
+  --mdos-bubble-other: #e9e9eb;
+  --mdos-bubble-other-fg: #1d1d1f;
+  --mdos-elev: 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 0 0.5px rgba(0, 0, 0, 0.06);
+}
+
+html.mdos:not([data-theme="light"]) {
+  --mdos-win-bg: #1e1e21;
+  --mdos-card: #2a2a2e;
+  --mdos-card-raised: #323236;
+  --mdos-sidebar-vib: rgba(38, 38, 44, 0.7);
+  --mdos-panel-bg: #222226;
+  --mdos-popover: rgba(46, 46, 52, 0.9);
+  --mdos-fg: #f5f5f7;
+  --mdos-fg-2: #a1a1a8;
+  --mdos-fg-3: #6b6b72;
+  --mdos-sep: rgba(255, 255, 255, 0.1);
+  --mdos-sep-strong: rgba(255, 255, 255, 0.16);
+  --mdos-fill: rgba(255, 255, 255, 0.06);
+  --mdos-fill-2: rgba(255, 255, 255, 0.11);
+  --mdos-field: rgba(255, 255, 255, 0.06);
+  --mdos-control: rgba(255, 255, 255, 0.12);
+  --mdos-control-hover: rgba(255, 255, 255, 0.17);
+  --mdos-control-active: rgba(255, 255, 255, 0.22);
+  --mdos-control-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.08);
+  --mdos-bubble-other: #3a3a3e;
+  --mdos-bubble-other-fg: #f5f5f7;
+  --mdos-elev: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+}
+
+html.mdos {
+  --mdos-accent-soft: color-mix(in srgb, var(--mdos-accent) 14%, transparent);
+  --mdos-accent-ring: color-mix(in srgb, var(--mdos-accent) 42%, transparent);
+  --mdos-ui-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Pretendard,
+    "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+}
+
+/* ── Token swap ──────────────────────────────────────────────── */
+
+html.mdos {
+  --background: var(--mdos-win-bg) !important;
+  --marinara-app-background-paint: var(--mdos-win-bg) !important;
+  --marinara-page-backing: transparent !important;
+  --marinara-shell-surface: var(--mdos-win-bg) !important;
+  --foreground: var(--mdos-fg) !important;
+  --card: var(--mdos-card) !important;
+  --card-foreground: var(--mdos-fg) !important;
+  --popover: var(--mdos-popover) !important;
+  --popover-foreground: var(--mdos-fg) !important;
+  --primary-foreground: #ffffff !important;
+  --secondary: var(--mdos-fill-2) !important;
+  --secondary-foreground: var(--mdos-fg) !important;
+  --muted: var(--mdos-fill) !important;
+  --muted-foreground: var(--mdos-fg-2) !important;
+  --accent: var(--mdos-fill) !important;
+  --accent-foreground: var(--mdos-fg) !important;
+  --border: var(--mdos-sep) !important;
+  --input: var(--mdos-sep) !important;
+  --radius: 0.5rem !important;
+  --sidebar: transparent !important;
+  --sidebar-foreground: var(--mdos-fg) !important;
+  --sidebar-border: var(--mdos-sep) !important;
+  --glow-primary: transparent !important;
+  --glow-accent: transparent !important;
+  --glow-color-1: transparent !important;
+  --glow-color-2: transparent !important;
+  --glow-color-3: transparent !important;
+  --glow-sm-1: transparent !important;
+  --glow-sm-2: transparent !important;
+  --marinara-conversation-gradient-from: var(--mdos-win-bg) !important;
+  --marinara-conversation-gradient-to: var(--mdos-win-bg) !important;
+
+  --marinara-topbar-surface: transparent !important;
+  --marinara-topbar-border: var(--mdos-sep) !important;
+  --marinara-home-page-wash: transparent !important;
+  --marinara-shell-edge-border: var(--mdos-sep) !important;
+
+  --marinara-chat-chrome-text: var(--mdos-fg) !important;
+  --marinara-chat-chrome-button-text-base: var(--mdos-fg) !important;
+  --marinara-chat-chrome-surface-bg: var(--mdos-control) !important;
+  --marinara-chat-chrome-surface-bg-hover: var(--mdos-control-hover) !important;
+  --marinara-chat-chrome-surface-bg-active: var(--mdos-control-active) !important;
+  --marinara-chat-chrome-button-bg: var(--mdos-control) !important;
+  --marinara-chat-chrome-button-bg-hover: var(--mdos-control-hover) !important;
+  --marinara-chat-chrome-button-bg-active: var(--mdos-control-active) !important;
+  --marinara-chat-chrome-button-border: transparent !important;
+  --marinara-chat-chrome-button-border-hover: transparent !important;
+  --marinara-chat-chrome-button-border-active: transparent !important;
+  --marinara-chat-chrome-button-text: color-mix(in srgb, var(--mdos-fg) 82%, transparent) !important;
+  --marinara-chat-chrome-button-text-hover: var(--mdos-fg) !important;
+  --marinara-chat-chrome-button-text-active: var(--mdos-fg) !important;
+  --marinara-chat-chrome-focus-ring: var(--mdos-accent-ring) !important;
+  --marinara-chat-chrome-panel-bg: var(--mdos-popover) !important;
+  --marinara-chat-chrome-panel-border: var(--mdos-sep) !important;
+  --marinara-chat-chrome-panel-divider: var(--mdos-sep) !important;
+  --marinara-chat-chrome-panel-text: var(--mdos-fg) !important;
+  --marinara-chat-chrome-panel-title: var(--mdos-fg) !important;
+  --marinara-chat-chrome-panel-muted: var(--mdos-fg-2) !important;
+  --marinara-chat-chrome-panel-scrollbar: var(--mdos-fill-2) !important;
+  --marinara-chat-message-action-text: var(--mdos-fg-2) !important;
+  --marinara-chat-message-action-text-hover: var(--mdos-fg) !important;
+  --marinara-chat-message-action-bg-hover: var(--mdos-fill) !important;
+  --marinara-chat-chrome-highlight-bg: var(--mdos-fill-2) !important;
+  --marinara-chat-chrome-highlight-bg-hover: var(--mdos-fill-2) !important;
+  --marinara-chat-chrome-highlight-text: var(--mdos-fg) !important;
+  --marinara-chat-chrome-input-bg: var(--mdos-field) !important;
+  --marinara-chat-chrome-input-border: var(--mdos-sep) !important;
+  --marinara-chat-chrome-input-border-focus: var(--mdos-accent) !important;
+  --marinara-chat-option-field-bg: var(--mdos-field) !important;
+  --marinara-chat-option-field-bg-hover: var(--mdos-control-hover) !important;
+  --marinara-chat-option-field-bg-active: var(--mdos-control-active) !important;
+  --marinara-chat-option-field-border: var(--mdos-sep) !important;
+  --marinara-chat-option-field-border-active: var(--mdos-accent) !important;
+  --marinara-chat-option-field-ring: var(--mdos-accent-ring) !important;
+  --marinara-chat-option-switch-off: var(--mdos-fill-2) !important;
+
+  --marinara-editor-bg: var(--mdos-win-bg) !important;
+  --marinara-editor-surface-bg: var(--mdos-card) !important;
+  --marinara-editor-surface-bg-hover: var(--mdos-fill-2) !important;
+  --marinara-editor-surface-bg-active: var(--mdos-fill-2) !important;
+  --marinara-editor-control-bg: var(--mdos-control) !important;
+  --marinara-editor-control-bg-hover: var(--mdos-control-hover) !important;
+  --marinara-editor-border: var(--mdos-sep) !important;
+  --marinara-editor-border-strong: var(--mdos-sep-strong) !important;
+  --marinara-editor-divider: var(--mdos-sep) !important;
+  --marinara-editor-text: var(--mdos-fg) !important;
+  --marinara-editor-muted: var(--mdos-fg-2) !important;
+  --marinara-editor-focus-ring: var(--mdos-accent-ring) !important;
+  --marinara-editor-shadow: none !important;
+
+  --glass-bg: var(--mdos-card) !important;
+  --glass-border: var(--mdos-sep) !important;
+  --glass-strong-bg: var(--mdos-card-raised) !important;
+  --glass-strong-border: var(--mdos-sep) !important;
+  --glass-strong-shadow: var(--mdos-elev) !important;
+  --scrollbar-track: transparent !important;
+  --scrollbar-border: transparent !important;
+}
+
+/* Accent: every accent token collapses to one solid colour. Off when
+   Control Center's accent is "Marinara" (the app's own accent stays). */
+html.mdos.mdos-accent {
+  --primary: var(--mdos-accent) !important;
+  --ring: var(--mdos-accent) !important;
+  --sidebar-accent: var(--mdos-fill-2) !important;
+  --sidebar-accent-foreground: var(--mdos-fg) !important;
+  --marinara-app-accent-solid: var(--mdos-accent) !important;
+  --marinara-app-accent-static: var(--mdos-accent) !important;
+  --marinara-app-accent-gradient: linear-gradient(var(--mdos-accent), var(--mdos-accent)) !important;
+  --marinara-app-accent-static-gradient: linear-gradient(var(--mdos-accent), var(--mdos-accent)) !important;
+  --marinara-chat-chrome-accent: var(--mdos-accent) !important;
+  --marinara-chat-chrome-accent-gradient: linear-gradient(var(--mdos-accent), var(--mdos-accent)) !important;
+  --marinara-chat-chrome-highlight-text-base: var(--mdos-accent) !important;
+  --marinara-editor-accent: var(--mdos-accent) !important;
+  --marinara-mode-game-accent: var(--mdos-accent) !important;
+  --y2k-pink: var(--mdos-accent) !important;
+  accent-color: var(--mdos-accent);
+}
+
+/* ── Typography ──────────────────────────────────────────────── */
+
+html.mdos body {
+  font-family: "Straight Quotes", var(--mdos-ui-font) !important;
+  -webkit-font-smoothing: antialiased;
+}
+html.mdos [data-mdos-win] :is(h1, h2, h3) {
+  letter-spacing: -0.01em;
+}
+
+/* ── Window surfaces ─────────────────────────────────────────── */
+
+/* Chat list: a translucent sidebar the wallpaper glows through. */
+/* Only the chat list keeps vibrancy (one blurred surface); other windows are solid,
+   which keeps scrolling and dragging smooth. */
+/* Measured: a blurred surface over the desktop costs ~30 ms frames while
+   anything behind it scrolls, so real blur is opt-in ("real glass"). */
+html.mdos [data-mdos-win="chats"] {
+  background: var(--mdos-panel-bg) !important;
+}
+html.mdos.mdos-real-glass [data-mdos-win="chats"] {
+  background: var(--mdos-sidebar-vib) !important;
+  backdrop-filter: blur(24px) saturate(165%);
+  -webkit-backdrop-filter: blur(24px) saturate(165%);
+}
+html.mdos [data-mdos-win="panel"] {
+  background: var(--mdos-panel-bg) !important;
+}
+html.mdos [data-mdos-win="main"] {
+  background: var(--mdos-win-bg) !important;
+}
+html.mdos [data-mdos-win] :is(.mari-sidebar, .mari-right-panel, .mari-right-panel-content) {
+  background: transparent !important;
+}
+/* The chat list keeps the theme's own surface and decorations (patterns,
+   images); apps.css only tints its colour per app. */
+
+/* Marinara's own headers become unified title bars (traffic lights sit on their left). */
+html.mdos [data-mdos-win] :is(.mari-sidebar-header, .mari-right-panel-header) {
+  height: var(--mdos-side-header-h) !important;
+  padding-left: 84px !important;
+  user-select: none;
+}
+html.mdos [data-mdos-win] :is(.mari-sidebar-header, .mari-right-panel-header) h2 {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--mdos-fg) !important;
+}
+html.mdos [data-mdos-win] .mari-sidebar-header [class*="#4de5dd"],
+html.mdos [data-mdos-win] [data-component="RightPanelHeaderIcon"] {
+  display: none !important;
+}
+html.mdos [data-mdos-win] :is(.mari-sidebar-header, .mari-right-panel-header) > .absolute.bottom-0 {
+  background: var(--mdos-sep) !important;
+  opacity: 1 !important;
+}
+html.mdos [data-mdos-win="main"] [data-component="TopBar"] {
+  background: var(--mdos-win-bg) !important;
+  box-shadow: none; /* merges with the chat header below into one toolbar */
+}
+html.mdos [data-mdos-win="main"] [data-component="TopBar"] > .absolute.bottom-0 {
+  display: none !important;
+}
+
+/* ── Scrollbars ──────────────────────────────────────────────── */
+
+/* scrollbar-color inherits, so it is set once per window; only the width
+   needs the scrolling elements themselves (no universal selector over the
+   transcript, which restyled on every streamed token). */
+html.mdos [data-mdos-win] {
+  scrollbar-color: color-mix(in srgb, var(--mdos-fg) 22%, transparent) transparent;
+}
+html.mdos [data-mdos-win] :is([class*="overflow-"], textarea, pre) {
+  scrollbar-width: thin;
+}
+html.mdos ::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+html.mdos ::-webkit-scrollbar-track {
+  background: transparent !important;
+  border: 0 !important;
+}
+html.mdos ::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--mdos-fg) 22%, transparent) !important;
+  border: 3px solid transparent !important;
+  border-radius: 999px !important;
+  background-clip: content-box !important;
+}
+html.mdos ::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--mdos-fg) 38%, transparent) !important;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+
+html.mdos .mari-chrome-control {
+  border-radius: 7px !important;
+  font-weight: 500 !important;
+  box-shadow: var(--mdos-control-shadow);
+}
+html.mdos .mari-chrome-control:focus-visible {
+  box-shadow: 0 0 0 3px var(--mdos-accent-ring) !important;
+}
+html.mdos .mari-chrome-control--primary {
+  min-height: 2rem !important;
+  padding: 0.3rem 0.75rem !important;
+  font-weight: 600 !important;
+}
+html.mdos .mari-chrome-control--quiet,
+html.mdos .mari-chrome-control--quiet:hover {
+  box-shadow: none;
+}
+html.mdos .mari-chrome-control--selected,
+html.mdos .mari-chrome-control[aria-pressed="true"] {
+  background: var(--mdos-accent) !important;
+  color: #fff !important;
+}
+html.mdos .mari-chrome-control--selected svg,
+html.mdos .mari-chrome-control[aria-pressed="true"] svg {
+  color: #fff !important;
+}
+html.mdos .mari-chrome-control--danger {
+  color: #ff453a !important;
+}
+
+/* The chat list's three big action buttons become one compact toolbar row. */
+html.mdos .mari-chat-sidebar > div:has(> .mari-chat-mode-action) {
+  gap: 6px !important;
+}
+html.mdos .mari-chat-sidebar .mari-chat-mode-action {
+  background: var(--mdos-accent) !important;
+  color: #fff !important;
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.2) !important;
+}
+html.mdos .mari-chat-sidebar .mari-chat-mode-action svg {
+  color: #fff !important;
+}
+
+/* Per-panel rainbow gradients (Characters pink, Lorebooks amber, …) become the one accent. */
+html.mdos.mdos-accent .mari-panel-gradient-button {
+  background: var(--mdos-accent) !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.2) !important;
+  min-height: 2rem !important;
+}
+html.mdos.mdos-accent .mari-panel-gradient-button svg {
+  color: #fff !important;
+}
+html.mdos.mdos-accent .mari-panel-gradient-surface {
+  background: var(--mdos-accent) !important;
+}
+
+/* ── Segmented controls ──────────────────────────────────────── */
+
+html.mdos .mari-chrome-segmented {
+  min-height: auto !important;
+  flex-shrink: 0 !important;
+  gap: 2px;
+  padding: 2px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: var(--mdos-fill) !important;
+  box-shadow: none !important;
+}
+html.mdos .mari-chrome-segmented__button {
+  min-height: 1.75rem !important;
+  padding-block: 0.25rem !important;
+  border: 0 !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  color: var(--mdos-fg) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html.mdos .mari-chrome-segmented__button:hover {
+  background: var(--mdos-fill) !important;
+}
+html.mdos .mari-chrome-segmented__button--selected,
+html.mdos .mari-chrome-segmented__button[aria-pressed="true"] {
+  background: var(--mdos-control) !important;
+  box-shadow: var(--mdos-control-shadow) !important;
+  font-weight: 600 !important;
+}
+html:not([data-theme="light"]).mdos .mari-chrome-segmented__button--selected,
+html:not([data-theme="light"]).mdos .mari-chrome-segmented__button[aria-pressed="true"] {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ── Fields ──────────────────────────────────────────────────── */
+
+html.mdos :is(.mari-chrome-field, .mari-chrome-sort-field) {
+  border-radius: 7px !important;
+  border: 0.5px solid var(--mdos-sep-strong) !important;
+  background: var(--mdos-field) !important;
+  box-shadow: inset 0 0.5px 1px rgba(0, 0, 0, 0.05) !important;
+}
+html.mdos .mari-chat-sidebar .mari-chrome-field,
+html.mdos .mari-right-panel-content .mari-chrome-field {
+  background: var(--mdos-fill) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+html.mdos [data-mdos-win]
+  :is(.mari-chrome-field, .mari-chrome-sort-field, input:not([type="checkbox"], [type="radio"], [type="range"]), textarea, select):focus-visible {
+  outline: none !important;
+  border-color: var(--mdos-accent) !important;
+  box-shadow: 0 0 0 3px var(--mdos-accent-ring) !important;
+}
+
+/* ── Lists (chat rows, library rows) ─────────────────────────── */
+
+html.mdos .mari-chat-sidebar :is(.rounded-lg, .rounded-xl).group {
+  border-radius: 7px !important;
+}
+html.mdos .mari-chat-sidebar .mari-chrome-accent-progress {
+  display: none !important;
+}
+html.mdos [data-mdos-win] .mari-chrome-text-strong {
+  color: var(--mdos-fg) !important;
+}
+html.mdos [data-mdos-win] :is(.mari-chrome-text-muted, .mari-chrome-accent-text-muted) {
+  color: var(--mdos-fg-2) !important;
+}
+
+/* ── Cards & glass ───────────────────────────────────────────── */
+
+html.mdos [data-mdos-win] :is(.glass, .glass-strong) {
+  background: var(--mdos-card) !important;
+  border-color: var(--mdos-sep) !important;
+  box-shadow: var(--mdos-elev) !important;
+  backdrop-filter: none !important;
+}
+html.mdos .mari-home-widget {
+  border-radius: 14px !important;
+  border: 0 !important;
+  background: var(--mdos-card) !important;
+  box-shadow: var(--mdos-elev) !important;
+}
+html.mdos [data-component="HomeBrowserHub.TabStrip"] {
+  background: transparent !important;
+  border-color: var(--mdos-sep) !important;
+}
+html.mdos .mari-home-starfield,
+html.mdos .retro-scanlines::after,
+html.mdos .noise-bg::before,
+html.mdos .geometric-grid::before {
+  display: none !important;
+}
+
+/* ── Conversation mode: message bubbles ──────────────────────── */
+
+html.mdos [data-component="ChatArea.Conversation"] .mari-chat-area {
+  background: var(--mdos-win-bg) !important;
+}
+html.mdos .texting-bubble-user {
+  background: var(--mdos-accent) !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 18px !important;
+}
+html.mdos .texting-bubble-user :is(a, code) {
+  color: inherit !important;
+}
+html.mdos .texting-bubble-other {
+  background: var(--mdos-bubble-other) !important;
+  color: var(--mdos-bubble-other-fg) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 18px !important;
+}
+
+/* ── Roleplay: no background image, clean reading surface ───── */
+
+html.mdos .rpg-chat-area {
+  background: var(--mdos-win-bg) !important;
+}
+html.mdos .rpg-chat-area > :is(.mari-background, .rpg-overlay, .rpg-vignette) {
+  display: none !important;
+}
+html.mdos [data-chat-mode="roleplay"] .mari-rp-bubble:not([data-roleplay-bubble-transparent="true"]) {
+  background: var(--mdos-card) !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  box-shadow: var(--mdos-elev) !important;
+  backdrop-filter: none !important;
+}
+
+/* ── Composer ────────────────────────────────────────────────── */
+
+html.mdos [data-mdos-win] .marinara-chat-input-shell {
+  border-radius: 20px !important;
+  border: 0.5px solid var(--mdos-sep-strong) !important;
+  background: var(--mdos-field) !important;
+  box-shadow: var(--mdos-elev) !important;
+  backdrop-filter: none !important;
+}
+html.mdos [data-mdos-win] .marinara-chat-input-shell:focus-within {
+  border-color: var(--mdos-accent) !important;
+  box-shadow: 0 0 0 3px var(--mdos-accent-ring) !important;
+}
+html.mdos [data-mdos-win] .chat-input-container {
+  background: transparent !important;
+}
+
+/* ── Sheets, menus & popovers ────────────────────────────────── */
+
+html.mdos .mari-modal-backdrop {
+  background: rgba(0, 0, 0, 0.22) !important;
+  backdrop-filter: none !important;
+}
+html.mdos .mari-modal-panel {
+  border-radius: 14px !important;
+  border: 0 !important;
+  background: var(--mdos-popover) !important;
+  backdrop-filter: blur(20px) saturate(170%) !important;
+  box-shadow:
+    0 30px 80px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 0.5px var(--mdos-sep-strong) !important;
+  font-family: var(--mdos-ui-font);
+}
+html.mdos [role="menu"]:not(.mdos-menu),
+html.mdos [role="listbox"] {
+  border-radius: 10px !important;
+  background: var(--mdos-popover) !important;
+  backdrop-filter: blur(16px) saturate(170%);
+  border-color: var(--mdos-sep) !important;
+  box-shadow: 0 16px 44px -8px rgba(0, 0, 0, 0.35) !important;
+}
+html.mdos [role="menuitem"]:not(.mdos-menu-item):hover {
+  background: var(--mdos-accent) !important;
+  color: #fff !important;
+}
+
+/* ── Toggles & sliders ───────────────────────────────────────── */
+
+html.mdos.mdos-accent [data-mdos-win] [role="switch"][aria-checked="true"] {
+  background: #34c759 !important;
+}

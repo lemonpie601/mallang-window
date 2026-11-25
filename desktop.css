@@ -1,0 +1,2516 @@
+/* ──────────────────────────────────────────────────────────────
+   Marinara Desktop — shell: wallpaper, windows, menu bar, Dock,
+   Launchpad, Control Center, popovers, icons.
+
+   html.mdos          — extension active (desktop or touch)
+   html.mdos-desktop  — mouse/wide screens: windows, menu bar
+   html.mdos-touch    — phones/touch tablets (see touch.css)
+   html.mdos-classic  — switched off by the user (only a way back)
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  --mdos-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Pretendard,
+    "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --mdos-ease: cubic-bezier(0.2, 0.9, 0.25, 1);
+  --mdos-radius: 12px;
+  --mdos-side-header-h: 52px;
+  --mdos-menu-bg: rgba(38, 38, 46, 0.78);
+  --mdos-menu-fg: #f5f5f7;
+  --mdos-menu-hover: #3478f6;
+  --mdos-blur: blur(18px) saturate(170%);
+  --mdos-shadow-active: 0 28px 70px -12px rgba(0, 0, 0, 0.55), 0 0 0 0.5px rgba(0, 0, 0, 0.35);
+  --mdos-shadow-idle: 0 14px 36px -10px rgba(0, 0, 0, 0.4), 0 0 0 0.5px rgba(0, 0, 0, 0.3);
+}
+
+#mdos-ui,
+#mdos-wallpaper,
+#mdos-widgets,
+#mdos-return,
+#mdos-boot,
+#mdos-editbar,
+#mdos-homebar {
+  display: none;
+}
+
+/* ── Wallpaper & desktop ─────────────────────────────────────── */
+
+html.mdos {
+  background: #0b0b10 !important;
+}
+html.mdos body,
+html.mdos #root {
+  background: transparent !important;
+}
+html.mdos #mdos-wallpaper {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--mdos-wallpaper);
+  pointer-events: none;
+}
+html.mdos #mdos-ui {
+  display: block;
+  font-family: var(--mdos-font);
+}
+
+/* The app shell becomes a transparent desktop; only its windows take the pointer,
+   so the desktop widgets underneath stay clickable. */
+html.mdos [data-component="AppShell"] {
+  background: transparent !important;
+}
+html.mdos-desktop [data-component="AppShell"] {
+  pointer-events: none;
+}
+html.mdos-desktop [data-component="AppShell"] > * {
+  pointer-events: auto;
+}
+html.mdos [data-component="AppShell"].retro-scanlines::before,
+html.mdos [data-component="AppShell"].retro-scanlines::after,
+html.mdos [data-component="AppShell"] > .y2k-star,
+html.mdos [data-component="AppShell"] > .y2k-star-md,
+html.mdos [data-component="AppShell"] > .y2k-star-lg,
+html.mdos-desktop [data-component="AppShell"] > [role="separator"] {
+  display: none !important;
+}
+
+/* ── Windows (desktop) ───────────────────────────────────────── */
+
+html.mdos [data-mdos-win] {
+  position: fixed !important;
+  margin: 0 !important;
+  border-radius: var(--mdos-radius) !important;
+  overflow: hidden !important;
+  contain: layout paint;
+  box-shadow: var(--mdos-shadow-idle);
+  outline: 0.5px solid rgba(255, 255, 255, 0.14);
+  outline-offset: -0.5px;
+  transition:
+    opacity 180ms var(--mdos-ease),
+    transform 220ms var(--mdos-ease),
+    box-shadow 180ms ease,
+    visibility 0s linear 0s !important;
+  flex: none !important;
+}
+html.mdos [data-mdos-win][data-mdos-focused="true"] {
+  box-shadow: var(--mdos-shadow-active);
+}
+html.mdos.mdos-animating [data-mdos-win] {
+  transition:
+    left 280ms var(--mdos-ease),
+    top 280ms var(--mdos-ease),
+    width 280ms var(--mdos-ease),
+    height 280ms var(--mdos-ease),
+    opacity 180ms var(--mdos-ease),
+    transform 220ms var(--mdos-ease) !important;
+}
+
+html.mdos [data-mdos-win="chats"] {
+  left: var(--mdos-chats-x) !important;
+  top: var(--mdos-chats-y) !important;
+  width: var(--mdos-chats-w) !important;
+  height: var(--mdos-chats-h) !important;
+  z-index: var(--mdos-chats-z, 10) !important;
+  translate: var(--mdos-chats-tx, 0px) var(--mdos-chats-ty, 0px);
+}
+html.mdos [data-mdos-win="main"] {
+  left: var(--mdos-main-x) !important;
+  top: var(--mdos-main-y) !important;
+  width: var(--mdos-main-w) !important;
+  height: var(--mdos-main-h) !important;
+  z-index: var(--mdos-main-z, 11) !important;
+  translate: var(--mdos-main-tx, 0px) var(--mdos-main-ty, 0px);
+}
+html.mdos [data-mdos-win="panel"] {
+  left: var(--mdos-panel-x) !important;
+  top: var(--mdos-panel-y) !important;
+  width: var(--mdos-panel-w) !important;
+  height: var(--mdos-panel-h) !important;
+  z-index: var(--mdos-panel-z, 12) !important;
+  translate: var(--mdos-panel-tx, 0px) var(--mdos-panel-ty, 0px);
+  --mari-right-panel-width: var(--mdos-panel-w) !important;
+}
+
+/* Closed windows shrink away instead of collapsing to 0 px. */
+html.mdos [data-mdos-win][aria-hidden="true"],
+html.mdos.mdos-main-min:not(.mdos-desktop-home) [data-mdos-win="main"] {
+  opacity: 0;
+  transform: scale(0.94) translateY(10px);
+  visibility: hidden;
+  pointer-events: none !important;
+  transition:
+    opacity 160ms ease,
+    transform 200ms var(--mdos-ease),
+    visibility 0s linear 200ms !important;
+}
+html.mdos.mdos-main-min:not(.mdos-desktop-home) [data-mdos-win="main"] {
+  transform: translateY(42vh) scale(0.12);
+  transform-origin: 50% 100%;
+  transition:
+    opacity 300ms ease 80ms,
+    transform 380ms cubic-bezier(0.55, 0, 0.75, 0.2),
+    visibility 0s linear 400ms !important;
+}
+
+/* Side-window contents fill the window; their own header is the title bar. */
+html.mdos [data-mdos-win="chats"] > [data-component="ChatSidebarPanel"],
+html.mdos [data-mdos-win="panel"] > [data-component="RightPanelDesktop"] {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  transform: none !important;
+  transition: none !important;
+}
+html.mdos [data-mdos-win] .mari-shell-panel-edge::after {
+  display: none !important;
+}
+
+/* ── Traffic lights ──────────────────────────────────────────── */
+
+.mdos-titlebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: var(--mdos-side-header-h);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  box-sizing: border-box;
+  cursor: var(--mdos-cur, default);
+  user-select: none;
+}
+.mdos-titlebar--main {
+  height: var(--mdos-topbar-h, 44px);
+}
+.mdos-lights {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.mdos-light {
+  all: unset;
+  box-sizing: border-box;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.22);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-light--close {
+  background: #ff5f57;
+}
+.mdos-light--minimize {
+  background: #febc2e;
+}
+.mdos-light--zoom {
+  background: #28c840;
+}
+[data-mdos-win]:not([data-mdos-focused="true"]) .mdos-lights:not(:hover) .mdos-light {
+  background: color-mix(in srgb, var(--foreground) 22%, transparent);
+  box-shadow: none;
+}
+.mdos-light svg {
+  width: 10px;
+  height: 10px;
+  stroke: rgba(60, 0, 0, 0.65);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  fill: none;
+  color: rgba(60, 0, 0, 0.65);
+  opacity: 0;
+}
+.mdos-lights:hover .mdos-light svg,
+.mdos-light:focus-visible svg {
+  opacity: 1;
+}
+.mdos-light:focus-visible {
+  outline: 2px solid var(--mdos-menu-hover);
+  outline-offset: 2px;
+}
+
+/* Marinara's top bar becomes the main window's unified toolbar. */
+html.mdos [data-mdos-win="main"] [data-component="TopBar"] {
+  padding-left: 88px !important;
+  user-select: none;
+}
+html.mdos [data-mdos-win="main"] [data-tour="sidebar-toggle"],
+html.mdos [data-mdos-win="main"] [data-topbar-hover-key="home"],
+html.mdos [data-mdos-win="main"] [data-tour="panel-buttons"] > button[data-tour^="panel-"] {
+  display: none !important;
+}
+html.mdos [data-mdos-win="main"] [data-tour="panel-buttons"] {
+  background: transparent !important;
+}
+
+/* Resize grips. */
+.mdos-grip {
+  position: absolute;
+  z-index: 60;
+}
+.mdos-grip--n,
+.mdos-grip--s {
+  left: 10px;
+  right: 10px;
+  height: 6px;
+  cursor: ns-resize;
+}
+.mdos-grip--n {
+  top: 0;
+}
+.mdos-grip--s {
+  bottom: 0;
+}
+.mdos-grip--e,
+.mdos-grip--w {
+  top: 10px;
+  bottom: 10px;
+  width: 6px;
+  cursor: ew-resize;
+}
+.mdos-grip--e {
+  right: 0;
+}
+.mdos-grip--w {
+  left: 0;
+}
+.mdos-grip--ne,
+.mdos-grip--nw,
+.mdos-grip--se,
+.mdos-grip--sw {
+  width: 14px;
+  height: 14px;
+}
+.mdos-grip--ne {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+.mdos-grip--sw {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+.mdos-grip--nw {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+.mdos-grip--se {
+  bottom: 0;
+  right: 0;
+  cursor: nwse-resize;
+}
+
+/* While dragging: no transitions, no blur, no text selection, iframes don't eat the pointer. */
+html.mdos-gesture,
+html.mdos-gesture * {
+  user-select: none !important;
+}
+html.mdos-gesture [data-mdos-win] {
+  transition: none !important;
+  will-change: translate;
+}
+html.mdos-gesture [data-mdos-win],
+html.mdos-gesture [data-mdos-win] * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.mdos-gesture iframe {
+  pointer-events: none !important;
+}
+html[data-mdos-gesture="move"] * {
+  cursor: var(--mdos-cur, default) !important;
+}
+
+#mdos-snap {
+  position: fixed;
+  z-index: 8100;
+  border-radius: var(--mdos-radius);
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  opacity: 0;
+  transform: scale(0.97);
+  pointer-events: none;
+  transition:
+    opacity 140ms ease,
+    transform 160ms var(--mdos-ease);
+}
+#mdos-snap.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Menu bar ────────────────────────────────────────────────── */
+
+#mdos-menubar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 30px;
+  z-index: 8200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  color: #fff;
+  font-size: 13px;
+  background: rgba(20, 18, 28, 0.36);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  box-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.12);
+  user-select: none;
+}
+html.mdos-touch #mdos-menubar {
+  display: none;
+}
+.mdos-mb-left,
+.mdos-mb-right {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+.mdos-mb-item {
+  all: unset;
+  box-sizing: border-box;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+  border-radius: 6px;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-mb-item:hover,
+.mdos-mb-item.is-open {
+  background: rgba(255, 255, 255, 0.18);
+}
+.mdos-mb-item:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+}
+.mdos-mb-logo svg {
+  width: 17px;
+  height: 17px;
+  color: #ff5a4a;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+}
+.mdos-mb-app {
+  font-weight: 700;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mdos-mb-icon svg {
+  width: 15px;
+  height: 15px;
+}
+.mdos-mb-clock {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* ── Menus ───────────────────────────────────────────────────── */
+
+.mdos-menu {
+  position: fixed;
+  z-index: 8600;
+  min-width: 230px;
+  padding: 5px;
+  border-radius: 10px;
+  background: var(--mdos-menu-bg);
+  color: var(--mdos-menu-fg);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  box-shadow:
+    0 18px 50px -8px rgba(0, 0, 0, 0.55),
+    0 0 0 0.5px rgba(255, 255, 255, 0.18) inset,
+    0 0 0 0.5px rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+  animation: mdos-pop 120ms var(--mdos-ease);
+}
+.mdos-menu-item {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 6px;
+  border-radius: 5px;
+  cursor: var(--mdos-cur, default);
+}
+.mdos-menu-item:hover:not(:disabled),
+.mdos-menu-item:focus-visible {
+  background: var(--mdos-accent, var(--mdos-menu-hover));
+  color: #fff;
+}
+.mdos-menu-item:disabled {
+  opacity: 0.4;
+}
+.mdos-menu-check {
+  font-size: 12px;
+  text-align: center;
+}
+.mdos-menu-key {
+  opacity: 0.55;
+  font-size: 12px;
+  padding-left: 16px;
+}
+.mdos-menu-sep {
+  height: 1px;
+  margin: 5px 8px;
+  background: rgba(255, 255, 255, 0.14);
+}
+@keyframes mdos-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+/* ── App icons (Dock, Launchpad, springboard) ────────────────── */
+
+.mdos-app-icon {
+  --mdos-shape: 23%;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--mdos-shape);
+  color: #fff;
+  background:
+    radial-gradient(120% 90% at 30% 0%, rgba(255, 255, 255, 0.35), transparent 55%),
+    linear-gradient(160deg, var(--g1), var(--g2));
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.35),
+    0 2px 6px rgba(0, 0, 0, 0.25);
+}
+.mdos-app-icon svg {
+  width: 56%;
+  height: 56%;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18));
+}
+.mdos-app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.mdos-app-icon.has-host-image {
+  background: #fff;
+}
+.mdos-app-icon.has-host-image img {
+  width: 68%;
+  height: 68%;
+  object-fit: contain;
+}
+html[data-mdos-icon-shape="circle"] .mdos-app-icon {
+  --mdos-shape: 50%;
+}
+html[data-mdos-icon-shape="rounded"] .mdos-app-icon {
+  --mdos-shape: 14%;
+}
+/* Icon styles: only icons without a custom image change. */
+html[data-mdos-icon-style="glass"] .mdos-app-icon:not(.has-image) {
+  background: rgba(255, 255, 255, 0.24);
+  color: #fff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 4px 14px rgba(0, 0, 0, 0.18);
+}
+html[data-mdos-icon-style="pastel"] .mdos-app-icon:not(.has-image) {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--g1) 30%, #fff), color-mix(in srgb, var(--g2) 38%, #fff));
+  color: color-mix(in srgb, var(--g2) 80%, #000);
+}
+html[data-mdos-icon-style="tinted"] .mdos-app-icon:not(.has-image) {
+  background: linear-gradient(160deg, #2c2c30, #161618);
+  color: var(--mdos-accent, #0a84ff);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.14),
+    0 2px 6px rgba(0, 0, 0, 0.3);
+}
+html[data-mdos-icon-style="dark"] .mdos-app-icon:not(.has-image) {
+  background: linear-gradient(160deg, #2c2c30, #161618);
+  color: var(--g1);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.14),
+    0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Dock ────────────────────────────────────────────────────── */
+
+#mdos-dock {
+  --mdos-dock-pad: 6px;
+  position: fixed;
+  left: 50%;
+  bottom: 6px;
+  z-index: 8200;
+  transform: translateX(-50%);
+  transition: transform 260ms var(--mdos-ease);
+}
+html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
+  transform: translate(-50%, calc(100% + 16px));
+}
+.mdos-dock-inner {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding: var(--mdos-dock-pad);
+  padding-bottom: 8px;
+  height: calc(var(--mdos-dock-size, 54px) + var(--mdos-dock-pad) + 8px);
+  box-sizing: border-box;
+  border-radius: calc(var(--mdos-dock-size, 54px) * 0.36);
+  background: rgba(255, 255, 255, 0.18);
+  border: 0.5px solid rgba(255, 255, 255, 0.32);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  box-shadow: 0 14px 40px -12px rgba(0, 0, 0, 0.5);
+}
+.mdos-dock-item {
+  all: unset;
+  --mag: 1;
+  position: relative;
+  width: calc(var(--mdos-dock-size, 54px) * var(--mag));
+  height: calc(var(--mdos-dock-size, 54px) * var(--mag));
+  transition:
+    width 110ms ease-out,
+    height 110ms ease-out;
+  cursor: var(--mdos-cur, default);
+  flex: none;
+}
+.mdos-dock-item .mdos-app-icon {
+  width: 100%;
+  height: 100%;
+}
+.mdos-dock-item--recent .mdos-app-icon {
+  border-radius: 50%;
+  background: #2c2c30;
+}
+.mdos-dock-item--recent .mdos-app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.mdos-dock-item:focus-visible .mdos-app-icon {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+.mdos-dock-item:active .mdos-app-icon {
+  filter: brightness(0.8);
+}
+.mdos-dock-dot {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+.mdos-dock-item.is-running .mdos-dock-dot {
+  opacity: 1;
+}
+.mdos-dock-label {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 12px);
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border-radius: 7px;
+  white-space: nowrap;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  color: #f5f5f7;
+  background: rgba(40, 40, 48, 0.88);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 100ms ease;
+}
+.mdos-dock-item:hover .mdos-dock-label,
+.mdos-dock-item:focus-visible .mdos-dock-label {
+  opacity: 1;
+}
+.mdos-dock-sep {
+  align-self: stretch;
+  width: 1px;
+  margin: 4px 5px 0;
+  background: rgba(255, 255, 255, 0.3);
+}
+.mdos-dock-item.is-bouncing .mdos-app-icon {
+  animation: mdos-bounce 650ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+@keyframes mdos-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-38%);
+  }
+  65% {
+    transform: translateY(0);
+  }
+  80% {
+    transform: translateY(-10%);
+  }
+}
+
+/* ── Launchpad ───────────────────────────────────────────────── */
+
+#mdos-launchpad {
+  position: fixed;
+  inset: 0;
+  z-index: 8400;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 70px 40px 120px;
+  overflow-y: auto;
+  background: rgba(10, 10, 18, 0.45);
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  opacity: 0;
+  transform: scale(1.06);
+  transition:
+    opacity 200ms ease,
+    transform 220ms var(--mdos-ease);
+}
+#mdos-launchpad.is-open {
+  opacity: 1;
+  transform: none;
+}
+.mdos-lp-search {
+  all: unset;
+  box-sizing: border-box;
+  width: min(260px, 80vw);
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 9px;
+  color: #fff;
+  font-size: 13px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.16);
+  border: 0.5px solid rgba(255, 255, 255, 0.28);
+}
+.mdos-lp-search::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.mdos-lp-search:focus {
+  background: rgba(255, 255, 255, 0.24);
+}
+.mdos-lp-grid {
+  flex: 1;
+  width: min(980px, 100%);
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+  align-content: start;
+  gap: 34px 10px;
+}
+.mdos-lp-app {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: var(--mdos-cur, default);
+  animation: mdos-lp-in 320ms var(--mdos-ease) both;
+  animation-delay: calc(var(--i) * 14ms);
+}
+.mdos-lp-app .mdos-app-icon {
+  width: 84px;
+  height: 84px;
+  transition: transform 140ms ease;
+}
+.mdos-lp-app:hover .mdos-app-icon,
+.mdos-lp-app:focus-visible .mdos-app-icon {
+  transform: scale(1.07);
+}
+.mdos-lp-app:focus-visible .mdos-app-icon {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+.mdos-lp-label {
+  max-width: 110px;
+  font-size: 13px;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@keyframes mdos-lp-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+/* ── Control Center ──────────────────────────────────────────── */
+
+#mdos-cc {
+  position: fixed;
+  top: 36px;
+  right: 10px;
+  z-index: 8500;
+  width: 330px;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 18px;
+  color: var(--mdos-menu-fg);
+  font-size: 13px;
+  background: rgba(36, 36, 44, 0.72);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  box-shadow:
+    0 24px 60px -10px rgba(0, 0, 0, 0.6),
+    0 0 0 0.5px rgba(255, 255, 255, 0.2) inset;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity 140ms ease,
+    transform 180ms var(--mdos-ease);
+}
+#mdos-cc.is-open {
+  opacity: 1;
+  transform: none;
+}
+.mdos-cc-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  scroll-margin-top: 8px;
+  transition: box-shadow 300ms ease;
+}
+.mdos-cc-card.is-flash {
+  box-shadow: 0 0 0 2px var(--mdos-accent, #0a84ff);
+}
+.mdos-cc-card h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.mdos-cc-sub {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-bottom: -4px;
+}
+.mdos-cc-swatches {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.mdos-cc-swatch {
+  all: unset;
+  aspect-ratio: 16 / 10;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-cc-swatch[aria-checked="true"] {
+  outline: 2px solid var(--mdos-accent, var(--mdos-menu-hover));
+  outline-offset: 2px;
+}
+.mdos-cc-swatch:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+.mdos-cc-accents {
+  display: flex;
+  justify-content: space-between;
+}
+.mdos-cc-accent {
+  all: unset;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.25);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-cc-accent--app {
+  background: conic-gradient(#ec4b97, #f29744, #36cdde, #ec4b97);
+}
+.mdos-cc-accent[aria-checked="true"] {
+  box-shadow:
+    inset 0 0 0 0.5px rgba(0, 0, 0, 0.25),
+    0 0 0 2px rgba(36, 36, 44, 0.9),
+    0 0 0 4px rgba(255, 255, 255, 0.85);
+}
+.mdos-cc-accent:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+.mdos-cc-row {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+}
+.mdos-cc-input,
+.mdos-cc-select {
+  all: unset;
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 9px;
+  border-radius: 7px;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 0.5px solid rgba(255, 255, 255, 0.18);
+}
+.mdos-cc-select {
+  flex: 0 1 150px;
+  appearance: auto;
+}
+.mdos-cc-select option {
+  color: #111;
+}
+.mdos-cc-btn {
+  all: unset;
+  box-sizing: border-box;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.16);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-cc-btn:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+.mdos-cc-btn:focus-visible {
+  outline: 2px solid var(--mdos-menu-hover);
+}
+.mdos-cc-btn--wide {
+  flex: 1;
+}
+.mdos-cc-actions {
+  grid-template-columns: 1fr;
+}
+.mdos-cc-toggle,
+.mdos-cc-slider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.mdos-cc-slider input[type="range"] {
+  flex: 1;
+  max-width: 160px;
+  accent-color: var(--mdos-accent, var(--mdos-menu-hover));
+}
+.mdos-cc-toggle input,
+.mdos-switch {
+  appearance: none;
+  width: 34px;
+  height: 20px;
+  margin: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  position: relative;
+  transition: background 160ms ease;
+  flex: none;
+}
+.mdos-cc-toggle input::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  transition: transform 180ms var(--mdos-ease);
+}
+.mdos-cc-toggle input:checked {
+  background: #34c759;
+}
+.mdos-cc-toggle input:checked::after {
+  transform: translateX(14px);
+}
+.mdos-cc-toggle input:focus-visible {
+  outline: 2px solid var(--mdos-menu-hover);
+  outline-offset: 2px;
+}
+
+/* ── Popovers: icon editor, widget editor, widget gallery ────── */
+
+.mdos-pop {
+  position: fixed;
+  z-index: 8700;
+  width: 300px;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  padding: 14px;
+  border-radius: 16px;
+  color: var(--mdos-menu-fg);
+  font: 13px var(--mdos-font);
+  background: rgba(40, 40, 48, 0.86);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  box-shadow:
+    0 26px 70px -12px rgba(0, 0, 0, 0.6),
+    0 0 0 0.5px rgba(255, 255, 255, 0.18) inset;
+  animation: mdos-pop 140ms var(--mdos-ease);
+}
+.mdos-pop--wide {
+  width: min(560px, calc(100vw - 24px));
+}
+.mdos-pop.is-centered {
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%);
+  animation: none;
+}
+.mdos-pop-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.mdos-pop-head h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+.mdos-pop-close {
+  all: unset;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-pop-body {
+  display: grid;
+  gap: 12px;
+}
+.mdos-field {
+  display: grid;
+  gap: 6px;
+}
+.mdos-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.7;
+}
+.mdos-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.mdos-input {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 0.5px solid rgba(255, 255, 255, 0.18);
+  color-scheme: dark;
+}
+.mdos-input:focus-visible {
+  border-color: var(--mdos-accent, #0a84ff);
+}
+.mdos-pop input[type="color"] {
+  width: 44px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+}
+.mdos-btn {
+  all: unset;
+  box-sizing: border-box;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: 500 12px var(--mdos-font);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.16);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-btn:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+.mdos-btn:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0a84ff);
+  outline-offset: 2px;
+}
+.mdos-btn--primary {
+  background: var(--mdos-accent, #0a84ff);
+}
+.mdos-btn--primary:hover {
+  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 85%, #fff);
+}
+.mdos-btn--danger {
+  color: #ff6961;
+}
+.mdos-btn--quiet {
+  background: transparent;
+  opacity: 0.75;
+}
+.mdos-seg {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.28);
+}
+.mdos-seg-btn {
+  all: unset;
+  flex: 1;
+  min-height: 24px;
+  padding: 0 6px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 12px;
+  cursor: var(--mdos-cur, default);
+}
+.mdos-seg-btn[aria-checked="true"] {
+  background: rgba(255, 255, 255, 0.22);
+  font-weight: 600;
+}
+.mdos-seg-btn:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0a84ff);
+}
+.mdos-swatches .mdos-swatch {
+  all: unset;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-iconed-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+.mdos-iconed-preview .mdos-app-icon {
+  width: 72px;
+  height: 72px;
+}
+.mdos-iconpick {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 16px 6px;
+}
+.mdos-iconpick .mdos-lp-app {
+  animation: none;
+}
+.mdos-iconpick .mdos-app-icon {
+  width: 56px;
+  height: 56px;
+}
+.mdos-iconpick .mdos-lp-label {
+  font-size: 11px;
+  max-width: 80px;
+}
+
+/* ── About ───────────────────────────────────────────────────── */
+
+#mdos-about {
+  position: fixed;
+  inset: 0;
+  z-index: 8700;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.2);
+}
+.mdos-about-card {
+  width: min(400px, calc(100vw - 32px));
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  padding: 26px 24px 20px;
+  border-radius: 16px;
+  text-align: center;
+  color: var(--mdos-menu-fg);
+  background: rgba(40, 40, 48, 0.9);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  box-shadow: 0 30px 80px -10px rgba(0, 0, 0, 0.65);
+  font-size: 13px;
+  animation: mdos-pop 160ms var(--mdos-ease);
+}
+.mdos-about-logo svg {
+  width: 64px;
+  height: 64px;
+  color: #ff5a4a;
+}
+.mdos-about-card h2 {
+  margin: 8px 0 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+.mdos-about-version {
+  margin: 2px 0 12px;
+  opacity: 0.6;
+}
+.mdos-about-card p {
+  line-height: 1.5;
+}
+.mdos-about-keys {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 12px;
+  margin: 14px 0 18px;
+  text-align: left;
+}
+.mdos-about-keys dt {
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0.9;
+}
+.mdos-about-keys dd {
+  margin: 0;
+  opacity: 0.75;
+}
+
+/* ── Boot splash ─────────────────────────────────────────────── */
+
+html.mdos #mdos-boot {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 42px;
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  background: #050507;
+  transition: opacity 500ms ease;
+}
+#mdos-boot.is-done {
+  opacity: 0;
+  pointer-events: none;
+}
+.mdos-boot-logo svg {
+  width: 88px;
+  height: 88px;
+  color: #f2f2f4;
+}
+.mdos-boot-logo svg path {
+  fill: #f2f2f4;
+}
+.mdos-boot-bar {
+  width: 180px;
+  height: 5px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.18);
+}
+.mdos-boot-bar span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  background: #f2f2f4;
+  transform-origin: left;
+  animation: mdos-boot var(--boot-ms, 1100ms) cubic-bezier(0.4, 0.1, 0.3, 1) forwards;
+}
+@keyframes mdos-boot {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ── Classic layout: just a way back ─────────────────────────── */
+
+html.mdos-classic #mdos-return {
+  all: unset;
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 8200;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px 7px 9px;
+  border-radius: 999px;
+  font: 500 12px var(--mdos-font);
+  color: #fff;
+  background: rgba(30, 30, 38, 0.82);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  cursor: var(--mdos-cur-ptr, pointer);
+  opacity: 0.55;
+  transition: opacity 160ms ease;
+}
+html.mdos-classic #mdos-return:hover,
+html.mdos-classic #mdos-return:focus-visible {
+  opacity: 1;
+}
+.mdos-return-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  color: #ff5a4a;
+}
+
+/* ── Performance switches ────────────────────────────────────── */
+
+/* "Reduce transparency": no backdrop blur anywhere we control. */
+html.mdos-no-blur {
+  --mdos-blur: none;
+}
+html.mdos-no-blur #mdos-ui *,
+html.mdos-no-blur #mdos-widgets *,
+html.mdos-no-blur [data-mdos-win],
+html.mdos-no-blur [data-mdos-win] * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.mdos-no-blur #mdos-menubar,
+html.mdos-no-blur .mdos-dock-inner {
+  background: rgba(32, 30, 40, 0.92);
+}
+html.mdos-no-blur #mdos-launchpad {
+  background: rgba(14, 14, 22, 0.94);
+}
+
+/* "Reduce motion" (or the OS setting): no animations from us. */
+html.mdos-calm [data-mdos-win],
+html.mdos-calm #mdos-launchpad,
+html.mdos-calm #mdos-cc,
+html.mdos-calm .mdos-dock-item,
+html.mdos-calm .mdos-lp-app,
+html.mdos-calm .mdos-menu,
+html.mdos-calm .mdos-pop,
+html.mdos-calm .mdos-wg {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Closed Marinara windows skip style and layout work entirely once they
+   have faded out (small-app windows are left alone so YouTube keeps playing). */
+@supports (transition-behavior: allow-discrete) {
+  html.mdos [data-mdos-win]:not(.mdos-appwin)[aria-hidden="true"] {
+    content-visibility: hidden;
+    transition:
+      opacity 160ms ease,
+      transform 200ms var(--mdos-ease),
+      visibility 0s linear 200ms,
+      content-visibility 0s linear 200ms allow-discrete !important;
+  }
+}
+
+/* ── Bookmark icons ──────────────────────────────────────────── */
+
+.mdos-app-icon.has-letter {
+  position: relative;
+  container-type: inline-size;
+}
+.mdos-icon-letter {
+  font: 700 46cqw/1 var(--mdos-font);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.mdos-app-icon .mdos-icon-favicon {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  padding: 20%;
+  object-fit: contain;
+  background: #fff;
+}
+
+/* ── Small-app windows (Notes, Web, YouTube) ─────────────────── */
+
+#mdos-appwins {
+  display: contents;
+}
+.mdos-appwin {
+  display: flex;
+  flex-direction: column;
+  background: var(--mdos-win-bg, #fff);
+  color: var(--mdos-fg, #1d1d1f);
+  font: 13px var(--mdos-font);
+  container: mdos-app / inline-size;
+}
+.mdos-appwin-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 10px 0 16px;
+  background: var(--mdos-win-bg, #fff);
+  box-shadow: inset 0 -0.5px 0 var(--mdos-sep, rgba(0, 0, 0, 0.1));
+  user-select: none;
+}
+.mdos-appwin-title {
+  flex: 1;
+  min-width: 0;
+  padding-right: 52px;
+  text-align: center;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mdos-appwin-tools {
+  flex: none;
+  display: flex;
+  gap: 2px;
+}
+.mdos-tool {
+  all: unset;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  color: var(--mdos-fg-2, #6e6e73);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-tool:hover {
+  background: var(--mdos-fill, rgba(0, 0, 0, 0.05));
+  color: var(--mdos-fg, #1d1d1f);
+}
+.mdos-tool:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0a84ff);
+}
+.mdos-tool[aria-pressed="true"] {
+  color: var(--mdos-accent, #0a84ff);
+  background: var(--mdos-accent-soft, rgba(10, 132, 255, 0.14));
+}
+.mdos-tool:disabled {
+  opacity: 0.35;
+}
+.mdos-tool svg {
+  width: 17px;
+  height: 17px;
+}
+.mdos-url-form {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+.mdos-url {
+  all: unset;
+  box-sizing: border-box;
+  width: min(100%, 560px);
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: var(--mdos-fill, rgba(0, 0, 0, 0.05));
+  color: var(--mdos-fg, #1d1d1f);
+  font-size: 13px;
+  text-align: center;
+  text-overflow: ellipsis;
+}
+.mdos-url:focus {
+  text-align: left;
+  box-shadow: 0 0 0 3px var(--mdos-accent-ring, rgba(10, 132, 255, 0.4));
+}
+.mdos-appwin-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  background: var(--mdos-win-bg, #fff);
+}
+.mdos-appwin--youtube .mdos-appwin-body {
+  background: #000;
+}
+.mdos-frame {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #000;
+}
+/* Buttons inside app windows sit on a light/dark window, not a dark popover. */
+.mdos-appwin .mdos-btn {
+  color: var(--mdos-fg, #1d1d1f);
+  background: var(--mdos-fill-2, rgba(0, 0, 0, 0.08));
+}
+.mdos-appwin .mdos-btn--primary {
+  color: #fff;
+  background: var(--mdos-accent, #0a84ff);
+}
+
+/* Notes */
+.mdos-notes-list {
+  flex: none;
+  width: 210px;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--mdos-card, #f5f5f7);
+  border-right: 1px solid var(--mdos-sep, rgba(0, 0, 0, 0.1));
+}
+.mdos-notes-item {
+  all: unset;
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: var(--mdos-cur, default);
+}
+.mdos-notes-item b {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mdos-notes-item span {
+  font-size: 11px;
+  color: var(--mdos-fg-2, #6e6e73);
+}
+.mdos-notes-item:hover {
+  background: var(--mdos-fill, rgba(0, 0, 0, 0.05));
+}
+.mdos-notes-item[aria-selected="true"] {
+  background: var(--mdos-accent, #0a84ff);
+  color: #fff;
+}
+.mdos-notes-item[aria-selected="true"] span {
+  color: rgba(255, 255, 255, 0.8);
+}
+.mdos-notes-item:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0a84ff);
+}
+.mdos-notes-editor {
+  all: unset;
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 18px 22px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  font: 15px/1.6 var(--mdos-font);
+  color: var(--mdos-fg, #1d1d1f);
+  background: color-mix(in srgb, var(--mdos-win-bg, #fff) 94%, #ffd60a 6%);
+  cursor: text;
+}
+@container mdos-app (max-width: 520px) {
+  .mdos-notes-list {
+    width: 130px;
+  }
+}
+
+/* Web */
+.mdos-web-start {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 32px;
+}
+.mdos-web-start h3 {
+  margin: 0 0 18px;
+  font-size: 18px;
+  font-weight: 700;
+}
+.mdos-web-favs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 18px 8px;
+}
+.mdos-web-fav {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  text-align: center;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+.mdos-web-fav .mdos-app-icon {
+  width: 56px;
+  height: 56px;
+}
+.mdos-web-fav span {
+  max-width: 84px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mdos-web-fav:focus-visible .mdos-app-icon {
+  outline: 2px solid var(--mdos-accent, #0a84ff);
+  outline-offset: 3px;
+}
+.mdos-web-card {
+  margin: auto;
+  max-width: 440px;
+  padding: 28px;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.mdos-web-card .mdos-app-icon {
+  width: 64px;
+  height: 64px;
+}
+.mdos-web-card h3 {
+  margin: 4px 0 0;
+  font-size: 18px;
+}
+.mdos-web-url {
+  margin: 0;
+  font-size: 12px;
+  color: var(--mdos-fg-2, #6e6e73);
+  word-break: break-all;
+}
+.mdos-web-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--mdos-fg-2, #6e6e73);
+}
+.mdos-web-start .mdos-web-note {
+  max-width: 420px;
+}
+.mdos-appwin--youtube .mdos-web-start {
+  display: grid;
+  place-items: center;
+  color: #d0d0d6;
+}
+.mdos-appwin--youtube .mdos-web-note {
+  color: #b9b9c0;
+  text-align: center;
+}
+
+/* ── Grid placement ──────────────────────────────────────────── */
+
+.mdos-wg.is-settling,
+.mdos-dicon.is-settling {
+  transition:
+    left 220ms var(--mdos-ease),
+    top 220ms var(--mdos-ease);
+}
+/* While arranging in grid mode, faint dots show where cells are. */
+html.mdos-desktop.mdos-edit[data-mdos-layout="grid"] #mdos-widgets {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.35) 1.4px, transparent 1.8px);
+  background-size: 180px 180px;
+  background-position: calc(100% - 24px + 10px) 6px;
+}
+
+/* ── Control Center extras ───────────────────────────────────── */
+
+.mdos-cc-accent--theme {
+  background:
+    radial-gradient(circle at 50% 50%, var(--c) 0 42%, transparent 44%),
+    conic-gradient(#ffd36b, #ff7ab0, #8e9cff, #6ef08d, #ffd36b);
+}
+.mdos-cc-btn--accent {
+  background: var(--mdos-accent, #0a84ff);
+  color: #fff;
+}
+.mdos-cc-btn--accent:hover {
+  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 85%, #fff);
+}
+.mdos-pop-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+/* ── Customize window ────────────────────────────────────────── */
+
+.mdos-set {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+}
+.mdos-set-nav {
+  overflow-y: auto;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--mdos-card, #f5f5f7);
+  border-right: 1px solid var(--mdos-sep, rgba(0, 0, 0, 0.1));
+}
+.mdos-set-nav-item {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 32px;
+  padding: 0 8px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: var(--mdos-cur, default);
+}
+.mdos-set-nav-item .mdos-app-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  box-shadow: none;
+}
+.mdos-set-nav-item .mdos-app-icon svg {
+  width: 64%;
+  height: 64%;
+}
+.mdos-set-nav-item:hover {
+  background: var(--mdos-fill, rgba(0, 0, 0, 0.05));
+}
+.mdos-set-nav-item[aria-current="true"] {
+  background: var(--mdos-accent, #0a84ff);
+  color: #fff;
+}
+.mdos-set-nav-item:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0a84ff);
+}
+.mdos-set-pane {
+  overflow-y: auto;
+  padding: 20px 24px 28px;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+.mdos-set-group {
+  display: grid;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--mdos-card, #f5f5f7);
+  box-shadow: inset 0 0 0 0.5px var(--mdos-sep, rgba(0, 0, 0, 0.08));
+}
+.mdos-set-group h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.mdos-set-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 28px;
+}
+.mdos-set-row > span {
+  font-size: 13px;
+}
+.mdos-set-hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--mdos-fg-2, #6e6e73);
+}
+.mdos-set-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mdos-set-range input {
+  width: 160px;
+  accent-color: var(--mdos-accent, #0a84ff);
+}
+.mdos-set-range output {
+  min-width: 46px;
+  text-align: right;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--mdos-fg-2, #6e6e73);
+}
+.mdos-color {
+  width: 44px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+@container mdos-app (max-width: 560px) {
+  .mdos-set {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .mdos-set-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--mdos-sep, rgba(0, 0, 0, 0.1));
+  }
+  .mdos-set-nav-item span:last-child {
+    white-space: nowrap;
+  }
+}
+
+/* Controls inside light/dark app windows (popovers keep their dark look). */
+.mdos-appwin :is(.mdos-seg) {
+  background: var(--mdos-fill, rgba(0, 0, 0, 0.06));
+}
+.mdos-appwin .mdos-seg-btn {
+  color: var(--mdos-fg, #1d1d1f);
+}
+.mdos-appwin .mdos-seg-btn[aria-checked="true"] {
+  background: var(--mdos-control, #fff);
+  box-shadow: var(--mdos-control-shadow, 0 0.5px 1.5px rgba(0, 0, 0, 0.16));
+}
+.mdos-appwin .mdos-input,
+.mdos-appwin .mdos-cc-input,
+.mdos-appwin .mdos-cc-select {
+  color: var(--mdos-fg, #1d1d1f);
+  background: var(--mdos-field, #fff);
+  border: 0.5px solid var(--mdos-sep-strong, rgba(0, 0, 0, 0.16));
+  color-scheme: light;
+}
+/* Explicit option colours: the native list ignores inherited text colour. */
+.mdos-appwin .mdos-cc-select option {
+  color: #1d1d1f;
+  background: #ffffff;
+}
+html:not([data-theme="light"]) .mdos-appwin :is(.mdos-input, .mdos-cc-input, .mdos-cc-select) {
+  color-scheme: dark;
+}
+html:not([data-theme="light"]) .mdos-appwin .mdos-cc-select option {
+  color: #f5f5f7;
+  background: #2a2a2e;
+}
+.mdos-appwin .mdos-cc-toggle input {
+  background: var(--mdos-fill-2, rgba(0, 0, 0, 0.12));
+}
+.mdos-appwin .mdos-cc-toggle input:checked {
+  background: #34c759;
+}
+.mdos-appwin .mdos-cc-btn {
+  color: var(--mdos-fg, #1d1d1f);
+  background: var(--mdos-fill-2, rgba(0, 0, 0, 0.08));
+}
+.mdos-appwin .mdos-cc-swatches {
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+.mdos-appwin .mdos-cc-accents {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.mdos-appwin .mdos-cc-accent[aria-checked="true"] {
+  box-shadow:
+    inset 0 0 0 0.5px rgba(0, 0, 0, 0.25),
+    0 0 0 2px var(--mdos-win-bg, #fff),
+    0 0 0 4px var(--mdos-accent, #0a84ff);
+}
+.mdos-appwin .mdos-about-keys {
+  margin: 4px 0;
+}
+
+/* YouTube search results */
+.mdos-yt-results {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  align-content: start;
+  gap: 14px;
+  background: var(--mdos-win-bg, #fff);
+  color: var(--mdos-fg, #1d1d1f);
+}
+.mdos-yt-results > .mdos-web-note {
+  grid-column: 1 / -1;
+  text-align: left;
+}
+.mdos-yt-item {
+  all: unset;
+  display: grid;
+  gap: 4px;
+  cursor: var(--mdos-cur-ptr, pointer);
+  border-radius: 10px;
+}
+.mdos-yt-item img,
+.mdos-yt-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #222;
+}
+.mdos-yt-item b {
+  font-size: 13px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.mdos-yt-item span {
+  font-size: 11.5px;
+  color: var(--mdos-fg-2, #6e6e73);
+}
+.mdos-yt-item:hover img {
+  filter: brightness(0.9);
+}
+.mdos-yt-item:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0a84ff);
+  outline-offset: 3px;
+}
+
+/* ── Web: reader view ────────────────────────────────────────── */
+.mdos-reader {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 18px max(20px, calc((100% - 720px) / 2)) 40px;
+  color: var(--mdos-fg);
+  font-size: 15px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.mdos-reader-note {
+  margin: 0 0 14px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--mdos-fill);
+  color: var(--mdos-fg-2);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.mdos-reader-title {
+  margin: 4px 0 14px;
+  font-size: 22px;
+  line-height: 1.3;
+}
+.mdos-reader :is(h2, h3, h4, h5, h6) {
+  margin: 20px 0 8px;
+  font-size: 16px;
+  line-height: 1.35;
+}
+.mdos-reader h2 {
+  font-size: 19px;
+}
+.mdos-reader p,
+.mdos-reader ul,
+.mdos-reader blockquote {
+  margin: 0 0 10px;
+}
+.mdos-reader ul {
+  padding-left: 20px;
+}
+.mdos-reader blockquote {
+  padding-left: 12px;
+  border-left: 3px solid var(--mdos-sep);
+  color: var(--mdos-fg-2);
+}
+.mdos-reader a {
+  color: var(--mdos-accent);
+  text-decoration: none;
+}
+.mdos-reader a:hover {
+  text-decoration: underline;
+}
+.mdos-reader img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 8px 0;
+  border-radius: 8px;
+}
+/* Thumbnails inside links (post lists) stay small beside their title. */
+.mdos-reader a img {
+  display: inline-block;
+  width: 56px;
+  height: 42px;
+  object-fit: cover;
+  margin: 2px 8px 2px 0;
+  vertical-align: middle;
+  border-radius: 6px;
+  background: var(--mdos-fill);
+}
+.mdos-reader li img {
+  display: inline-block;
+  max-height: 1.6em;
+  margin: 0 2px;
+  vertical-align: middle;
+  border-radius: 3px;
+}
+.mdos-reader-row {
+  font-size: 13.5px;
+  color: var(--mdos-fg-2);
+}
+
+/* ── Mouse pointer (Customize → Appearance) ──────────────────── */
+/* Set on <html> and inherited, so resize edges, grab handles and anything
+   else that asks for its own cursor keeps it. Links and buttons take the
+   pointer version; text fields keep the I-beam. */
+html.mdos-cursor,
+html.mdos-cursor body {
+  cursor: var(--mdos-cur);
+}
+html.mdos-cursor :is(a[href], button, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [role="switch"], select, summary, label, .cursor-pointer, input:is([type="checkbox"], [type="radio"], [type="button"], [type="submit"], [type="color"], [type="file"])):not(:disabled) {
+  cursor: var(--mdos-cur-ptr) !important;
+}
+html.mdos-cursor :is(.cursor-default, :disabled) {
+  cursor: var(--mdos-cur) !important;
+}
+html.mdos-cursor :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="button"], [type="submit"], [type="color"], [type="file"]), textarea, [contenteditable="true"], [contenteditable=""]) {
+  cursor: text;
+}
+
+/* ── Notification badges (desktop.js refreshBadges) ──────────── */
+/* A red count at the icon's top-right corner. The icon itself clips its
+   content, so the badge hangs off the button, placed by the icon's width. */
+/* Element-qualified: both buttons start from all: unset (home.css loads later). */
+button.mdos-lp-app,
+button.mdos-launch {
+  position: relative;
+}
+.mdos-lp-app { --mdos-badge-icon: 84px; }
+html.mdos-touch .mdos-lp-app { --mdos-badge-icon: var(--mdos-sb-icon); }
+.mdos-launch { --mdos-badge-icon: 56px; }
+.mdos-wg--launcher.mdos-wg--s .mdos-launch { --mdos-badge-icon: 38px; }
+.mdos-dicon { --mdos-badge-icon: 58px; }
+[data-mdos-badge]::after {
+  content: attr(data-mdos-badge);
+  position: absolute;
+  top: -6px;
+  left: calc(50% + var(--mdos-badge-icon, 56px) / 2 - 14px);
+  z-index: 3;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: #ff3b30;
+  color: #fff;
+  font: 700 12px/20px var(--mdos-font);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+.mdos-dock-item[data-mdos-badge]::after {
+  left: auto;
+  right: -6px;
+}
+/* The large New chat widget lays its buttons out as rows, icon first. */
+.mdos-wg--launcher.mdos-wg--l .mdos-launch[data-mdos-badge]::after {
+  left: calc(var(--mdos-badge-icon) - 14px);
+}
+
+/* ── Focus mode (Ctrl Alt F) ─────────────────────────────────── */
+html.mdos-focus :is(#mdos-menubar, #mdos-dock, #mdos-widgets, [data-mdos-win="chats"], [data-mdos-win="panel"], .mdos-appwin) {
+  display: none !important;
+}
+html.mdos-desktop.mdos-focus {
+  --mdos-main-x: 0px !important;
+  --mdos-main-y: 0px !important;
+  --mdos-main-w: 100vw !important;
+  --mdos-main-h: 100vh !important;
+  --mdos-main-tx: 0px !important;
+  --mdos-main-ty: 0px !important;
+}
+html.mdos-focus [data-mdos-win="main"] {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#mdos-focus-exit {
+  display: none;
+}
+html.mdos-focus #mdos-focus-exit {
+  all: unset;
+  display: block;
+  position: fixed;
+  top: 6px;
+  left: 50%;
+  z-index: 8800;
+  translate: -50% 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font: 600 12px/1.4 var(--mdos-font);
+  opacity: 0.25;
+  cursor: var(--mdos-cur-ptr, pointer);
+  transition: opacity 150ms ease;
+}
+html.mdos-focus #mdos-focus-exit:hover,
+html.mdos-focus #mdos-focus-exit:focus-visible {
+  opacity: 1;
+}
+
+/* ── Character count in editors ──────────────────────────────── */
+#mdos-count {
+  display: none;
+}
+html.mdos #mdos-count.is-on {
+  display: block;
+  position: fixed;
+  z-index: 8700;
+  translate: -100% -100%;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--mdos-fg, #000) 72%, transparent);
+  color: var(--mdos-win-bg, #fff);
+  font: 600 11px/1.4 var(--mdos-font);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+/* ── One messenger window (desktop.js paneOn) ────────────────── */
+/* The list and the chat read as one window: no inner corners or doubled
+   shadow at the seam, the list always just above the chat, one set of
+   lights (the list's). The chat strip's sidebar button folds the list. */
+html.mdos-pane [data-mdos-win="chats"] {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  z-index: calc(var(--mdos-main-z, 11) + 1) !important;
+  box-shadow: -18px 24px 60px -24px rgba(0, 0, 0, 0.45) !important;
+  border-right: 1px solid var(--mdos-sep, rgba(127, 127, 127, 0.25)) !important;
+}
+html.mdos-pane [data-mdos-win="main"] {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+html.mdos-pane [data-mdos-win="main"] .mdos-titlebar--main .mdos-lights {
+  display: none;
+}
+.mdos-pane-toggle {
+  display: none;
+}
+html.mdos-pane-ready .mdos-pane-toggle {
+  all: unset;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 24px;
+  margin-left: 6px;
+  border-radius: 6px;
+  color: var(--mdos-fg-2, currentColor);
+  pointer-events: auto;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+html.mdos-pane-ready .mdos-pane-toggle:hover {
+  background: var(--mdos-fill-2, rgba(127, 127, 127, 0.15));
+  color: var(--mdos-fg, currentColor);
+}
+html.mdos-pane-ready .mdos-pane-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+html.mdos-pane [data-mdos-win="main"] .mdos-titlebar--main {
+  padding-left: 4px;
+}
+
+/* ── Chat apps: title, list name, "pick a chat" ─────────────── */
+
+/* The chat's name, centred in the chat window's title strip. */
+.mdos-chat-title {
+  display: none;
+}
+html.mdos-desktop .mdos-chat-title {
+  position: absolute;
+  top: 0;
+  left: 96px;
+  right: 96px;
+  height: var(--mdos-topbar-h, 44px);
+  z-index: 39;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 13px/1 var(--mdos-font);
+  letter-spacing: -0.005em;
+  color: var(--foreground, var(--mdos-fg));
+  opacity: 0.88;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+html.mdos-in-rp:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mdos-chat-title {
+  color: var(--mdos-ink);
+}
+html.mdos-chat-other .mdos-chat-title {
+  display: none;
+}
+
+/* The list's title names the app it shows (Conversation / Roleplay / Game). */
+html.mdos-desktop [data-mdos-win="chats"] .mari-sidebar-header h2[data-mdos-title]:not([data-mdos-title=""]) {
+  font-size: 0 !important;
+}
+html.mdos-desktop [data-mdos-win="chats"] .mari-sidebar-header h2[data-mdos-title]:not([data-mdos-title=""])::before {
+  content: attr(data-mdos-title);
+  font: 700 13px/1 var(--mdos-font);
+  color: var(--foreground, var(--mdos-fg));
+}
+
+/* A chat of another app behind the list: an empty view until one is picked. */
+.mdos-pickchat {
+  position: absolute;
+  inset: 0;
+  z-index: 38;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--marinara-page-background, var(--background, var(--mdos-win-bg, #fff)));
+  color: var(--mdos-fg-2, var(--muted-foreground));
+  font: 500 14px/1.4 var(--mdos-font);
+}
+.mdos-pickchat-icon .mdos-app-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 15px;
+  opacity: 0.9;
+}
+.mdos-pickchat p {
+  margin: 0;
+}
+
+/* ── Web pages: on white, scaled to fit (desktop.js mountBrowser) ── */
+/* A page with a transparent background showed the black meant for videos.
+   Wide pages are laid out at 100%/z of the window and scaled by z. */
+/* An editor took the chat's place: the list hides behind the window (desktop.js editorShown). */
+html.mdos-editing [data-component="ChatSidebarSlot"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+.mdos-zoom {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #fff;
+}
+.mdos-zoom > .mdos-frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(100% / var(--z, 1));
+  height: calc(100% / var(--z, 1));
+  transform: scale(var(--z, 1));
+  transform-origin: 0 0;
+  background: #fff;
+  color-scheme: light;
+}
+.mdos-zoom-btn {
+  min-width: 44px;
+  font: 600 11.5px/1 var(--mdos-font);
+  font-variant-numeric: tabular-nums;
+}
+.mdos-zoom-menu {
+  display: grid;
+  gap: 2px;
+  min-width: 150px;
+}
+.mdos-zoom-menu .mdos-menu-item.is-on {
+  font-weight: 650;
+  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 22%, transparent);
+}
+
+/* ── YouTube: browsing like the site (desktop.js mountYouTube) ── */
+.mdos-yt {
+  --yt-bg: #0f0f0f;
+  --yt-fg: #f1f1f1;
+  --yt-mute: #aaaaaa;
+  --yt-chip: #272727;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 18px 24px;
+  background: var(--yt-bg);
+  color: var(--yt-fg);
+  font: 14px/1.4 "Roboto", var(--mdos-font);
+  scrollbar-width: thin;
+  scrollbar-color: #555 transparent;
+}
+.mdos-yt button {
+  all: unset;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+.mdos-yt .mdos-btn {
+  all: unset;
+  padding: 8px 18px;
+  border-radius: 18px;
+  background: var(--yt-fg);
+  color: var(--yt-bg);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+.mdos-yt-note {
+  margin: 18px 0;
+  color: var(--yt-mute);
+  font-size: 13px;
+}
+.mdos-yt-empty {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  max-width: 440px;
+  margin: 48px auto;
+  text-align: center;
+}
+.mdos-yt-empty .mdos-yt-note {
+  margin: 0;
+  line-height: 1.6;
+}
+.mdos-yt-logo {
+  width: 64px;
+  height: 45px;
+  border-radius: 12px;
+  background: #ff0033;
+  position: relative;
+}
+.mdos-yt-logo::after {
+  content: "";
+  position: absolute;
+  inset: 13px 23px 13px 26px;
+  background: #fff;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+.mdos-yt-chips {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  margin: 0 -18px 12px;
+  padding: 12px 18px;
+  background: var(--yt-bg);
+  scrollbar-width: none;
+}
+.mdos-yt .mdos-yt-chip {
+  flex: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--yt-chip);
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.mdos-yt .mdos-yt-chip:hover {
+  background: #3f3f3f;
+}
+.mdos-yt .mdos-yt-chip.is-on {
+  background: var(--yt-fg);
+  color: var(--yt-bg);
+}
+.mdos-yt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 26px 16px;
+  padding-top: 4px;
+}
+.mdos-yt-card {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.mdos-yt .mdos-yt-thumbbox {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 6px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #222;
+}
+.mdos-yt-thumbbox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 200ms var(--mdos-ease);
+}
+.mdos-yt .mdos-yt-thumbbox:hover img {
+  transform: scale(1.03);
+}
+.mdos-yt-dur {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+}
+.mdos-yt-dur.is-live {
+  background: #cc0000;
+}
+.mdos-yt .mdos-yt-title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.38;
+}
+.mdos-yt .mdos-yt-chan,
+.mdos-yt-meta {
+  overflow: hidden;
+  color: var(--yt-mute);
+  font-size: 12.5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.mdos-yt .mdos-yt-chan:hover {
+  color: var(--yt-fg);
+}
+.mdos-yt-h {
+  margin: 18px 0 12px;
+  font-size: 17px;
+  font-weight: 700;
+}
+/* Watch page: player and details, the channel's other videos beside them
+   when the window is wide (under them when narrow). */
+.mdos-yt.is-watch {
+  padding-top: 16px;
+  container-type: inline-size;
+}
+.mdos-yt-watch {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+@container (min-width: 900px) {
+  .mdos-yt-watch {
+    grid-template-columns: minmax(0, 1fr) 340px;
+  }
+}
+.mdos-yt-player {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+}
+.mdos-yt-player .mdos-frame {
+  width: 100%;
+  height: 100%;
+}
+.mdos-yt-wtitle {
+  margin: 12px 0 10px;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.mdos-yt .mdos-yt-owner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.mdos-yt-owner img,
+.mdos-yt-avatar,
+.mdos-yt-chhead img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #333;
+}
+.mdos-yt-owner span {
+  display: grid;
+}
+.mdos-yt-owner b {
+  font-size: 15px;
+}
+.mdos-yt-owner small,
+.mdos-yt-chhead small {
+  color: var(--yt-mute);
+  font-size: 12px;
+}
+.mdos-yt-descbox {
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--yt-chip);
+  font-size: 13.5px;
+}
+.mdos-yt-desc {
+  max-height: 4.2em;
+  margin-top: 6px;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.mdos-yt-desc.is-open {
+  max-height: none;
+}
+.mdos-yt .mdos-yt-more {
+  margin-top: 6px;
+  font-weight: 650;
+}
+.mdos-yt-side .mdos-yt-h {
+  margin-top: 0;
+}
+.mdos-yt-list {
+  display: grid;
+  gap: 10px;
+}
+.mdos-yt-list .mdos-yt-card {
+  grid-template-columns: 168px minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr;
+  column-gap: 10px;
+  row-gap: 2px;
+}
+.mdos-yt-list .mdos-yt-thumbbox {
+  grid-row: 1 / 4;
+  margin: 0;
+  border-radius: 8px;
+}
+.mdos-yt-list .mdos-yt-title {
+  font-size: 14px;
+}
+.mdos-yt-chhead {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 0 6px;
+}
+.mdos-yt-chhead img,
+.mdos-yt-chhead .mdos-yt-avatar {
+  width: 72px;
+  height: 72px;
+}
+.mdos-yt-chhead h2 {
+  margin: 0 0 2px;
+  font-size: 24px;
+  font-weight: 700;
+}

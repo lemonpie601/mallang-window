@@ -1,0 +1,26 @@
+{
+  "kind": "marinara.personal-extension",
+  "version": 1,
+  "config": {
+    "name": "Marinara Desktop Win11",
+    "version": "1.0.0",
+    "description": "Turns Marinara into a Windows 11 desktop: bottom taskbar (auto-hide), draggable windows, Home as a customizable widget board with desktop icons and bookmarks, small apps (Notes, Web, YouTube), Start menu, Quick Settings, and phone/tablet home screens, and per-message token cost receipts. Ctrl+Alt+D switches back to the classic layout.",
+    "runtime": "client",
+    "capabilities": [
+      "full_page_access"
+    ],
+    "jsPaths": [
+      "receipt-presets.js",
+      "receipt.js",
+      "styles.js",
+      "desktop.js"
+    ],
+    "cssPath": [
+      "desktop.css",
+      "theme.css",
+      "layout.css",
+      "home.css",
+      "win11.css"
+    ]
+  }
+}

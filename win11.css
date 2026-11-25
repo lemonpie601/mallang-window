@@ -1,0 +1,999 @@
+/* ──────────────────────────────────────────────────────────────
+   Marinara Desktop for Windows 11 — the Fluent skin.
+
+   Loaded last of the manifest stylesheets, so it restyles the shell
+   built by desktop.js without changing any behaviour:
+
+   · menu bar + Dock → one taskbar along the bottom: app menus on the
+     left, Start / Search / pinned apps centred, tray and clock right
+   · traffic lights   → minimize / maximize / close on the right edge
+   · Launchpad        → Start (one panel above the taskbar)
+   · Control Center   → Quick Settings (bottom-right flyout)
+   · menus, tooltips, snap preview, boot splash in Fluent style
+   · window palettes  → Windows 11 light / dark (Mica-like surfaces)
+
+   Light/dark follows Marinara's own theme (data-theme on <html>).
+   Phones and tablets keep their own layout (touch rules ship later in
+   styles.js); only colours and fonts change there.
+   ────────────────────────────────────────────────────────────── */
+
+/* ── Tokens ──────────────────────────────────────────────────── */
+
+:root {
+  --mdos-font: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", Pretendard, "Malgun Gothic",
+    "Apple SD Gothic Neo", system-ui, sans-serif;
+  --mdos-ease: cubic-bezier(0, 0, 0, 1);
+  --mdos-radius: 8px;
+  --mdos-menu-hover: #0078d4;
+  --mdos-blur: blur(30px) saturate(140%);
+  --w-tb-h: 48px;
+}
+
+/* Dark (default) */
+html.mdos {
+  --w-fg: #ffffff;
+  --w-fg-2: rgba(255, 255, 255, 0.786);
+  --w-fg-3: rgba(255, 255, 255, 0.544);
+  --w-acrylic: rgba(44, 44, 44, 0.86);
+  --w-acrylic-solid: #2c2c2c;
+  --w-taskbar: rgba(28, 28, 28, 0.84);
+  --w-stroke: rgba(255, 255, 255, 0.08);
+  --w-stroke-strong: rgba(255, 255, 255, 0.14);
+  --w-hover: rgba(255, 255, 255, 0.06);
+  --w-press: rgba(255, 255, 255, 0.04);
+  --w-card: rgba(255, 255, 255, 0.05);
+  --w-ctl: rgba(255, 255, 255, 0.061);
+  --w-ctl-hover: rgba(255, 255, 255, 0.084);
+  --w-ctl-stroke: rgba(255, 255, 255, 0.07);
+  --w-ctl-stroke-b: rgba(255, 255, 255, 0.03);
+  --w-footer: rgba(0, 0, 0, 0.16);
+  --w-accent: var(--mdos-accent, #4cc2ff);
+  --w-on-accent: #ffffff;
+  --w-start-1: #6ccbff;
+  --w-start-2: #1d8fe8;
+  --w-shadow-flyout: 0 8px 16px rgba(0, 0, 0, 0.26), 0 0 0 1px rgba(0, 0, 0, 0.3);
+  --w-shadow-win: 0 32px 64px rgba(0, 0, 0, 0.42), 0 2px 21px rgba(0, 0, 0, 0.36);
+  --w-shadow-win-idle: 0 16px 32px rgba(0, 0, 0, 0.32), 0 2px 10px rgba(0, 0, 0, 0.28);
+  --mdos-menu-bg: var(--w-acrylic);
+  --mdos-menu-fg: var(--w-fg);
+  --mdos-ui-font: var(--mdos-font);
+}
+html.mdos[data-theme="light"] {
+  --w-fg: #1a1a1a;
+  --w-fg-2: rgba(0, 0, 0, 0.62);
+  --w-fg-3: rgba(0, 0, 0, 0.45);
+  --w-acrylic: rgba(249, 249, 249, 0.9);
+  --w-acrylic-solid: #f9f9f9;
+  --w-taskbar: rgba(238, 238, 238, 0.86);
+  --w-stroke: rgba(0, 0, 0, 0.07);
+  --w-stroke-strong: rgba(0, 0, 0, 0.14);
+  --w-hover: rgba(0, 0, 0, 0.037);
+  --w-press: rgba(0, 0, 0, 0.024);
+  --w-card: rgba(255, 255, 255, 0.7);
+  --w-ctl: rgba(255, 255, 255, 0.7);
+  --w-ctl-hover: rgba(249, 249, 249, 0.5);
+  --w-ctl-stroke: rgba(0, 0, 0, 0.06);
+  --w-ctl-stroke-b: rgba(0, 0, 0, 0.16);
+  --w-footer: rgba(0, 0, 0, 0.03);
+  --w-accent: var(--mdos-accent, #0067c0);
+  --w-start-1: #3ba6f7;
+  --w-start-2: #0059b8;
+  --w-shadow-flyout: 0 8px 16px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  --w-shadow-win: 0 32px 64px rgba(0, 0, 0, 0.2), 0 2px 21px rgba(0, 0, 0, 0.16);
+  --w-shadow-win-idle: 0 16px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Window palettes: Windows 11 surfaces instead of the Mac greys. */
+html.mdos[data-theme="light"] {
+  --mdos-win-bg: #f9f9f9;
+  --mdos-card: #ffffff;
+  --mdos-card-raised: #ffffff;
+  --mdos-sidebar-vib: rgba(243, 243, 243, 0.86);
+  --mdos-panel-bg: #f3f3f3;
+  --mdos-popover: rgba(249, 249, 249, 0.96);
+  --mdos-fg: #1a1a1a;
+  --mdos-fg-2: #5d5d5d;
+  --mdos-fg-3: #8a8a8a;
+  --mdos-sep: rgba(0, 0, 0, 0.0803);
+  --mdos-sep-strong: rgba(0, 0, 0, 0.14);
+  --mdos-fill: rgba(0, 0, 0, 0.037);
+  --mdos-fill-2: rgba(0, 0, 0, 0.06);
+  --mdos-field: #ffffff;
+  --mdos-control: #fbfbfb;
+  --mdos-control-hover: #f6f6f6;
+  --mdos-control-active: #f0f0f0;
+  --mdos-control-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 0 rgba(0, 0, 0, 0.12);
+  --mdos-bubble-other: #ebebeb;
+  --mdos-bubble-other-fg: #1a1a1a;
+  --mdos-elev: 0 2px 4px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+html.mdos:not([data-theme="light"]) {
+  --mdos-win-bg: #202020;
+  --mdos-card: #2b2b2b;
+  --mdos-card-raised: #323232;
+  --mdos-sidebar-vib: rgba(32, 32, 32, 0.84);
+  --mdos-panel-bg: #1c1c1c;
+  --mdos-popover: rgba(44, 44, 44, 0.96);
+  --mdos-fg: #ffffff;
+  --mdos-fg-2: #c5c5c5;
+  --mdos-fg-3: #8b8b8b;
+  --mdos-sep: rgba(255, 255, 255, 0.0837);
+  --mdos-sep-strong: rgba(255, 255, 255, 0.14);
+  --mdos-fill: rgba(255, 255, 255, 0.04);
+  --mdos-fill-2: rgba(255, 255, 255, 0.07);
+  --mdos-field: rgba(255, 255, 255, 0.06);
+  --mdos-control: rgba(255, 255, 255, 0.061);
+  --mdos-control-hover: rgba(255, 255, 255, 0.084);
+  --mdos-control-active: rgba(255, 255, 255, 0.033);
+  --mdos-control-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --mdos-bubble-other: #2f2f2f;
+  --mdos-bubble-other-fg: #ffffff;
+  --mdos-elev: 0 2px 4px rgba(0, 0, 0, 0.26), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* ── Windows ─────────────────────────────────────────────────── */
+
+html.mdos-desktop [data-mdos-win] {
+  border-radius: 8px !important;
+  box-shadow: var(--w-shadow-win-idle);
+  outline: 1px solid var(--w-stroke-strong);
+  outline-offset: -1px;
+}
+html.mdos-desktop [data-mdos-win][data-mdos-focused="true"] {
+  box-shadow: var(--w-shadow-win);
+}
+/* Minimizing drops the window into the taskbar. */
+html.mdos-desktop.mdos-main-min:not(.mdos-desktop-home) [data-mdos-win="main"] {
+  transform: translateY(46vh) scale(0.2);
+}
+
+#mdos-snap {
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--w-accent) 18%, rgba(255, 255, 255, 0.12));
+  border: 1px solid color-mix(in srgb, var(--w-accent) 40%, rgba(255, 255, 255, 0.3));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ── Caption buttons (minimize · maximize · close) ───────────── */
+
+/* The title strip spans the window's top edge; it lets the pointer through
+   to Marinara's header underneath (which is the drag area), and only its
+   buttons take clicks. */
+html.mdos-desktop .mdos-titlebar {
+  left: 0;
+  right: 0;
+  width: auto;
+  padding: 0;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+html.mdos-desktop .mdos-titlebar > * {
+  pointer-events: auto;
+}
+html.mdos-desktop .mdos-pane-toggle {
+  order: -1;
+  margin-right: auto;
+}
+html.mdos-pane-ready.mdos-desktop .mdos-pane-toggle {
+  width: 32px;
+  height: 28px;
+  margin-left: 8px;
+  border-radius: 4px;
+}
+html.mdos-pane-ready.mdos-desktop .mdos-pane-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+html.mdos-desktop .mdos-lights {
+  gap: 0;
+  align-self: stretch;
+  align-items: stretch;
+  margin-left: auto;
+  max-height: 44px;
+}
+html.mdos-desktop .mdos-light {
+  width: 46px;
+  height: auto;
+  min-height: 32px;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mdos-fg, var(--w-fg));
+  transition: background 83ms linear, color 83ms linear;
+}
+html.mdos-desktop .mdos-light svg {
+  width: 10px;
+  height: 10px;
+  opacity: 1;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linecap: butt;
+  color: inherit;
+  fill: none;
+}
+html.mdos-desktop .mdos-light:hover {
+  background: var(--mdos-fill-2, var(--w-hover)) !important;
+}
+html.mdos-desktop .mdos-light:active {
+  background: var(--mdos-fill, var(--w-press)) !important;
+}
+html.mdos-desktop .mdos-light--close:hover {
+  background: #c42b1c !important;
+  color: #fff;
+}
+html.mdos-desktop .mdos-light--close:active {
+  background: #c83c31 !important;
+  color: rgba(255, 255, 255, 0.8);
+}
+html.mdos-desktop .mdos-light:focus-visible {
+  outline: 2px solid var(--mdos-fg, var(--w-fg));
+  outline-offset: -2px;
+}
+/* An inactive window's caption glyphs fade, like Windows. */
+html.mdos-desktop [data-mdos-win]:not([data-mdos-focused="true"]) .mdos-light:not(:hover) {
+  color: var(--mdos-fg-3, var(--w-fg-3));
+}
+/* Dark hub pages (Home tabs) keep light glyphs. */
+html.mdos.mdos-hub-app[data-mdos-hub-tone="dark"] [data-mdos-win="main"] .mdos-light {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+/* One messenger window: the caption buttons sit on the chat's right edge,
+   so the list loses its own and the chat keeps them. */
+html.mdos-desktop.mdos-pane [data-mdos-win="main"] .mdos-titlebar--main .mdos-lights {
+  display: flex;
+}
+html.mdos-desktop.mdos-pane [data-mdos-win="chats"] .mdos-lights {
+  display: none;
+}
+
+/* Marinara's own headers: the title starts at the left edge, the right
+   edge is kept for the caption buttons. */
+html.mdos-desktop [data-mdos-win] :is(.mari-sidebar-header, .mari-right-panel-header) {
+  padding-left: 16px !important;
+  padding-right: 146px !important;
+}
+html.mdos-desktop.mdos-pane [data-mdos-win="chats"] .mari-sidebar-header {
+  padding-right: 12px !important;
+}
+html.mdos-desktop [data-mdos-win="main"] [data-component="TopBar"] {
+  padding-left: 12px !important;
+  padding-right: 146px !important;
+}
+html.mdos-desktop.mdos-pane-ready [data-mdos-win="main"] [data-component="TopBar"] {
+  padding-left: 48px !important;
+}
+html.mdos-desktop [data-mdos-win] :is(.mari-sidebar-header, .mari-right-panel-header) h2 {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+}
+
+/* Small-app windows (Notes, Web, YouTube): title left, tools, captions. */
+html.mdos-desktop .mdos-appwin-bar {
+  height: 40px;
+  padding: 0 0 0 14px;
+  gap: 8px;
+  align-items: stretch;
+}
+html.mdos-desktop .mdos-appwin-bar > :not(.mdos-lights) {
+  align-self: center;
+}
+html.mdos-desktop .mdos-appwin-bar .mdos-lights {
+  order: 9;
+  margin-left: 0;
+}
+html.mdos-desktop .mdos-appwin-title {
+  order: 0;
+  padding-right: 0;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 400;
+}
+html.mdos-desktop .mdos-appwin-tools {
+  order: 1;
+}
+html.mdos-desktop .mdos-tool {
+  width: 32px;
+  height: 30px;
+  border-radius: 4px;
+}
+html.mdos-desktop .mdos-url {
+  height: 30px;
+  border-radius: 4px;
+  text-align: left;
+  background: var(--mdos-field);
+  box-shadow: inset 0 0 0 1px var(--mdos-sep), inset 0 -1px 0 var(--mdos-sep-strong);
+}
+html.mdos-desktop .mdos-url:focus {
+  box-shadow: inset 0 0 0 1px var(--mdos-sep), inset 0 -2px 0 var(--w-accent);
+}
+
+/* ── Taskbar ─────────────────────────────────────────────────── */
+
+html.mdos-desktop #mdos-menubar {
+  inset: auto 0 0 0;
+  height: var(--w-tb-h);
+  padding: 0 8px 0 6px;
+  color: var(--w-fg);
+  font-size: 12px;
+  background: var(--w-taskbar);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  box-shadow: inset 0 1px 0 var(--w-stroke);
+  transition: transform 250ms var(--mdos-ease);
+}
+html.mdos-desktop.mdos-dock-autohide #mdos-menubar:not(.is-peek) {
+  transform: translateY(100%);
+}
+html.mdos-desktop .mdos-mb-item {
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 4px;
+  text-shadow: none;
+  transition: background 83ms linear;
+}
+html.mdos-desktop .mdos-mb-item:hover,
+html.mdos-desktop .mdos-mb-item.is-open {
+  background: var(--w-hover);
+}
+html.mdos-desktop .mdos-mb-item:active {
+  background: var(--w-press);
+}
+html.mdos-desktop .mdos-mb-item:focus-visible {
+  outline: 2px solid var(--w-fg);
+  outline-offset: -2px;
+}
+html.mdos-desktop .mdos-mb-logo svg {
+  width: 20px;
+  height: 20px;
+  filter: none;
+}
+html.mdos-desktop .mdos-mb-app {
+  font-weight: 600;
+}
+html.mdos-desktop .mdos-mb-icon svg {
+  width: 16px;
+  height: 16px;
+}
+html.mdos-desktop .mdos-mb-clock {
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  padding: 0 10px;
+  font-weight: 400;
+  line-height: 16px;
+}
+.mdos-mb-time,
+.mdos-mb-date {
+  display: block;
+  font-size: 12px;
+}
+/* The centred icons sit on top of the bar; keep the tray clear of them. */
+html.mdos-desktop .mdos-mb-left,
+html.mdos-desktop .mdos-mb-right {
+  max-width: calc(50vw - 220px);
+  overflow: hidden;
+}
+
+/* Centred group: Start, Search, pinned apps, recent chats. */
+html.mdos-desktop #mdos-dock {
+  bottom: 0;
+  z-index: 8210;
+  max-width: calc(100vw - 480px);
+  transition: transform 250ms var(--mdos-ease);
+}
+html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
+  transform: translate(-50%, 100%);
+}
+html.mdos-desktop .mdos-dock-inner {
+  align-items: center;
+  gap: 4px;
+  height: var(--w-tb-h);
+  padding: 4px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+html.mdos-desktop .mdos-dock-item {
+  --mag: 1 !important;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  transition: background 83ms linear;
+}
+html.mdos-desktop .mdos-dock-item:hover {
+  background: var(--w-hover);
+}
+html.mdos-desktop .mdos-dock-item:active {
+  background: var(--w-press);
+}
+html.mdos-desktop .mdos-dock-item .mdos-app-icon {
+  --s: clamp(20px, calc(var(--mdos-dock-size, 54px) * 0.5), 30px);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 22%;
+  box-shadow: none;
+  transition: transform 160ms var(--mdos-ease);
+}
+html.mdos-desktop .mdos-dock-item:active .mdos-app-icon {
+  filter: none;
+  transform: scale(0.86);
+}
+html.mdos-desktop .mdos-dock-item--recent .mdos-app-icon {
+  border-radius: 50%;
+}
+html.mdos-desktop .mdos-dock-item:focus-visible .mdos-app-icon {
+  outline: none;
+}
+html.mdos-desktop .mdos-dock-item:focus-visible {
+  outline: 2px solid var(--w-fg);
+  outline-offset: -2px;
+}
+html.mdos-desktop .mdos-dock-sep {
+  display: none;
+}
+
+/* Running apps: a short pill under the icon. */
+html.mdos-desktop .mdos-dock-dot {
+  bottom: 2px;
+  width: 6px;
+  height: 3px;
+  margin-left: -3px;
+  border-radius: 2px;
+  background: var(--w-fg-3);
+  box-shadow: none;
+  transition:
+    opacity 160ms ease,
+    width 160ms var(--mdos-ease),
+    margin 160ms var(--mdos-ease);
+}
+html.mdos-desktop .mdos-dock-item.is-running:hover .mdos-dock-dot {
+  width: 16px;
+  margin-left: -8px;
+  background: var(--w-accent);
+}
+
+/* Start: four panes in a blue gradient, no tile behind. */
+html.mdos-desktop .mdos-dock-item--launchpad .mdos-app-icon:not(.has-image),
+html.mdos-desktop .mdos-dock-item--search .mdos-app-icon:not(.has-image) {
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  color: var(--w-fg);
+}
+.mdos-dock-item--launchpad .mdos-app-icon > svg:first-child {
+  display: none;
+}
+html.mdos-desktop .mdos-dock-item--launchpad .mdos-app-icon:not(.has-image) > svg:first-child {
+  display: block;
+  width: 78%;
+  height: 78%;
+  filter: none;
+  fill: var(--w-start-2);
+}
+html.mdos-desktop .mdos-dock-item--launchpad .mdos-app-icon:not(.has-image) > svg:first-child rect:nth-child(1) {
+  fill: var(--w-start-1);
+}
+html.mdos-desktop .mdos-dock-item--launchpad .mdos-app-icon:not(.has-image) > svg:first-child rect:nth-child(2),
+html.mdos-desktop .mdos-dock-item--launchpad .mdos-app-icon:not(.has-image) > svg:first-child rect:nth-child(3) {
+  fill: color-mix(in srgb, var(--w-start-1) 50%, var(--w-start-2));
+}
+html.mdos-desktop .mdos-dock-item--launchpad .mdos-app-icon:not(.has-image) > svg:not(:first-child) {
+  display: none;
+}
+html.mdos-desktop .mdos-dock-item--search .mdos-app-icon svg {
+  width: 72%;
+  height: 72%;
+  filter: none;
+}
+
+/* Tooltips */
+html.mdos-desktop .mdos-dock-label {
+  bottom: calc(100% + 10px);
+  padding: 5px 9px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--w-fg);
+  background: var(--w-acrylic-solid);
+  border: 1px solid var(--w-stroke);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+}
+
+/* Launch: a small hop instead of the Mac bounce. */
+html.mdos-desktop .mdos-dock-item.is-bouncing .mdos-app-icon {
+  animation: w-hop 420ms var(--mdos-ease);
+}
+@keyframes w-hop {
+  0%,
+  100% {
+    transform: none;
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Widget edit bar, and the desktop that now ends at the taskbar. */
+html.mdos-desktop.mdos-edit #mdos-editbar {
+  bottom: calc(var(--w-tb-h) + 12px);
+  border-radius: 8px;
+  background: var(--w-acrylic);
+  border: 1px solid var(--w-stroke);
+  box-shadow: var(--w-shadow-flyout);
+}
+html.mdos-desktop.mdos-edit #mdos-dock,
+html.mdos-desktop.mdos-edit #mdos-menubar {
+  transform: none !important;
+}
+html.mdos-desktop.mdos-edit #mdos-dock {
+  transform: translateX(-50%) !important;
+}
+html.mdos-desktop-home [data-mdos-win="main"] {
+  top: 0 !important;
+  height: calc(100vh - var(--w-tb-h)) !important;
+}
+html.mdos-desktop-home.mdos-dock-autohide [data-mdos-win="main"] {
+  height: 100vh !important;
+}
+html.mdos-desktop #mdos-widgets {
+  inset: 0 0 var(--w-tb-h) 0;
+}
+html.mdos-desktop.mdos-dock-autohide #mdos-widgets {
+  inset: 0;
+}
+
+/* ── Menus (taskbar menus, context menus) ────────────────────── */
+
+html.mdos .mdos-menu {
+  min-width: 220px;
+  padding: 4px;
+  border-radius: 8px;
+  color: var(--w-fg);
+  background: var(--w-acrylic);
+  border: 1px solid var(--w-stroke);
+  box-shadow: var(--w-shadow-flyout);
+  font-size: 13px;
+  animation: w-rise 167ms var(--mdos-ease);
+}
+html.mdos .mdos-menu-item {
+  min-height: 30px;
+  padding: 0 12px 0 8px;
+  margin: 1px 0;
+  border-radius: 4px;
+}
+html.mdos .mdos-menu-item:hover:not(:disabled),
+html.mdos .mdos-menu-item:focus-visible {
+  background: var(--w-hover);
+  color: inherit;
+}
+html.mdos .mdos-menu-item:active:not(:disabled) {
+  background: var(--w-press);
+}
+html.mdos .mdos-menu-check {
+  color: var(--w-accent);
+}
+html.mdos .mdos-menu-key {
+  color: var(--w-fg-2);
+  opacity: 1;
+}
+html.mdos .mdos-menu-sep {
+  margin: 4px -4px;
+  background: var(--w-stroke);
+}
+@keyframes w-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* ── Start ───────────────────────────────────────────────────── */
+
+html.mdos-desktop #mdos-launchpad {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transform: none;
+  opacity: 0;
+  transition: opacity 167ms linear;
+}
+html.mdos-desktop #mdos-launchpad.is-open {
+  opacity: 1;
+}
+html.mdos-desktop .mdos-start {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--w-tb-h) + 12px);
+  width: min(642px, calc(100vw - 24px));
+  height: min(726px, calc(100vh - var(--w-tb-h) - 24px));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 32px 0;
+  overflow: hidden;
+  border-radius: 8px;
+  color: var(--w-fg);
+  background: var(--w-acrylic);
+  border: 1px solid var(--w-stroke);
+  box-shadow: var(--w-shadow-flyout), 0 32px 64px rgba(0, 0, 0, 0.24);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  transform: translate(-50%, 40px);
+  transition: transform 250ms var(--mdos-ease);
+}
+html.mdos-desktop.mdos-dock-autohide .mdos-start {
+  bottom: 12px;
+}
+html.mdos-desktop #mdos-launchpad.is-open .mdos-start {
+  transform: translate(-50%, 0);
+}
+html.mdos-desktop .mdos-lp-search {
+  flex: none;
+  width: 100%;
+  height: 36px;
+  padding: 0 16px 0 42px;
+  border-radius: 18px;
+  color: var(--w-fg);
+  text-align: left;
+  font-size: 13px;
+  background-color: var(--w-ctl);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='m20 20-4.8-4.8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 16px 50%;
+  background-size: 16px;
+  border: 1px solid var(--w-ctl-stroke);
+  border-bottom-color: var(--w-ctl-stroke-b);
+}
+html.mdos-desktop .mdos-lp-search::placeholder {
+  color: var(--w-fg-2);
+}
+html.mdos-desktop .mdos-lp-search:focus {
+  background-color: var(--mdos-win-bg);
+  border-bottom: 2px solid var(--w-accent);
+}
+.mdos-start-head {
+  display: none;
+}
+html.mdos-desktop .mdos-start-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: none;
+  margin: 28px 24px 12px;
+}
+.mdos-start-head h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+html.mdos-desktop .mdos-lp-grid {
+  flex: 1;
+  min-height: 0;
+  width: auto;
+  margin: 0 -8px;
+  padding: 0 8px 16px;
+  overflow-y: auto;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+  scrollbar-width: thin;
+}
+html.mdos-desktop .mdos-lp-app {
+  gap: 8px;
+  padding: 12px 4px 10px;
+  border-radius: 4px;
+  animation: w-rise 250ms var(--mdos-ease) both;
+  animation-delay: calc(min(var(--i), 24) * 8ms);
+}
+html.mdos-desktop .mdos-lp-app:hover {
+  background: var(--w-hover);
+}
+html.mdos-desktop .mdos-lp-app:active {
+  background: var(--w-press);
+}
+html.mdos-desktop .mdos-lp-app .mdos-app-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 22%;
+  box-shadow: none;
+}
+html.mdos-desktop .mdos-lp-app:hover .mdos-app-icon,
+html.mdos-desktop .mdos-lp-app:focus-visible .mdos-app-icon {
+  transform: none;
+  outline: none;
+}
+html.mdos-desktop .mdos-lp-app:focus-visible {
+  outline: 2px solid var(--w-fg);
+  outline-offset: -2px;
+}
+html.mdos-desktop .mdos-lp-label {
+  max-width: 100%;
+  font-size: 12px;
+  color: var(--w-fg);
+  text-shadow: none;
+}
+.mdos-start-foot {
+  display: none;
+}
+html.mdos-desktop .mdos-start-foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  margin: 0 -32px;
+  padding: 0 52px;
+  background: var(--w-footer);
+  border-top: 1px solid var(--w-stroke);
+}
+.mdos-start-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+}
+.mdos-start-avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--w-ctl);
+  border: 1px solid var(--w-stroke);
+}
+.mdos-start-avatar svg {
+  width: 20px;
+  height: 20px;
+  color: #ff5a4a;
+}
+.mdos-start-actions {
+  display: flex;
+  gap: 4px;
+}
+.mdos-start-btn {
+  all: unset;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  color: var(--w-fg);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-start-btn:hover {
+  background: var(--w-hover);
+}
+.mdos-start-btn:active {
+  background: var(--w-press);
+}
+.mdos-start-btn:focus-visible {
+  outline: 2px solid var(--w-fg);
+  outline-offset: -2px;
+}
+.mdos-start-btn svg {
+  width: 16px;
+  height: 16px;
+}
+/* Phones and tablets: the panel melts into their full-screen app list. */
+html.mdos-touch .mdos-start {
+  display: contents;
+}
+
+/* ── Quick Settings ──────────────────────────────────────────── */
+
+html.mdos-desktop #mdos-cc {
+  top: auto;
+  right: 12px;
+  bottom: calc(var(--w-tb-h) + 12px);
+  width: 360px;
+  max-height: calc(100vh - var(--w-tb-h) - 24px);
+  gap: 12px;
+  padding: 16px;
+  border-radius: 8px;
+  color: var(--w-fg);
+  background: var(--w-acrylic);
+  border: 1px solid var(--w-stroke);
+  box-shadow: var(--w-shadow-flyout), 0 32px 64px rgba(0, 0, 0, 0.22);
+  transform: translateY(24px);
+  transition:
+    opacity 167ms linear,
+    transform 250ms var(--mdos-ease);
+}
+html.mdos-desktop.mdos-dock-autohide #mdos-cc {
+  bottom: 12px;
+}
+html.mdos-desktop #mdos-cc.is-open {
+  transform: none;
+}
+html.mdos #mdos-cc {
+  color: var(--w-fg);
+}
+html.mdos .mdos-cc-card {
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: var(--w-card);
+  border: 1px solid var(--w-stroke);
+}
+html.mdos .mdos-cc-card.is-flash {
+  box-shadow: 0 0 0 2px var(--w-accent);
+}
+html.mdos .mdos-cc-card h3 {
+  font-size: 13px;
+  font-weight: 600;
+}
+html.mdos .mdos-cc-sub {
+  color: var(--w-fg-2);
+  opacity: 1;
+}
+html.mdos .mdos-cc-swatch {
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--w-stroke);
+}
+html.mdos .mdos-cc-swatch[aria-checked="true"] {
+  outline: 2px solid var(--w-accent);
+}
+html.mdos .mdos-cc-accent[aria-checked="true"] {
+  box-shadow:
+    0 0 0 2px var(--w-acrylic-solid),
+    0 0 0 4px var(--w-fg);
+}
+html.mdos .mdos-cc-input,
+html.mdos .mdos-cc-select {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 4px;
+  color: var(--w-fg);
+  background: var(--w-ctl);
+  border: 1px solid var(--w-ctl-stroke);
+  border-bottom-color: var(--w-ctl-stroke-b);
+}
+html.mdos .mdos-cc-input:focus {
+  border-bottom: 2px solid var(--w-accent);
+}
+html.mdos .mdos-cc-btn {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--w-fg);
+  background: var(--w-ctl);
+  border: 1px solid var(--w-ctl-stroke);
+  border-bottom-color: var(--w-ctl-stroke-b);
+}
+html.mdos .mdos-cc-btn:hover {
+  background: var(--w-ctl-hover);
+}
+html.mdos .mdos-cc-btn:active {
+  background: var(--w-press);
+  color: var(--w-fg-2);
+}
+html.mdos .mdos-cc-btn:focus-visible {
+  outline: 2px solid var(--w-fg);
+  outline-offset: 1px;
+}
+html.mdos .mdos-cc-btn--accent,
+html.mdos .mdos-cc-done {
+  color: var(--w-on-accent) !important;
+  background: var(--w-accent) !important;
+  border-color: color-mix(in srgb, #fff 8%, var(--w-accent));
+  border-bottom-color: color-mix(in srgb, #000 30%, var(--w-accent));
+}
+html.mdos .mdos-cc-btn--accent:hover {
+  background: color-mix(in srgb, var(--w-accent) 90%, var(--w-fg)) !important;
+}
+html.mdos .mdos-cc-slider input[type="range"] {
+  accent-color: var(--w-accent);
+}
+
+/* Toggle switches (Quick Settings and the Customize window). */
+html.mdos .mdos-cc-toggle input,
+html.mdos .mdos-switch {
+  width: 40px;
+  height: 20px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: var(--w-ctl);
+  border: 1px solid var(--w-fg-2);
+}
+html.mdos .mdos-cc-toggle input::after,
+html.mdos .mdos-switch::after {
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  background: var(--w-fg-2);
+  box-shadow: none;
+  transition:
+    transform 167ms var(--mdos-ease),
+    width 167ms var(--mdos-ease),
+    height 167ms var(--mdos-ease),
+    top 167ms var(--mdos-ease);
+}
+html.mdos .mdos-cc-toggle input:hover::after,
+html.mdos .mdos-switch:hover::after {
+  top: 2px;
+  width: 14px;
+  height: 14px;
+}
+html.mdos .mdos-cc-toggle input:checked,
+html.mdos .mdos-switch:checked {
+  background: var(--w-accent);
+  border-color: var(--w-accent);
+}
+html.mdos .mdos-cc-toggle input:checked::after,
+html.mdos .mdos-switch:checked::after {
+  background: #fff;
+  transform: translateX(20px);
+}
+html.mdos .mdos-cc-toggle input:checked:hover::after,
+html.mdos .mdos-switch:checked:hover::after {
+  transform: translateX(18px);
+}
+html.mdos .mdos-cc-toggle input:focus-visible,
+html.mdos .mdos-switch:focus-visible {
+  outline: 2px solid var(--w-fg);
+  outline-offset: 2px;
+}
+
+/* ── Reduced transparency / motion ───────────────────────────── */
+
+html.mdos-no-blur.mdos-desktop #mdos-menubar,
+html.mdos-no-blur.mdos-desktop .mdos-start,
+html.mdos-no-blur.mdos-desktop #mdos-cc,
+html.mdos-no-blur .mdos-menu {
+  background: var(--w-acrylic-solid);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html.mdos-no-blur.mdos-desktop .mdos-dock-inner {
+  background: none;
+}
+html.mdos-no-blur.mdos-desktop #mdos-launchpad {
+  background: transparent;
+}
+html.mdos-calm .mdos-start,
+html.mdos-calm .mdos-lp-app,
+html.mdos-calm #mdos-menubar,
+html.mdos-calm .mdos-dock-item .mdos-app-icon {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* ── Boot splash: logo over a spinning ring ──────────────────── */
+
+html.mdos #mdos-boot {
+  background: #000;
+  gap: 56px;
+}
+.mdos-boot-bar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: none;
+  border: 3px solid rgba(255, 255, 255, 0.12);
+  border-top-color: #fff;
+  box-sizing: border-box;
+  animation: w-spin 900ms linear infinite;
+}
+.mdos-boot-bar span {
+  display: none;
+}
+@keyframes w-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

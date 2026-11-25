@@ -1,0 +1,1656 @@
+/* ──────────────────────────────────────────────────────────────
+   Marinara Desktop — Home is the desktop itself.
+
+   html.mdos-desktop-home: Marinara's Home view is showing, so the main
+   "window" dissolves: no frame, no background, no toolbar. What was on
+   Home becomes a board of widgets on the wallpaper:
+
+     [ New chat launcher ]  [ API budget / credit cards ]   [ our widgets ]
+     [ Marinara widgets  ]
+
+   Every widget — ours, Marinara's and the credit extension's — shares
+   one design: glass card, 22 px corners, 16 px padding, a small grey
+   title, big semibold numbers, accent progress bars and pill buttons
+   that only appear on hover.
+   ────────────────────────────────────────────────────────────── */
+
+html.mdos {
+  --mdos-widget-glass: rgba(255, 255, 255, 0.2);
+  --mdos-widget-ink: #ffffff;
+  --mdos-widget-ink-2: rgba(255, 255, 255, 0.72);
+  --mdos-widget-fill: rgba(255, 255, 255, 0.16);
+  --mdos-widget-fill-2: rgba(255, 255, 255, 0.3);
+  --mdos-widget-line: rgba(255, 255, 255, 0.18);
+  --mdos-widget-shadow: 0 12px 34px -12px rgba(0, 0, 0, 0.45), inset 0 0 0 0.5px rgba(255, 255, 255, 0.32);
+  --mdos-widget-blur: none; /* real blur is opt-in: see html.mdos-real-glass */
+  --mdos-widget-w: 340px;
+}
+html.mdos[data-mdos-wallpaper-tone="light"] {
+  --mdos-widget-glass: rgba(255, 255, 255, 0.6);
+  --mdos-widget-ink: #1d1d1f;
+  --mdos-widget-ink-2: rgba(29, 29, 31, 0.6);
+  --mdos-widget-fill: rgba(0, 0, 0, 0.06);
+  --mdos-widget-fill-2: rgba(0, 0, 0, 0.12);
+  --mdos-widget-line: rgba(0, 0, 0, 0.08);
+  --mdos-widget-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.28), inset 0 0 0 0.5px rgba(255, 255, 255, 0.7);
+}
+html.mdos-real-glass {
+  --mdos-widget-blur: blur(20px) saturate(170%);
+}
+html.mdos-no-blur {
+  --mdos-widget-glass: rgba(34, 32, 42, 0.86);
+  --mdos-widget-blur: none;
+}
+html.mdos-no-blur[data-mdos-wallpaper-tone="light"] {
+  --mdos-widget-glass: rgba(255, 255, 255, 0.94);
+}
+
+/* ── The main window dissolves into the desktop ──────────────── */
+
+html.mdos-desktop-home [data-mdos-win="main"] {
+  left: 0 !important;
+  top: 30px !important;
+  width: 100vw !important;
+  height: calc(100vh - 30px) !important;
+  z-index: 1 !important;
+  translate: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+html.mdos-desktop-home [data-mdos-win="main"] > :is(.mdos-titlebar, .mdos-grip),
+html.mdos-desktop-home [data-mdos-win="main"] [data-component="TopBar"],
+html.mdos-desktop-home .mari-home-browser-starfield,
+html.mdos-desktop-home .mari-seasonal-home,
+html.mdos-desktop-home .mari-home-browser-chrome {
+  display: none !important;
+}
+html.mdos-desktop-home [data-mdos-win="main"] :is(.mari-app-background-paint, [data-component="HomeBrowserHub"], [data-component="HomeBrowserHub"] > div, [data-component="HomeBrowserHub.Content"], [data-component="HomeBrowserHub.HomePage"]) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+/* Only real content takes the pointer: empty desktop stays clickable underneath. */
+html.mdos-desktop-home [data-mdos-win="main"] :is(
+    .mari-home-hero,
+    .mari-home-feed-grid > *,
+    #mac-credit-home > header,
+    #mac-credit-home .mlh-card,
+    #mac-credit-home .mac-management
+  ) {
+  pointer-events: auto;
+}
+
+/* The widget board: launcher (and Marinara's widgets) on the left, the
+   budget/credit cards beside them; our own widgets keep the right edge. */
+html.mdos-desktop-home [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  display: grid !important;
+  grid-template-columns: var(--mdos-widget-w) minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+  /* Leaves our widget column (340 px + 24 px margin) free on the right; at 1440 px
+     the cards get ~650 px, enough for the credit extension's two columns. */
+  /* --mdos-board-max: measured room up to the widget column (desktop.js fitBoard). */
+  max-width: min(1180px, var(--mdos-board-max, calc(100vw - var(--mdos-widget-reserve, 388px))));
+  padding: 22px 20px 120px !important;
+}
+html.mdos-desktop-home [data-component="HomeBrowserHub.HomePage"] > div.relative > .mari-home-hero {
+  grid-column: 1;
+  grid-row: 1;
+}
+html.mdos-desktop-home [data-component="HomeBrowserHub.HomePage"] > div.relative > .mari-home-feed-shell {
+  grid-column: 1;
+}
+html.mdos-desktop-home [data-component="HomeBrowserHub.HomePage"] > div.relative > #mac-credit-home {
+  grid-column: 2;
+  grid-row: 1 / span 6;
+}
+@media (max-width: 1180px) {
+  html.mdos-desktop-home [data-component="HomeBrowserHub.HomePage"] > div.relative {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  html.mdos-desktop-home [data-component="HomeBrowserHub.HomePage"] > div.relative > * {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+  }
+}
+
+/* ── Shared widget card ──────────────────────────────────────── */
+
+:is(html.mdos-desktop-home, html.mdos-touch-home) :is(.mari-home-hero, .mari-home-widget, .mari-home-professor-widget, [data-component="RecentChats"], #mac-credit-home .mlh-card),
+.mdos-wg {
+  box-sizing: border-box;
+  border: 0 !important;
+  border-radius: 22px !important;
+  background: var(--mdos-widget-glass) !important;
+  box-shadow: var(--mdos-widget-shadow) !important;
+  backdrop-filter: var(--mdos-widget-blur);
+  -webkit-backdrop-filter: var(--mdos-widget-blur);
+  color: var(--mdos-widget-ink);
+  font-family: var(--mdos-font);
+  overflow: hidden;
+}
+/* Marinara's own tokens inside a widget follow the wallpaper. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) :is(.mari-home-hero, .mari-home-widget, .mari-home-professor-widget, [data-component="RecentChats"], #mac-credit-home) {
+  --foreground: var(--mdos-widget-ink);
+  --card-foreground: var(--mdos-widget-ink);
+  --muted-foreground: var(--mdos-widget-ink-2);
+  --muted: var(--mdos-widget-fill);
+  --border: var(--mdos-widget-line);
+  --card: transparent;
+  --marinara-chat-chrome-text: var(--mdos-widget-ink);
+  --marinara-chat-chrome-panel-text: var(--mdos-widget-ink);
+  --marinara-chat-chrome-panel-title: var(--mdos-widget-ink);
+  --marinara-chat-chrome-panel-muted: var(--mdos-widget-ink-2);
+  --marinara-chat-chrome-button-bg: var(--mdos-widget-fill);
+  --marinara-chat-chrome-button-bg-hover: var(--mdos-widget-fill-2);
+  --mdos-control-shadow: none;
+}
+/* Widget title: small, bold, grey — same on every widget. */
+.mdos-wg-label,
+:is(html.mdos-desktop-home, html.mdos-touch-home) :is(#mac-credit-home .mlh-card-title, .mari-home-widget h2, .mari-home-widget h3) {
+  margin: 0 !important;
+  font: 700 12px/1.3 var(--mdos-font) !important;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--mdos-widget-ink-2) !important;
+}
+
+/* ── New chat launcher ───────────────────────────────────────── */
+
+/* Marinara's "What shall we cook tonight?" greeting is replaced by our
+   launcher widget (it lives in the widget column with the clock); the
+   original buttons stay in the page, hidden, and the widget clicks them. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) .mari-home-hero {
+  display: none !important;
+}
+.mdos-wg--launcher .mdos-wg-body {
+  justify-content: space-between;
+}
+.mdos-launcher {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.mdos-launch {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  cursor: var(--mdos-cur-ptr, pointer);
+  -webkit-tap-highlight-color: transparent;
+}
+.mdos-launch .mdos-app-icon {
+  width: 56px;
+  height: 56px;
+  transition: transform 140ms ease;
+}
+.mdos-launch:hover .mdos-app-icon {
+  transform: scale(1.06);
+}
+.mdos-launch:active .mdos-app-icon {
+  transform: scale(0.94);
+  filter: brightness(0.85);
+}
+.mdos-launch:focus-visible .mdos-app-icon {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+.mdos-launch-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 600 12px/1.2 var(--mdos-font);
+  color: var(--mdos-widget-ink);
+}
+/* Small launcher: icons only. */
+.mdos-wg--launcher.mdos-wg--s .mdos-launch .mdos-app-icon {
+  width: 38px;
+  height: 38px;
+}
+.mdos-wg--launcher.mdos-wg--s .mdos-launch-label {
+  font-size: 10px;
+}
+.mdos-wg--launcher.mdos-wg--l .mdos-launcher {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.mdos-wg--launcher.mdos-wg--l .mdos-launch {
+  flex-direction: row;
+  gap: 12px;
+}
+.mdos-wg--launcher.mdos-wg--l .mdos-launch-label {
+  font-size: 15px;
+}
+html.mdos-edit .mdos-launch {
+  pointer-events: none;
+}
+
+/* ── Credit cards: a mixed-size widget grid ──────────────────── */
+
+/* The credit extension packs cards in one masonry stack; on the desktop they
+   become a widget grid instead: the budget card is a large widget (2×2), the
+   credit cards small squares, with every fourth one a medium (2×1) widget so
+   the board doesn't read as one long row. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-cards {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+  grid-auto-rows: 160px !important;
+  grid-auto-flow: row dense !important;
+  gap: 16px !important;
+  height: auto !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-cards > .mlh-card {
+  grid-row: span 1 !important;
+  grid-column: span 1 !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-cards > .mlh-rcptcard {
+  grid-column: span 2 !important;
+  grid-row: span 2 !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-cards > .mlh-crcard:nth-child(4n + 2) {
+  grid-column: span 2 !important;
+}
+
+/* Small credit tile: provider, big amount, bar. Details wait for the medium size or "자세히". */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard {
+  position: relative;
+  padding: 14px !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-card-title {
+  display: none !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-card-head {
+  position: absolute !important;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  margin: 0 !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand {
+  gap: 8px !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand b {
+  font-size: 13px !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-big {
+  margin-top: auto !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-big b {
+  font-size: 24px !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-bar {
+  margin: 8px 0 0 !important;
+  flex: none;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) :is(.mlh-cr-brand em, .mlh-cr-sub, .mlh-cr-tag, .mlh-cr-foot, .mlh-cr-won, .mlh-cr-big span, .mlh-rc-line, .mlh-rc-note, .mlh-empty) {
+  display: none !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:nth-child(4n + 2) :is(.mlh-cr-tag, .mlh-cr-foot, .mlh-cr-won, .mlh-rc-line, .mlh-rc-note, .mlh-empty) {
+  display: none !important;
+}
+/* Cards without a balance (usage-only sites) show their today / this-month lines instead. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:has(.mlh-cr-big)) .mlh-cr > .mlh-rc-line {
+  display: flex !important;
+  font-size: 12px !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:has(.mlh-cr-big)) .mlh-cr-brand {
+  margin-bottom: auto;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:nth-child(4n + 2) .mlh-cr-big b {
+  font-size: 30px !important;
+}
+/* Buttons in a small tile appear on hover, over the top of the card. */
+html.mdos-desktop-home #mac-credit-home .mlh-crcard:not(:hover, :focus-within) .mlh-wxre {
+  opacity: 0;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mac-card-actions {
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--mdos-widget-glass);
+  backdrop-filter: var(--mdos-widget-blur);
+}
+
+
+/* ── API budget & credit cards ───────────────────────────────── */
+
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home {
+  --mac-muted: var(--mdos-widget-ink-2);
+  --mac-line: var(--mdos-widget-line);
+  color: var(--mdos-widget-ink) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home > header {
+  padding: 0 4px 6px !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home > header h2 {
+  font: 700 15px var(--mdos-font) !important;
+  color: var(--mdos-widget-ink) !important;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-card {
+  padding: 16px !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-card-head {
+  margin-bottom: 10px !important;
+}
+/* Pill buttons that only appear when you point at the widget. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mlh-link, > header button, .mac-led-nav button, .mac-management button) {
+  min-height: 24px !important;
+  padding: 3px 10px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--mdos-widget-fill) !important;
+  color: var(--mdos-widget-ink) !important;
+  font: 600 11px var(--mdos-font) !important;
+  box-shadow: none !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mlh-link, > header button):hover {
+  background: var(--mdos-widget-fill-2) !important;
+}
+html.mdos-desktop-home #mac-credit-home .mac-card-actions {
+  transition: opacity 160ms ease;
+}
+html.mdos-desktop-home #mac-credit-home .mlh-card:not(:hover, :focus-within) .mac-card-actions {
+  opacity: 0;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-drag-handle {
+  color: var(--mdos-widget-ink-2) !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+/* Card body: name, big amount, accent bar, quiet footnotes. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-cr-brand b {
+  font: 700 15px var(--mdos-font) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-wxre {
+  width: 26px;
+  height: 26px;
+  min-height: 26px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  background: var(--mdos-widget-fill) !important;
+  color: var(--mdos-widget-ink) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mlh-cr-big b, .mac-led-total b, .mac-led-total strong) {
+  font: 650 30px/1.15 var(--mdos-font) !important;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--mdos-widget-ink) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mlh-cr-brand em, .mlh-cr-big span, .mlh-cr-sub, .mlh-cr-tag, .mlh-cr-foot) {
+  font-family: var(--mdos-font) !important;
+  font-size: 11.5px !important;
+  color: var(--mdos-widget-ink-2) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-cr-bar {
+  height: 6px !important;
+  border-radius: 3px !important;
+  background: var(--mdos-widget-fill) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-cr-bar i {
+  border-radius: 3px;
+  background: var(--mdos-accent, var(--primary)) !important;
+}
+/* Budget card: segmented switch and the heat-map calendar follow the accent. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-seg {
+  border-radius: 9px !important;
+  background: var(--mdos-widget-fill) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-seg .is-on {
+  border-radius: 7px !important;
+  background: var(--mdos-widget-fill-2) !important;
+  color: var(--mdos-widget-ink) !important;
+  box-shadow: none !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mac-cal-day, i).lv0 {
+  background: var(--mdos-widget-fill) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mac-cal-day, i).lv1 {
+  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 24%, transparent) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mac-cal-day, i).lv2 {
+  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 44%, transparent) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mac-cal-day, i).lv3 {
+  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 68%, transparent) !important;
+  color: #fff !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mac-cal-day, i).lv4 {
+  background: var(--mdos-accent, #0a84ff) !important;
+  color: #fff !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-cal-day {
+  border-radius: 7px !important;
+  color: var(--mdos-widget-ink);
+}
+
+/* Marinara's own widgets: header buttons wait for hover too. */
+html.mdos-desktop-home :is(.mari-home-widget, .mari-home-professor-widget) :is(button, .mari-chrome-control) {
+  transition: opacity 160ms ease;
+}
+html.mdos-desktop-home .mari-home-widget:not(:hover, :focus-within) header :is(button, .mari-chrome-control) {
+  opacity: 0;
+}
+
+/* ── Our widgets ─────────────────────────────────────────────── */
+
+html.mdos-desktop #mdos-widgets {
+  display: block;
+  position: fixed;
+  inset: 30px 0 0 0;
+  pointer-events: none;
+}
+/* While editing, widgets come above the windows so they can be arranged. */
+html.mdos-desktop.mdos-edit #mdos-widgets {
+  z-index: 8000;
+}
+
+.mdos-wg {
+  position: absolute;
+  padding: 16px;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  --mdos-widget-glass-own: var(--mdos-widget-glass);
+}
+.mdos-wg--s {
+  width: 160px;
+  height: 160px;
+}
+.mdos-wg--m {
+  width: var(--mdos-widget-w);
+  height: 160px;
+}
+.mdos-wg--l {
+  width: var(--mdos-widget-w);
+  height: var(--mdos-widget-w);
+}
+.mdos-wg-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+.mdos-wg.mdos-wg-style--light {
+  --mdos-widget-ink: #1d1d1f;
+  --mdos-widget-ink-2: rgba(29, 29, 31, 0.6);
+  background: #ffffff !important;
+  backdrop-filter: none;
+}
+.mdos-wg.mdos-wg-style--dark {
+  --mdos-widget-ink: #f5f5f7;
+  --mdos-widget-ink-2: rgba(245, 245, 247, 0.65);
+  background: #1c1c1e !important;
+  backdrop-filter: none;
+}
+.mdos-wg.mdos-wg-style--accent {
+  --mdos-widget-ink: #ffffff;
+  --mdos-widget-ink-2: rgba(255, 255, 255, 0.82);
+  background: linear-gradient(150deg, color-mix(in srgb, var(--mdos-accent, #0a84ff) 80%, #fff), var(--mdos-accent, #0a84ff)) !important;
+  backdrop-filter: none;
+}
+.mdos-wg.mdos-wg-style--clear {
+  --mdos-widget-ink: #ffffff;
+  --mdos-widget-ink-2: rgba(255, 255, 255, 0.85);
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+.mdos-wg.mdos-wg--note {
+  --mdos-widget-ink: #3b3220;
+  background: var(--note, #ffe57a) !important;
+  backdrop-filter: none;
+  padding: 14px 16px;
+}
+
+/* Same type scale as the cards: semibold numbers, small grey labels. */
+.mdos-wg-time {
+  font-size: 40px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+.mdos-wg--m .mdos-wg-time,
+.mdos-wg--l .mdos-wg-time {
+  font-size: 52px;
+}
+.mdos-wg-sub {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-wg-strong {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-wg-greet {
+  font-size: 15px;
+  font-weight: 650;
+  margin-bottom: 4px;
+}
+.mdos-wg-weekday {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #ff5a4a;
+}
+.mdos-wg-style--accent .mdos-wg-weekday,
+.mdos-wg-style--clear .mdos-wg-weekday {
+  color: inherit;
+}
+.mdos-wg-daynum {
+  font-size: 54px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.mdos-wg-dday {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+.mdos-wg--calendar.mdos-wg--s .mdos-wg-body,
+.mdos-wg--dday .mdos-wg-body,
+.mdos-wg--clock.mdos-wg--s .mdos-wg-body {
+  justify-content: space-between;
+}
+.mdos-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px 2px;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.mdos-wg--l .mdos-cal-grid {
+  font-size: 15px;
+  gap: 10px 4px;
+}
+.mdos-cal-head {
+  font-weight: 700;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-cal-grid .is-today {
+  border-radius: 50%;
+  background: #ff5a4a;
+  color: #fff;
+}
+.mdos-wg--note .mdos-wg-body {
+  justify-content: stretch;
+}
+.mdos-wg-note {
+  all: unset;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  font: 500 14px/1.45 var(--mdos-font);
+  color: var(--mdos-widget-ink);
+  white-space: pre-wrap;
+  overflow-y: auto;
+  cursor: text;
+  user-select: text;
+}
+.mdos-wg-note::placeholder {
+  color: color-mix(in srgb, var(--mdos-widget-ink) 45%, transparent);
+}
+.mdos-wg.mdos-wg--photo {
+  padding: 0;
+}
+.mdos-wg-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.mdos-wg-empty {
+  margin: auto;
+  padding: 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mdos-widget-ink-2);
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+
+/* Analog clock */
+.mdos-wg--analog .mdos-wg-body {
+  align-items: center;
+}
+.mdos-analog {
+  position: relative;
+  width: min(100%, 132px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fbfbfd;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+.mdos-wg--l .mdos-analog {
+  width: 290px;
+}
+.mdos-analog i {
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  width: 2px;
+  height: 7%;
+  margin-left: -1px;
+  background: #1d1d1f;
+  border-radius: 1px;
+  transform-origin: 50% 628%;
+  transform: rotate(var(--t));
+}
+.mdos-analog b {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  border-radius: 3px;
+  background: #1d1d1f;
+  transform-origin: 50% 100%;
+}
+.mdos-analog-h {
+  width: 5px;
+  height: 26%;
+  margin-left: -2.5px;
+  transform: rotate(var(--h));
+}
+.mdos-analog-m {
+  width: 3px;
+  height: 38%;
+  margin-left: -1.5px;
+  transform: rotate(var(--m));
+}
+.mdos-analog em {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--mdos-accent, #ff9500);
+}
+
+/* ── Edit (jiggle) mode ──────────────────────────────────────── */
+
+.mdos-wg-badge {
+  all: unset;
+  position: absolute;
+  z-index: 2;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: none;
+  place-items: center;
+  font: 700 15px/1 var(--mdos-font);
+  color: #1d1d1f;
+  background: rgba(235, 235, 240, 0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: var(--mdos-cur, default);
+}
+.mdos-wg-remove {
+  top: 6px;
+  left: 6px;
+}
+.mdos-wg-edit {
+  top: 6px;
+  right: 6px;
+  font: italic 700 13px/1 Georgia, serif;
+}
+html.mdos-edit .mdos-wg:not(.is-sample) .mdos-wg-badge {
+  display: grid;
+}
+html.mdos-edit .mdos-wg:not(.is-sample) {
+  cursor: grab;
+  animation: mdos-jiggle 0.32s ease-in-out infinite alternate;
+}
+html.mdos-edit .mdos-wg:nth-child(2n):not(.is-sample) {
+  animation-delay: -0.16s;
+}
+.mdos-wg.is-dragging {
+  animation: none !important;
+  cursor: grabbing;
+  box-shadow: 0 26px 50px -12px rgba(0, 0, 0, 0.55) !important;
+  z-index: 5;
+}
+@keyframes mdos-jiggle {
+  from {
+    rotate: -0.7deg;
+  }
+  to {
+    rotate: 0.7deg;
+  }
+}
+html.mdos-calm .mdos-wg {
+  animation: none !important;
+}
+html.mdos-edit #mdos-editbar {
+  display: flex;
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--mdos-dock-size, 54px) + 34px);
+  z-index: 8300;
+  transform: translateX(-50%);
+  gap: 8px;
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(36, 36, 44, 0.78);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.5);
+  font-family: var(--mdos-font);
+}
+html.mdos-desktop.mdos-edit #mdos-dock {
+  transform: translateX(-50%) !important;
+}
+
+/* Widget gallery */
+.mdos-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: 14px 8px;
+}
+.mdos-gallery-item {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  cursor: var(--mdos-cur, default);
+}
+.mdos-gallery-item:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0a84ff);
+  border-radius: 12px;
+}
+.mdos-wg.is-sample {
+  position: relative;
+  zoom: 0.6;
+  pointer-events: none;
+  animation: none;
+}
+.mdos-gallery-item:hover .mdos-wg.is-sample {
+  box-shadow: 0 0 0 3px var(--mdos-accent, #0a84ff), var(--mdos-widget-shadow) !important;
+}
+
+/* ── Desktop icons (apps & bookmarks on the desktop) ─────────── */
+
+.mdos-dicon {
+  position: absolute;
+  width: 92px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 2px;
+  border-radius: 10px;
+  pointer-events: auto;
+  cursor: var(--mdos-cur, default);
+  user-select: none;
+  outline: none;
+}
+.mdos-dicon .mdos-app-icon {
+  width: 58px;
+  height: 58px;
+}
+.mdos-dicon-label {
+  max-width: 88px;
+  font: 600 12px/1.25 var(--mdos-font);
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-all;
+}
+html[data-mdos-wallpaper-tone="light"] .mdos-dicon-label {
+  color: #1d1d1f;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+}
+.mdos-dicon:hover,
+.mdos-dicon:focus-visible {
+  background: rgba(255, 255, 255, 0.16);
+}
+.mdos-dicon:focus-visible {
+  box-shadow: 0 0 0 2px var(--mdos-accent, #0a84ff);
+}
+.mdos-dicon.is-dragging {
+  opacity: 0.85;
+  z-index: 5;
+}
+.mdos-dicon .mdos-wg-badge {
+  top: 0;
+  left: 10px;
+}
+html.mdos-edit .mdos-dicon .mdos-wg-badge {
+  display: grid;
+}
+html.mdos-edit .mdos-dicon {
+  animation: mdos-jiggle 0.3s ease-in-out infinite alternate;
+}
+html.mdos-calm .mdos-dicon {
+  animation: none !important;
+}
+
+/* ── Home layout options ─────────────────────────────────────── */
+
+/* Leave the left edge for desktop icons. */
+html.mdos-desktop-home.mdos-has-icons [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  padding-left: 120px !important;
+}
+/* Centre: the board sits between the icon column and the widget column. */
+html.mdos-desktop-home[data-mdos-board="center"] [data-component="HomeBrowserHub.HomePage"] {
+  box-sizing: border-box;
+  padding: 0 calc(var(--mdos-widget-w) + 48px) 0 110px !important;
+}
+html.mdos-desktop-home[data-mdos-board="center"] [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  max-width: 1000px !important;
+  margin-inline: auto !important;
+  padding-left: 20px !important;
+}
+/* Hidden / one kind of block switched off. */
+:is(html.mdos-desktop-home, html.mdos-touch-home)[data-mdos-board="hidden"] :is(.mari-home-feed-shell, #mac-credit-home),
+:is(html.mdos-desktop-home, html.mdos-touch-home).mdos-no-credits #mac-credit-home,
+:is(html.mdos-desktop-home, html.mdos-touch-home).mdos-no-feed .mari-home-feed-shell {
+  display: none !important;
+}
+html.mdos-desktop-home:is(.mdos-no-feed, .mdos-no-credits) [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+html.mdos-desktop-home:is(.mdos-no-feed, .mdos-no-credits) [data-component="HomeBrowserHub.HomePage"] > div.relative > * {
+  grid-column: 1 !important;
+  grid-row: auto !important;
+}
+html.mdos-desktop-home.mdos-no-credits [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  max-width: calc(var(--mdos-widget-w) + 160px) !important;
+}
+
+/* ── API credits widget ──────────────────────────────────────── */
+/* On the bare desktop the credit extension's own cards show, so the summary
+   steps aside (keeping its grid spot) except while arranging widgets. */
+/* (The summary used to hide on Home next to the real cards; since 2.4 the
+   cards themselves live on the desktop as widgets, so it always shows.) */
+.mdos-cr-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mdos-cr-head b {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--mdos-widget-ink);
+  font-variant-numeric: tabular-nums;
+}
+.mdos-cr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 8px;
+  min-height: 0;
+  overflow: hidden;
+}
+.mdos-cr-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 8px;
+  row-gap: 3px;
+  font-size: 12.5px;
+}
+.mdos-cr-brand {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--mdos-widget-ink);
+}
+.mdos-cr-amt {
+  font-variant-numeric: tabular-nums;
+  color: var(--mdos-widget-ink-2);
+  white-space: nowrap;
+}
+.mdos-cr-bar {
+  grid-column: 1 / -1;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--mdos-accent) var(--p), color-mix(in srgb, var(--mdos-widget-ink) 12%, transparent) var(--p));
+}
+.mdos-wg--s .mdos-cr-amt,
+.mdos-wg--s .mdos-cr-head b {
+  display: none;
+}
+
+/* ── Extension locker widget ─────────────────────────────────── */
+/* Every button is in the list. Small and large scroll down, medium is one
+   row that scrolls sideways; drag with the mouse, swipe, or use the wheel
+   (desktop.js dragScroll). The edge fades while there is more that way. */
+.mdos-locker {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-content: start;
+  gap: 10px 6px;
+  margin: 10px -4px 0;
+  padding: 2px 4px 4px;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  touch-action: pan-y;
+  cursor: grab;
+  --fade: 22px;
+}
+.mdos-locker::-webkit-scrollbar {
+  display: none;
+}
+.mdos-locker.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none !important;
+}
+.mdos-locker.is-dragging .mdos-locker-item {
+  pointer-events: none;
+}
+.mdos-wg--s .mdos-locker {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.mdos-wg--m .mdos-locker {
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 4 * 6px) / 5);
+  align-content: center;
+  touch-action: pan-x;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 4px;
+}
+.mdos-wg--m .mdos-locker-item {
+  scroll-snap-align: start;
+}
+.mdos-locker[data-more="end"] {
+  mask-image: linear-gradient(var(--fade-dir, to bottom), #000 calc(100% - var(--fade)), transparent);
+}
+.mdos-locker[data-more="start"] {
+  mask-image: linear-gradient(var(--fade-dir, to bottom), transparent, #000 var(--fade));
+}
+.mdos-locker[data-more="start end"] {
+  mask-image: linear-gradient(var(--fade-dir, to bottom), transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+}
+.mdos-wg--m .mdos-locker {
+  --fade-dir: to right;
+}
+.mdos-locker-item {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+.mdos-locker-ico {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: var(--mdos-widget-fill);
+  color: var(--mdos-widget-ink);
+  font: 700 16px var(--mdos-font);
+  overflow: hidden;
+  transition: transform 140ms ease;
+}
+.mdos-locker-ico > :is(svg, img) {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  fill: currentColor;
+}
+.mdos-locker-ico > svg [style*="fill:rgb(0, 0, 0)"],
+.mdos-locker-ico > svg[style*="fill:rgb(0, 0, 0)"] {
+  fill: currentColor !important;
+}
+.mdos-locker-item:hover .mdos-locker-ico {
+  transform: scale(1.06);
+}
+.mdos-locker-item:focus-visible .mdos-locker-ico {
+  outline: 2px solid var(--mdos-accent);
+  outline-offset: 2px;
+}
+.mdos-locker-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 600 10.5px/1.2 var(--mdos-font);
+  color: var(--mdos-widget-ink);
+}
+.mdos-wg--s .mdos-locker-name {
+  display: none;
+}
+html.mdos-edit .mdos-locker-item {
+  pointer-events: none;
+}
+
+/* ── Credit cards, taken apart ───────────────────────────────── */
+/* Each card is its own widget on the same 160 px / 20 px grid as ours: the
+   section frame and title step back, the provider becomes a small label with
+   an accent dot, the balance sits large at the bottom and the usage bar runs
+   along the bottom edge like a battery widget. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-cards {
+  grid-template-columns: repeat(auto-fill, 160px) !important;
+  grid-auto-rows: 160px !important;
+  gap: 20px !important;
+  justify-content: start !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home > header {
+  padding: 0 2px 10px !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home > header h2 {
+  font: 700 12px/1.3 var(--mdos-font) !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mdos-widget-ink-2) !important;
+  text-shadow: none;
+}
+html.mdos-desktop-home #mac-credit-home > header button {
+  transition: opacity 160ms ease;
+}
+html.mdos-desktop-home #mac-credit-home:not(:hover, :focus-within) > header button {
+  opacity: 0;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard {
+  padding: 14px 14px 18px !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand b {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 700 11px/1.2 var(--mdos-font) !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--mdos-widget-ink-2) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand b::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--mdos-accent, var(--primary));
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-big b {
+  font: 700 26px/1.1 var(--mdos-font) !important;
+  letter-spacing: -0.02em;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:nth-child(4n + 2) .mlh-cr-big b {
+  font-size: 34px !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-bar {
+  position: absolute !important;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5px !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-bar i {
+  border-radius: 0 3px 3px 0 !important;
+}
+
+/* ── Board fit (narrow windows) ──────────────────────────────── */
+/* Feed and credit cards sit side by side while the credits get at least
+   380 px; with less room the credits drop below the feed instead of being
+   squeezed into a sliver (titles wrapping letter by letter). */
+html.mdos-desktop-home:not([data-mdos-board="center"]) [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+}
+html.mdos-desktop-home:not([data-mdos-board="center"]) [data-component="HomeBrowserHub.HomePage"] > div.relative > .mari-home-feed-shell {
+  flex: 0 0 var(--mdos-widget-w);
+  max-width: 100%;
+  order: -1;
+}
+html.mdos-desktop-home:not([data-mdos-board="center"]) [data-component="HomeBrowserHub.HomePage"] > div.relative > #mac-credit-home {
+  flex: 1 1 380px;
+  min-width: min(100%, 380px);
+}
+/* Recent chats: in the 340 px widget column each card is ~150 px wide, and
+   Marinara's 85 px avatar in the bottom corner covered the name and preview.
+   It becomes a small circle in the top corner instead. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) [data-component="RecentChats"] > * > span.absolute.rounded-full {
+  top: 8px !important;
+  right: 8px !important;
+  bottom: auto !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-width: 1.5px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) [data-component="RecentChats"] > * > :not(span.absolute) {
+  padding-right: 0;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) [data-component="RecentChats"] > * :is(h3, h4, [class*="font-semibold"], [class*="font-bold"]) {
+  padding-right: 34px;
+}
+
+/* ── Credit card buttons: icons, never over the name ─────────── */
+/* "설정" and "간단히/자세히" become 24 px icon buttons beside the drag handle,
+   and while they show (hover / focus) the provider name ends in "…"
+   before reaching them instead of running underneath. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mac-card-actions {
+  display: flex !important;
+  gap: 2px;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mac-card-actions :is([data-wa="edit"], [data-mac-simple]) {
+  display: inline-grid !important;
+  place-items: center;
+  width: 24px !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  padding: 0 !important;
+  font-size: 0 !important;
+  border-radius: 50% !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mac-card-actions :is([data-wa="edit"], [data-mac-simple])::before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  background: currentColor;
+  -webkit-mask: var(--mdos-ico) center / contain no-repeat;
+  mask: var(--mdos-ico) center / contain no-repeat;
+}
+#mac-credit-home .mlh-crcard .mac-card-actions [data-wa="edit"] {
+  --mdos-ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M4 7h10M18 7h2M4 17h4M12 17h8'/%3E%3Ccircle cx='16' cy='7' r='2.2'/%3E%3Ccircle cx='10' cy='17' r='2.2'/%3E%3C/svg%3E");
+}
+#mac-credit-home .mlh-crcard .mac-card-actions [data-mac-simple] {
+  --mdos-ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 4H4v5M15 20h5v-5M4 4l6 6M20 20l-6-6'/%3E%3C/svg%3E");
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mac-card-actions .mac-drag-handle {
+  width: 22px !important;
+  height: 24px !important;
+  padding: 0 !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand {
+  min-width: 0;
+  max-width: 100%;
+  transition: padding-right 140ms ease;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand b {
+  display: block !important;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand b::before {
+  display: inline-block;
+  margin-right: 6px;
+  vertical-align: 1px;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:is(:hover, :focus-within) .mlh-cr-brand {
+  padding-right: 84px;
+}
+/* Touch screens have no hover: the buttons always show, so the room is always kept. */
+html.mdos-touch-home #mac-credit-home .mlh-crcard .mlh-cr-brand {
+  padding-right: 84px;
+}
+/* The refresh button (↻) leaves the name row: hidden until you point at the
+   card, then it sits under the other buttons instead of shortening the name. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-brand > .mlh-wxre {
+  position: absolute !important;
+  top: 36px;
+  right: 8px;
+  z-index: 2;
+}
+html.mdos-desktop-home #mac-credit-home .mlh-crcard:not(:hover, :focus-within) .mlh-cr-brand > .mlh-wxre {
+  display: none !important;
+}
+/* Balances stay on one line. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard .mlh-cr-big b {
+  white-space: nowrap;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-cr-big b {
+  font-size: 23px !important;
+}
+/* Small (1×1) cards: the buttons use the empty second line, under the name,
+   so the name stays whole; the refresh button sits at the right of that line. */
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-card-head {
+  top: 34px !important;
+  left: 9px;
+  right: auto !important;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-cr-brand > .mlh-wxre {
+  top: 37px;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)):is(:hover, :focus-within) .mlh-cr-brand,
+html.mdos-touch-home #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-cr-brand {
+  padding-right: 0;
+}
+
+/* ── Single credit widget ────────────────────────────────────── */
+/* The bar runs along the widget's bottom edge; on the phone home grid the
+   widget isn't positioned yet, so it becomes the bar's anchor there. */
+#mdos-sb .mdos-wg--credit {
+  position: relative;
+}
+.mdos-crd-brand {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.mdos-crd-brand::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--mdos-accent);
+}
+.mdos-crd-sub {
+  margin-top: 3px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11px !important;
+}
+.mdos-crd-lines {
+  display: grid;
+  gap: 2px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--mdos-widget-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.mdos-crd-amount {
+  margin-top: auto;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+}
+.mdos-crd-amount b {
+  font: 700 26px/1.1 var(--mdos-font);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--mdos-widget-ink);
+}
+.mdos-wg--m .mdos-crd-amount b,
+.mdos-wg--l .mdos-crd-amount b {
+  font-size: 34px;
+}
+.mdos-crd-amount span {
+  font-size: 12px;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-crd-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--mdos-accent) var(--p), color-mix(in srgb, var(--mdos-widget-ink) 10%, transparent) var(--p));
+}
+
+/* ── API budget (ledger) widget ──────────────────────────────── */
+.mdos-lg-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mdos-lg-head em {
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-lg-total {
+  margin-top: 10px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+}
+.mdos-lg-total b {
+  font: 700 34px/1.05 var(--mdos-font);
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  color: var(--mdos-widget-ink);
+  white-space: nowrap;
+}
+.mdos-wg--s .mdos-lg-total b {
+  font-size: 26px;
+}
+.mdos-lg-total span {
+  font-size: 13px;
+  color: var(--mdos-widget-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.mdos-lg-cmp {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.mdos-wg--s .mdos-lg-cmp {
+  margin-top: auto;
+}
+.mdos-lg-chip {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font: 700 11.5px/1.4 var(--mdos-font);
+  background: var(--mdos-widget-fill);
+  color: var(--mdos-widget-ink);
+}
+.mdos-lg-chip.is-up {
+  background: color-mix(in srgb, #ff453a 16%, transparent);
+  color: #d63a30;
+}
+.mdos-lg-chip.is-down {
+  background: color-mix(in srgb, #30d158 18%, transparent);
+  color: #1f9e48;
+}
+.mdos-lg-cmp small {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-lg-facts {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 11.5px;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-lg-facts span {
+  display: inline-flex;
+  gap: 4px;
+  white-space: nowrap;
+}
+.mdos-lg-facts b {
+  color: var(--mdos-widget-ink);
+  font-variant-numeric: tabular-nums;
+}
+.mdos-lg-grid {
+  margin: 14px 0 12px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+/* Heat map: one square a day, Monday first, darker = more spent. */
+.mdos-lg-cal {
+  display: grid;
+  grid-template-columns: repeat(7, 15px);
+  grid-auto-rows: 15px;
+  gap: 3px;
+}
+.mdos-lg-cal i {
+  border-radius: 4px;
+  background: var(--mdos-widget-fill);
+}
+.mdos-lg-cal i.lv1 {
+  background: color-mix(in srgb, var(--mdos-accent) 26%, transparent);
+}
+.mdos-lg-cal i.lv2 {
+  background: color-mix(in srgb, var(--mdos-accent) 46%, transparent);
+}
+.mdos-lg-cal i.lv3 {
+  background: color-mix(in srgb, var(--mdos-accent) 70%, transparent);
+}
+.mdos-lg-cal i.lv4 {
+  background: var(--mdos-accent);
+}
+.mdos-lg-cal i.is-today {
+  outline: 2px solid var(--mdos-widget-ink);
+  outline-offset: 1px;
+}
+.mdos-lg-uses {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.mdos-lg-uses-title {
+  font: 700 10.5px/1.2 var(--mdos-font);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-lg-use {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+}
+.mdos-lg-use i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.mdos-lg-use span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--mdos-widget-ink);
+}
+.mdos-lg-use b {
+  font-variant-numeric: tabular-nums;
+  color: var(--mdos-widget-ink-2);
+  font-weight: 600;
+}
+
+/* ── API budget: other ways to view it (widget i → View) ─────── */
+.mdos-lg-total.is-small b {
+  font-size: 22px;
+}
+.mdos-lg-split {
+  flex: 1;
+  min-height: 0;
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+.mdos-lg-split.is-big {
+  margin: 14px 0 10px;
+}
+.mdos-lg-col {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+.mdos-lg-col .mdos-lg-total,
+.mdos-lg-col .mdos-lg-cmp {
+  margin-top: 0;
+}
+/* Heat map that grows with the widget instead of fixed 15px squares. */
+.mdos-lg-cal.is-fill {
+  flex: 1;
+  min-height: 0;
+  margin-top: 8px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  align-self: stretch;
+}
+.mdos-lg-split .mdos-lg-cal.is-fill {
+  margin-top: 0;
+  height: 100%;
+}
+.mdos-wg--l .mdos-lg-cal.is-fill {
+  margin-top: 14px;
+  gap: 5px;
+}
+.mdos-lg-legend {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-lg-legend i {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: var(--mdos-widget-fill);
+}
+.mdos-lg-legend i.lv1 { background: color-mix(in srgb, var(--mdos-accent) 26%, transparent); }
+.mdos-lg-legend i.lv2 { background: color-mix(in srgb, var(--mdos-accent) 46%, transparent); }
+.mdos-lg-legend i.lv3 { background: color-mix(in srgb, var(--mdos-accent) 70%, transparent); }
+.mdos-lg-legend i.lv4 { background: var(--mdos-accent); }
+/* Daily bars: one column a day, today outlined. */
+.mdos-lg-bars {
+  flex: 1;
+  min-height: 28px;
+  margin-top: 10px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+.mdos-lg-bars i {
+  flex: 1;
+  min-width: 0;
+  height: max(3px, var(--h));
+  border-radius: 3px 3px 1px 1px;
+  background: color-mix(in srgb, var(--mdos-accent) 72%, transparent);
+}
+.mdos-lg-bars i.is-zero {
+  background: var(--mdos-widget-fill);
+}
+.mdos-lg-bars i.is-today {
+  background: var(--mdos-accent);
+  box-shadow: 0 0 0 1.5px var(--mdos-widget-ink);
+}
+.mdos-wg--l .mdos-lg-bars {
+  margin: 14px 0 12px;
+  gap: 3px;
+}
+/* Top uses: a ring of the shares beside the list. */
+.mdos-lg-ring {
+  width: 92px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  -webkit-mask: radial-gradient(circle, transparent 54%, #000 55%);
+  mask: radial-gradient(circle, transparent 54%, #000 55%);
+}
+.mdos-lg-split.is-big .mdos-lg-ring {
+  width: 140px;
+}
+.mdos-wg--s .mdos-lg-uses {
+  margin-top: 10px;
+}
+/* Numbers: label over a bold value, two to a row. */
+.mdos-lg-tiles {
+  flex: 1;
+  min-height: 0;
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 8px;
+}
+/* Small widgets: the month would wrap the title; the tiles get tighter. */
+.mdos-wg--s .mdos-lg-head em {
+  display: none;
+}
+.mdos-wg--s .mdos-lg-tiles {
+  gap: 6px;
+}
+.mdos-wg--s .mdos-lg-tile {
+  padding: 4px 9px;
+  gap: 0;
+}
+.mdos-wg--s .mdos-lg-tiles {
+  grid-template-columns: 1fr;
+}
+.mdos-lg-tile {
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--mdos-widget-fill);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+.mdos-lg-tile small {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  color: var(--mdos-widget-ink-2);
+}
+.mdos-lg-tile b {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font: 700 16px/1.2 var(--mdos-font);
+  font-variant-numeric: tabular-nums;
+  color: var(--mdos-widget-ink);
+}
+.mdos-lg-tile:first-child b {
+  font-size: 19px;
+}
+
+/* Cells the credit extension filled with "null" (desktop.js hideNullCells). */
+#mac-credit-home [data-mdos-null] {
+  display: none !important;
+}
