@@ -1898,12 +1898,203 @@ html.mdos-tablet #mdos-sb .mdos-sb-apps .mdos-lp-app {
 }
 
 /* ── Widgets: Windows 11 widget cards ────────────────────────── */
+/* Mica-like cards with 8 px corners and a hairline edge, Segoe type with
+   semibold numbers, sentence-case titles, accent highlights, and no
+   wobble while arranging (a dashed accent outline instead). */
 
+html.mdos {
+  --mdos-widget-glass: rgba(32, 32, 32, 0.7);
+  --mdos-widget-ink: #ffffff;
+  --mdos-widget-ink-2: rgba(255, 255, 255, 0.72);
+  --mdos-widget-fill: rgba(255, 255, 255, 0.06);
+  --mdos-widget-fill-2: rgba(255, 255, 255, 0.1);
+  --mdos-widget-line: rgba(255, 255, 255, 0.08);
+  --mdos-widget-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+html.mdos[data-mdos-wallpaper-tone="light"] {
+  --mdos-widget-glass: rgba(249, 249, 249, 0.76);
+  --mdos-widget-ink: #1a1a1a;
+  --mdos-widget-ink-2: rgba(0, 0, 0, 0.6);
+  --mdos-widget-fill: rgba(0, 0, 0, 0.04);
+  --mdos-widget-fill-2: rgba(0, 0, 0, 0.07);
+  --mdos-widget-line: rgba(0, 0, 0, 0.07);
+  --mdos-widget-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+html.mdos-real-glass {
+  --mdos-widget-blur: blur(30px) saturate(125%);
+}
+html.mdos-no-blur {
+  --mdos-widget-glass: #2b2b2b;
+}
+html.mdos-no-blur[data-mdos-wallpaper-tone="light"] {
+  --mdos-widget-glass: #fbfbfb;
+}
+:is(html.mdos-desktop-home, html.mdos-touch-home) :is(.mari-home-hero, .mari-home-widget, .mari-home-professor-widget, [data-component="RecentChats"], #mac-credit-home .mlh-card),
 html.mdos .mdos-wg {
   border-radius: 8px !important;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.14),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
+}
+html.mdos .mdos-wg {
+  padding: 14px 16px;
+}
+.mdos-wg-label,
+:is(html.mdos-desktop-home, html.mdos-touch-home) :is(#mac-credit-home .mlh-card-title, .mari-home-widget h2, .mari-home-widget h3) {
+  font: 600 13px/1.3 var(--mdos-font) !important;
+  letter-spacing: 0;
+  text-transform: none;
+}
+html.mdos .mdos-wg-strong {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+html.mdos .mdos-wg-sub {
+  font-size: 12px;
+  font-weight: 400;
+}
+html.mdos .mdos-wg-time,
+html.mdos .mdos-wg-daynum,
+html.mdos .mdos-wg-dday {
+  font-family: "Segoe UI Variable Display", "Segoe UI Variable", "Segoe UI", var(--mdos-font);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+html.mdos .mdos-wg-weekday {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--w-accent);
+}
+html.mdos .mdos-cal-grid {
+  font-weight: 400;
+}
+html.mdos .mdos-cal-head {
+  font-weight: 600;
+}
+html.mdos .mdos-cal-grid .is-today {
+  background: var(--w-accent);
+  color: var(--w-on-accent);
+  font-weight: 600;
+}
+/* Widget styles: light / dark are Windows card colours; accent is flat. */
+html.mdos .mdos-wg.mdos-wg-style--light {
+  --mdos-widget-ink: #1a1a1a;
+  --mdos-widget-ink-2: rgba(0, 0, 0, 0.6);
+  background: #fbfbfb !important;
+}
+html.mdos .mdos-wg.mdos-wg-style--dark {
+  --mdos-widget-ink: #ffffff;
+  --mdos-widget-ink-2: rgba(255, 255, 255, 0.72);
+  background: #2b2b2b !important;
+}
+html.mdos .mdos-wg.mdos-wg-style--accent {
+  background: var(--w-accent) !important;
+}
+/* Note widget: Sticky Notes — a coloured header strip over a lighter page. */
+html.mdos .mdos-wg.mdos-wg--note {
+  --mdos-widget-ink: #1a1a1a;
+  padding: 0;
+  background: color-mix(in srgb, var(--note, #fff7d1) 45%, #fff) !important;
+}
+html.mdos .mdos-wg--note::before {
+  content: "";
+  display: block;
+  flex: none;
+  height: 10px;
+  background: var(--note, #ffe66e);
+}
+html.mdos .mdos-wg--note .mdos-wg-body {
+  padding: 10px 14px 14px;
+}
+html.mdos .mdos-wg-note {
+  font: 400 14px/1.5 var(--mdos-font);
+}
+/* Analog clock: a flat Fluent face. */
+html.mdos .mdos-analog {
+  background: var(--mdos-widget-fill-2);
+  box-shadow: inset 0 0 0 1px var(--mdos-widget-line);
+}
+html.mdos .mdos-analog i,
+html.mdos .mdos-analog b {
+  background: var(--mdos-widget-ink);
+}
+html.mdos .mdos-analog em {
+  background: var(--w-accent);
+}
+/* New chat launcher: Fluent icons on button cards. */
+html.mdos .mdos-launch {
+  box-sizing: border-box;
+  padding: 10px 4px 8px;
+  gap: 6px;
+  border-radius: 6px;
+  background: var(--mdos-widget-fill);
+  box-shadow: inset 0 0 0 1px var(--mdos-widget-line);
+  transition: background 83ms linear;
+}
+html.mdos .mdos-launch:hover {
+  background: var(--mdos-widget-fill-2);
+}
+html.mdos .mdos-launch .mdos-app-icon {
+  width: 32px;
+  height: 32px;
+  transition: transform 160ms var(--mdos-ease);
+}
+html.mdos .mdos-launch:hover .mdos-app-icon {
+  transform: none;
+}
+html.mdos .mdos-launch:active .mdos-app-icon {
+  transform: scale(0.9);
+  filter: none;
+}
+html.mdos .mdos-launch:focus-visible {
+  outline: 2px solid var(--mdos-widget-ink);
+  outline-offset: -2px;
+}
+html.mdos .mdos-launch-label {
+  font: 400 12px/1.2 var(--mdos-font);
+}
+html.mdos .mdos-wg--launcher.mdos-wg--s .mdos-launch .mdos-app-icon {
+  width: 24px;
+  height: 24px;
+}
+html.mdos .mdos-wg--launcher.mdos-wg--l .mdos-launch {
+  padding: 10px 14px;
+  justify-content: flex-start;
+}
+html.mdos .mdos-wg--launcher.mdos-wg--l .mdos-launch-label {
+  font-size: 14px;
+}
+html.mdos .mdos-wg-empty {
+  font-weight: 400;
+}
+/* Arranging widgets: no wobble — a dashed accent outline and square badges. */
+html.mdos-edit .mdos-wg:not(.is-sample) {
+  animation: none !important;
+  outline: 2px dashed color-mix(in srgb, var(--w-accent) 80%, transparent);
+  outline-offset: 2px;
+}
+html.mdos .mdos-wg-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  font: 400 15px/1 var(--mdos-font);
+  color: var(--w-fg);
+  background: var(--w-acrylic-solid);
+  box-shadow: var(--w-shadow-flyout);
+}
+html.mdos .mdos-wg-edit {
+  font: 400 13px/1 var(--mdos-font);
+}
+html.mdos .mdos-wg.is-dragging {
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.32) !important;
+}
+html.mdos .mdos-gallery-item:focus-visible {
+  outline-color: var(--w-accent);
+  border-radius: 6px;
+}
+html.mdos .mdos-gallery-item:hover .mdos-wg.is-sample {
+  box-shadow: 0 0 0 2px var(--w-accent), var(--mdos-widget-shadow) !important;
 }
 /* The taskbar already has Search; the tray keeps Quick Settings only. */
 html.mdos-tablet #mdos-menubar .mdos-mb-icon:not([data-mdos-cc-toggle]) {

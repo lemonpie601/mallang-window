@@ -3385,7 +3385,7 @@ function widgetParts(w) {
                   if (!editMode) startChat(n);
                 },
               },
-              h("span", { class: "mdos-app-icon", style: `--g1:${m.g[0]};--g2:${m.g[1]}`, svg: svg(m.icon) }),
+              appIcon({ id: `launch:${n}`, icon: m.icon, g: m.g }),
               // Marinara's own (localized) label when Home is mounted.
               h("span", { class: "mdos-launch-label", text: heroButton(n)?.textContent.trim() || L.modes[n] }),
             ),
