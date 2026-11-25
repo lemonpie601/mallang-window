@@ -599,7 +599,7 @@ html.mdos .mdos-menu-sep {
 
 /* ── Start ───────────────────────────────────────────────────── */
 
-html.mdos-desktop #mdos-launchpad {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) #mdos-launchpad {
   display: block;
   padding: 0;
   overflow: hidden;
@@ -610,10 +610,10 @@ html.mdos-desktop #mdos-launchpad {
   opacity: 0;
   transition: opacity 167ms linear;
 }
-html.mdos-desktop #mdos-launchpad.is-open {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) #mdos-launchpad.is-open {
   opacity: 1;
 }
-html.mdos-desktop .mdos-start {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-start {
   position: absolute;
   left: 50%;
   bottom: calc(var(--w-tb-h) + 12px);
@@ -634,13 +634,13 @@ html.mdos-desktop .mdos-start {
   transform: translate(-50%, 40px);
   transition: transform 250ms var(--mdos-ease);
 }
-html.mdos-desktop.mdos-dock-autohide .mdos-start {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch).mdos-dock-autohide .mdos-start {
   bottom: 12px;
 }
-html.mdos-desktop #mdos-launchpad.is-open .mdos-start {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) #mdos-launchpad.is-open .mdos-start {
   transform: translate(-50%, 0);
 }
-html.mdos-desktop .mdos-lp-search {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-search {
   flex: none;
   width: 100%;
   height: 36px;
@@ -657,17 +657,17 @@ html.mdos-desktop .mdos-lp-search {
   border: 1px solid var(--w-ctl-stroke);
   border-bottom-color: var(--w-ctl-stroke-b);
 }
-html.mdos-desktop .mdos-lp-search::placeholder {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-search::placeholder {
   color: var(--w-fg-2);
 }
-html.mdos-desktop .mdos-lp-search:focus {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-search:focus {
   background-color: var(--mdos-win-bg);
   border-bottom: 2px solid var(--w-accent);
 }
 .mdos-start-head {
   display: none;
 }
-html.mdos-desktop .mdos-start-head {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-start-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -679,7 +679,7 @@ html.mdos-desktop .mdos-start-head {
   font-size: 14px;
   font-weight: 600;
 }
-html.mdos-desktop .mdos-lp-grid {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-grid {
   flex: 1;
   min-height: 0;
   width: auto;
@@ -690,35 +690,35 @@ html.mdos-desktop .mdos-lp-grid {
   gap: 4px;
   scrollbar-width: thin;
 }
-html.mdos-desktop .mdos-lp-app {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-app {
   gap: 8px;
   padding: 12px 4px 10px;
   border-radius: 4px;
   animation: w-rise 250ms var(--mdos-ease) both;
   animation-delay: calc(min(var(--i), 24) * 8ms);
 }
-html.mdos-desktop .mdos-lp-app:hover {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-app:hover {
   background: var(--w-hover);
 }
-html.mdos-desktop .mdos-lp-app:active {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-app:active {
   background: var(--w-press);
 }
-html.mdos-desktop .mdos-lp-app .mdos-app-icon {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-app .mdos-app-icon {
   width: 36px;
   height: 36px;
   border-radius: 22%;
   box-shadow: none;
 }
-html.mdos-desktop .mdos-lp-app:hover .mdos-app-icon,
-html.mdos-desktop .mdos-lp-app:focus-visible .mdos-app-icon {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-app:hover .mdos-app-icon,
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-app:focus-visible .mdos-app-icon {
   transform: none;
   outline: none;
 }
-html.mdos-desktop .mdos-lp-app:focus-visible {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-app:focus-visible {
   outline: 2px solid var(--w-fg);
   outline-offset: -2px;
 }
-html.mdos-desktop .mdos-lp-label {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-label {
   max-width: 100%;
   font-size: 12px;
   color: var(--w-fg);
@@ -727,7 +727,7 @@ html.mdos-desktop .mdos-lp-label {
 .mdos-start-foot {
   display: none;
 }
-html.mdos-desktop .mdos-start-foot {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-start-foot {
   flex: none;
   display: flex;
   align-items: center;
@@ -787,13 +787,13 @@ html.mdos-desktop .mdos-start-foot {
   height: 16px;
 }
 /* Phones and tablets: the panel melts into their full-screen app list. */
-html.mdos-touch .mdos-start {
+html.mdos-touch:not(.mdos-tablet) .mdos-start {
   display: contents;
 }
 
 /* ── Quick Settings ──────────────────────────────────────────── */
 
-html.mdos-desktop #mdos-cc {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) #mdos-cc {
   top: auto;
   right: 12px;
   bottom: calc(var(--w-tb-h) + 12px);
@@ -811,10 +811,10 @@ html.mdos-desktop #mdos-cc {
     opacity 167ms linear,
     transform 250ms var(--mdos-ease);
 }
-html.mdos-desktop.mdos-dock-autohide #mdos-cc {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch).mdos-dock-autohide #mdos-cc {
   bottom: 12px;
 }
-html.mdos-desktop #mdos-cc.is-open {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) #mdos-cc.is-open {
   transform: none;
 }
 html.mdos #mdos-cc {
@@ -1149,25 +1149,25 @@ html.mdos-desktop .mdos-mb-clock.is-open {
 /* ── Start: Recommended ──────────────────────────────────────── */
 
 /* Pinned shows three rows at a time and scrolls by rows, like Start's pages. */
-html.mdos-desktop .mdos-lp-grid {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-grid {
   flex: 0 0 auto;
   grid-auto-rows: 82px;
   max-height: calc(82px * 3 + 4px * 2);
   scroll-snap-type: y mandatory;
   padding-bottom: 0;
 }
-html.mdos-desktop .mdos-lp-app {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-lp-app {
   scroll-snap-align: start;
   box-sizing: border-box;
   height: 82px;
 }
-html.mdos-desktop .mdos-start-head--rec {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-start-head--rec {
   margin-top: 8px;
 }
 .mdos-start-rec {
   display: none;
 }
-html.mdos-desktop .mdos-start-rec {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-start-rec {
   flex: 1 1 0;
   min-height: 0;
   display: grid;
@@ -1177,7 +1177,7 @@ html.mdos-desktop .mdos-start-rec {
   margin: 0 8px 16px;
   overflow-y: auto;
 }
-html.mdos-desktop .mdos-start-rec--empty {
+html:is(.mdos-desktop, .mdos-tablet.mdos-touch) .mdos-start-rec--empty {
   display: block;
   padding: 8px 16px;
   color: var(--w-fg-2);
@@ -1489,4 +1489,423 @@ html.mdos-embed[data-mdos-embed-kind="chat"] [data-mdos-win="panel"],
 html.mdos-embed[data-mdos-embed-kind="main"] :is([data-mdos-win="chats"], [data-mdos-win="panel"]) {
   visibility: hidden !important;
   pointer-events: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Phones and tablets — Windows, not iPhone/iPad.
+
+   Phone  (html.mdos-touch:not(.mdos-tablet)): a Start screen of live
+          tiles, a navigation bar (Start · Search · Quick Settings), the
+          app list as a list, and a small Start pill inside apps.
+   Tablet (html.mdos-tablet): Windows 11 tablet mode — a full-width
+          taskbar on the home screen, the same Start / Quick Settings /
+          calendar flyouts as the desktop, apps on an acrylic card.
+   These rules out-rank touch.css (it loads after this file).
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Phone: Start screen of live tiles ───────────────────────── */
+
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-apps {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-flow: row dense;
+  gap: 6px;
+}
+/* The first two apps get medium (2 × 2) tiles, every seventh a wide one. */
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-cell:nth-child(-n + 2) {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-cell:nth-child(7n + 3) {
+  grid-column: span 2;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-cell {
+  min-width: 0;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-lp-app {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  aspect-ratio: 1;
+  gap: 0;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-cell:nth-child(7n + 3) .mdos-lp-app {
+  aspect-ratio: auto;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-app-icon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--g1) 55%, var(--g2)), var(--g2));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  color: #fff;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-app-icon.has-host-image {
+  background: #fff;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-app-icon > .mdos-fi {
+  display: none;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-app-icon > svg:not(.mdos-fi) {
+  display: block;
+  width: 38%;
+  height: 38%;
+  margin-bottom: 10%;
+  filter: none;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-cell:nth-child(-n + 2) .mdos-app-icon > svg:not(.mdos-fi) {
+  width: 30%;
+  height: 30%;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-lp-label {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 6px;
+  max-width: none;
+  font-size: 11.5px;
+  text-align: left;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-lp-app:active .mdos-app-icon {
+  filter: none;
+  transform: scale(0.96);
+}
+/* Tiles in edit mode lean back a little, like rearranging Start. */
+html.mdos-touch.mdos-edit:not(.mdos-tablet) #mdos-sb .mdos-lp-app {
+  transform: scale(0.92);
+  opacity: 0.9;
+}
+
+/* Phone: no floating Dock; the navigation bar replaces it. */
+html.mdos-touch:not(.mdos-tablet) #mdos-dock {
+  display: none !important;
+}
+#mdos-navbar {
+  display: none;
+}
+html.mdos-touch:not(.mdos-tablet).mdos-touch-home:not(.mdos-touch-sheet, .mdos-touch-app) #mdos-navbar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 8200;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: calc(52px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-sizing: border-box;
+  background: var(--w-taskbar);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  box-shadow: inset 0 1px 0 var(--w-stroke);
+  font-family: var(--mdos-font);
+}
+.mdos-nav-btn {
+  all: unset;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 44px;
+  border-radius: 6px;
+  color: var(--w-fg);
+  -webkit-tap-highlight-color: transparent;
+}
+.mdos-nav-btn:active {
+  background: var(--w-hover);
+}
+.mdos-nav-btn svg {
+  width: 22px;
+  height: 22px;
+}
+.mdos-nav-start svg {
+  fill: var(--w-start-2);
+}
+.mdos-nav-start svg rect:nth-child(1) {
+  fill: var(--w-start-1);
+}
+html.mdos-touch:not(.mdos-tablet).mdos-touch-home [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px) !important;
+}
+
+/* Inside apps: a small Start pill instead of the iPhone home bar. */
+html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet, .mdos-touch-app) #mdos-homebar {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--w-acrylic);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px var(--w-stroke);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+}
+#mdos-homebar::after {
+  display: none;
+}
+#mdos-homebar svg {
+  width: 14px;
+  height: 14px;
+  fill: var(--w-start-2);
+}
+#mdos-homebar svg rect:nth-child(1) {
+  fill: var(--w-start-1);
+}
+html.mdos-touch:is(:not(.mdos-touch-home), .mdos-touch-sheet) .chat-input-container {
+  padding-bottom: max(34px, calc(env(safe-area-inset-bottom, 0px) + 18px)) !important;
+}
+
+/* Phone: the app list is a list (icon square + name). */
+html.mdos-touch:not(.mdos-tablet) #mdos-launchpad {
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px 24px;
+  align-items: stretch;
+  background: var(--w-acrylic-solid);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html.mdos-touch:not(.mdos-tablet) .mdos-lp-search {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px 0 40px;
+  border-radius: 6px;
+  color: var(--w-fg);
+  text-align: left;
+  font-size: 15px;
+  background-color: var(--w-ctl);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='m20 20-4.8-4.8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 13px 50%;
+  background-size: 17px;
+  border: 1px solid var(--w-ctl-stroke);
+  border-bottom: 2px solid var(--w-accent);
+}
+html.mdos-touch:not(.mdos-tablet) .mdos-lp-search::placeholder {
+  color: var(--w-fg-2);
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-launchpad .mdos-lp-grid {
+  width: 100%;
+  margin-top: 16px;
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-launchpad .mdos-lp-app {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 6px 4px;
+  border-radius: 4px;
+  animation: w-rise 200ms var(--mdos-ease) both;
+  animation-delay: calc(min(var(--i), 20) * 12ms);
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-launchpad .mdos-lp-app:active {
+  background: var(--w-hover);
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-launchpad .mdos-app-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--g1) 55%, var(--g2)), var(--g2));
+  color: #fff;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-launchpad .mdos-app-icon > .mdos-fi {
+  display: none;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-launchpad .mdos-app-icon > svg:not(.mdos-fi) {
+  display: block;
+  width: 55%;
+  height: 55%;
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-launchpad .mdos-lp-label {
+  max-width: none;
+  font-size: 15px;
+  color: var(--w-fg);
+  text-shadow: none;
+  text-align: left;
+}
+
+/* Phone: Quick Settings is a sheet from the bottom, Windows-styled. */
+html.mdos-touch:not(.mdos-tablet) #mdos-cc {
+  border-radius: 8px;
+  color: var(--w-fg);
+  background: var(--w-acrylic);
+  border: 1px solid var(--w-stroke);
+  box-shadow: var(--w-shadow-flyout);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 60px);
+}
+
+/* ── Tablet: Windows 11 tablet mode ──────────────────────────── */
+
+/* Home screen: a full-width taskbar — Start, Search and apps centred,
+   tray, clock and Quick Settings on the right. Inside apps it steps away
+   (the Start pill takes you back). */
+html.mdos-tablet.mdos-touch-home:not(.mdos-touch-sheet, .mdos-touch-app) #mdos-menubar {
+  display: flex;
+  position: fixed;
+  inset: auto 0 0 0;
+  height: calc(56px + env(safe-area-inset-bottom, 0px));
+  padding: 0 10px env(safe-area-inset-bottom, 0px);
+  box-sizing: border-box;
+  justify-content: flex-end;
+  color: var(--w-fg);
+  font-size: 12px;
+  background: var(--w-taskbar);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+  box-shadow: inset 0 1px 0 var(--w-stroke);
+}
+html.mdos-tablet #mdos-menubar .mdos-mb-left,
+html.mdos-tablet #mdos-menubar .mdos-mb-locker,
+html.mdos-tablet #mdos-menubar .mdos-mb-showdesk {
+  display: none;
+}
+html.mdos-tablet #mdos-menubar .mdos-mb-item {
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 6px;
+  text-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+}
+html.mdos-tablet #mdos-menubar .mdos-mb-item:active,
+html.mdos-tablet #mdos-menubar .mdos-mb-item.is-open {
+  background: var(--w-hover);
+}
+html.mdos-tablet #mdos-menubar .mdos-mb-icon svg {
+  width: 18px;
+  height: 18px;
+}
+html.mdos-tablet #mdos-menubar .mdos-mb-clock {
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  line-height: 16px;
+  font-weight: 400;
+}
+html.mdos-tablet.mdos-touch #mdos-dock {
+  bottom: env(safe-area-inset-bottom, 0px);
+  z-index: 8210;
+}
+html.mdos-tablet.mdos-touch .mdos-dock-inner {
+  align-items: center;
+  gap: 8px;
+  height: 56px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html.mdos-tablet.mdos-touch .mdos-dock-item {
+  display: grid;
+  place-items: center;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 6px;
+}
+html.mdos-tablet.mdos-touch .mdos-dock-item:active {
+  background: var(--w-hover);
+}
+html.mdos-tablet.mdos-touch .mdos-dock-item .mdos-app-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 22%;
+  box-shadow: none;
+}
+html.mdos-tablet.mdos-touch .mdos-dock-item--launchpad .mdos-app-icon:not(.has-image),
+html.mdos-tablet.mdos-touch .mdos-dock-item--search .mdos-app-icon:not(.has-image) {
+  background: none;
+  border-radius: 0;
+  color: var(--w-fg);
+}
+html.mdos-tablet.mdos-touch .mdos-dock-item--launchpad .mdos-app-icon > svg:not(:first-child) {
+  display: none;
+}
+html.mdos-tablet.mdos-touch .mdos-dock-item--launchpad .mdos-app-icon:not(.has-image) > svg:first-child {
+  display: block;
+  width: 80%;
+  height: 80%;
+  fill: var(--w-start-2);
+}
+html.mdos-tablet.mdos-touch .mdos-dock-item--launchpad .mdos-app-icon:not(.has-image) > svg:first-child rect:nth-child(1) {
+  fill: var(--w-start-1);
+}
+/* Flyouts sit above the taller tablet taskbar. */
+html.mdos-tablet.mdos-touch .mdos-start,
+html.mdos-tablet.mdos-touch #mdos-cc,
+html.mdos-tablet.mdos-touch #mdos-cal {
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 12px);
+}
+html.mdos-tablet.mdos-touch #mdos-launchpad {
+  background: rgba(0, 0, 0, 0.12);
+}
+html.mdos-tablet.mdos-touch .mdos-lp-app {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Tablet home: the apps sit on an acrylic card, Fluent icons, dark/light ink. */
+html.mdos-tablet #mdos-sb .mdos-sb-apps {
+  padding: 24px 20px;
+  border-radius: 8px;
+  gap: 18px 8px;
+  background: var(--w-acrylic);
+  border: 1px solid var(--w-stroke);
+  box-shadow: var(--w-shadow-flyout);
+  backdrop-filter: var(--mdos-blur);
+  -webkit-backdrop-filter: var(--mdos-blur);
+}
+html.mdos-tablet #mdos-sb .mdos-sb-apps .mdos-app-icon {
+  width: 48px;
+  height: 48px;
+}
+html.mdos-tablet #mdos-sb .mdos-sb-apps .mdos-lp-app {
+  padding: 10px 4px;
+  border-radius: 6px;
+}
+html.mdos-tablet #mdos-sb .mdos-sb-apps .mdos-lp-app:active {
+  background: var(--w-hover);
+}
+html.mdos-tablet #mdos-sb .mdos-sb-apps .mdos-lp-label {
+  font-size: 12.5px;
+  color: var(--w-fg);
+  text-shadow: none;
+}
+html.mdos-tablet.mdos-touch-home [data-component="HomeBrowserHub.HomePage"] > div.relative {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px) !important;
+}
+
+/* Touch buttons over apps (back / chats) in Fluent style. */
+html.mdos-touch .mdos-tctl-btn {
+  border-radius: 6px;
+  background: var(--w-acrylic);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px var(--w-stroke);
+}
+
+/* Tablet home grid: tiles size to their content (not Start's fixed rows). */
+html.mdos-tablet #mdos-sb .mdos-sb-apps .mdos-lp-app {
+  height: auto;
+  scroll-snap-align: none;
+  animation: none;
+}
+
+/* ── Widgets: Windows 11 widget cards ────────────────────────── */
+
+html.mdos .mdos-wg {
+  border-radius: 8px !important;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12) !important;
+}
+/* The taskbar already has Search; the tray keeps Quick Settings only. */
+html.mdos-tablet #mdos-menubar .mdos-mb-icon:not([data-mdos-cc-toggle]) {
+  display: none;
 }

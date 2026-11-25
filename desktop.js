@@ -2519,7 +2519,8 @@ function recentChats() {
     }))
     .filter((c) => c.chatId);
 }
-const TOUCH_DOCK = ["mode:conversation", "mode:roleplay", "mode:game", "settings"];
+// Touch: the tablet taskbar shows Start and Search, then these apps.
+const TOUCH_DOCK = ["launchpad", "search", "mode:conversation", "mode:roleplay", "mode:game", "settings"];
 
 function dockItem(app) {
   const label = h("span", { class: "mdos-dock-label", text: appLabel(app) });
@@ -6334,6 +6335,16 @@ const homebar = h("button", {
   onclick: () => goHome(),
 });
 ui.append(homebar);
+homebar.innerHTML = START_GLYPH;
+// Phones: a Windows-style navigation bar along the bottom of the Start screen.
+const navbar = h(
+  "nav",
+  { id: "mdos-navbar", "aria-label": L.launchpad },
+  h("button", { type: "button", class: "mdos-nav-btn mdos-nav-start", "aria-label": L.launchpad, svg: START_GLYPH, onclick: () => toggleLaunchpad() }),
+  h("button", { type: "button", class: "mdos-nav-btn", "aria-label": L.search, svg: svg("search"), onclick: () => openSpotlight() }),
+  h("button", { type: "button", class: "mdos-nav-btn", "aria-label": L.controlCenter, "data-mdos-cc-toggle": "", svg: svg("sliders"), onclick: () => toggleCC() }),
+);
+ui.append(navbar);
 // Swipe up on the home indicator also goes home.
 let swipeStart = null;
 on(homebar, "pointerdown", (e) => (swipeStart = e.clientY));
