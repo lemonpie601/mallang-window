@@ -86,7 +86,7 @@ const L = KO
       customize: "꾸미기",
       iconStyle: "아이콘 스타일",
       iconShape: "아이콘 모양",
-      iconStyles: { gradient: "그라데이션", glass: "유리", pastel: "파스텔", tinted: "틴트", dark: "다크" },
+      iconStyles: { fluent: "Fluent (Windows 11)", gradient: "그라데이션", glass: "유리", pastel: "파스텔", tinted: "틴트", dark: "다크" },
       iconShapes: { squircle: "둥근 사각", circle: "동그라미", rounded: "각진 사각" },
       cursor: "마우스 포인터",
       cursorSize: "포인터 크기",
@@ -440,7 +440,7 @@ const L = KO
       customize: "Customize",
       iconStyle: "Icon style",
       iconShape: "Icon shape",
-      iconStyles: { gradient: "Gradient", glass: "Glass", pastel: "Pastel", tinted: "Tinted", dark: "Dark" },
+      iconStyles: { fluent: "Fluent (Windows 11)", gradient: "Gradient", glass: "Glass", pastel: "Pastel", tinted: "Tinted", dark: "Dark" },
       iconShapes: { squircle: "Squircle", circle: "Circle", rounded: "Rounded" },
       cursor: "Mouse pointer",
       cursorSize: "Pointer size",
@@ -875,6 +875,38 @@ const ICONS = {
   back: '<path d="M15 5l-7 7 7 7"/>',
   reader: '<path d="M6 3.5h8.5L19 8v12.5H6z"/><path d="M9.5 11h6M9.5 14.5h6M9.5 18h4"/>',
 };
+// Windows 11: full-colour Fluent-style app icons (no tile behind them).
+// Shapes fill from the app's two colours (--g1 light, --g2 deep), so the
+// icon editor's colour choices still apply. Classes: a = --g1, b = --g2,
+// w = white, l = soft white highlight, d = soft shade, s/t = strokes.
+const FLUENT = {
+  home: '<path class="b" d="M16 3.2 29.4 14a1.3 1.3 0 0 1-1.7 2L16 6.6 4.3 16a1.3 1.3 0 1 1-1.7-2z"/><path class="a" d="M6.5 15.3 16 7.7l9.5 7.6V26a2.5 2.5 0 0 1-2.5 2.5H9A2.5 2.5 0 0 1 6.5 26z"/><path class="l" d="M6.5 15.3 16 7.7l9.5 7.6v2.2L16 9.9l-9.5 7.6z"/><rect class="w" x="13" y="19" width="6" height="9.5" rx="1.4"/>',
+  chat: '<path class="b" d="M16 5.5c6.9 0 12.5 4.6 12.5 10.3S22.9 26 16 26c-1.2 0-2.4-.1-3.5-.4L6 28.6l1.4-5.4C5 21.3 3.5 18.7 3.5 15.8 3.5 10.1 9.1 5.5 16 5.5z"/><path class="a" d="M16 4c6.9 0 12.5 4.6 12.5 10.3S22.9 24.5 16 24.5c-1.2 0-2.4-.1-3.5-.4L6 27.1l1.4-5.4C5 19.8 3.5 17.2 3.5 14.3 3.5 8.6 9.1 4 16 4z"/><circle class="w" cx="10.6" cy="14.3" r="1.9"/><circle class="w" cx="16" cy="14.3" r="1.9"/><circle class="w" cx="21.4" cy="14.3" r="1.9"/>',
+  roleplay: '<path class="b" d="M3 7.5c4.4-1.6 8.8-1.2 13 1.2 4.2-2.4 8.6-2.8 13-1.2V27c-4.4-1.4-8.8-1-13 1.4C11.8 26 7.4 25.6 3 27z"/><path class="a" d="M4.5 6c3.9-1.3 7.7-.9 11.5 1.3v18.4c-3.8-2.1-7.6-2.5-11.5-1.3z"/><path class="l" d="M16 7.3c3.8-2.2 7.6-2.6 11.5-1.3v18.4c-3.9-1.2-7.7-.8-11.5 1.3z"/><path class="t" d="M7.5 11.2c1.9-.4 3.8-.2 5.6.6M7.5 15.2c1.9-.4 3.8-.2 5.6.6M18.9 11.8c1.8-.8 3.7-1 5.6-.6M18.9 15.8c1.8-.8 3.7-1 5.6-.6"/>',
+  game: '<path class="b" d="M9.5 10.5h13a7 7 0 0 1 6.9 8.2l-.7 4a3.9 3.9 0 0 1-6.6 2.1l-2.6-2.6h-7l-2.6 2.6a3.9 3.9 0 0 1-6.6-2.1l-.7-4a7 7 0 0 1 6.9-8.2z"/><path class="a" d="M9.5 9h13a7 7 0 0 1 6.9 8.2l-.7 4a3.9 3.9 0 0 1-6.6 2.1l-2.6-2.6h-7l-2.6 2.6a3.9 3.9 0 0 1-6.6-2.1l-.7-4A7 7 0 0 1 9.5 9z"/><rect class="w" x="7.2" y="14.6" width="6.6" height="2.2" rx="1.1"/><rect class="w" x="9.4" y="12.4" width="2.2" height="6.6" rx="1.1"/><circle class="w" cx="21.5" cy="13.6" r="1.6"/><circle class="w" cx="24.3" cy="16.9" r="1.6"/>',
+  characters: '<circle class="b" cx="22" cy="10.5" r="4.2"/><path class="b" d="M14.8 20.2c1.2-3.1 4-4.7 7.2-4.7 4.2 0 7.3 2.8 7.5 7.3a1.6 1.6 0 0 1-1.6 1.7H17z"/><circle class="a" cx="12" cy="10" r="5.3"/><path class="a" d="M12 16.8c5.2 0 9.2 3.4 9.5 9a1.7 1.7 0 0 1-1.7 1.8H4.2a1.7 1.7 0 0 1-1.7-1.8c.3-5.6 4.3-9 9.5-9z"/><path class="l" d="M8.2 8.2A5.3 5.3 0 0 1 16.6 7a6 6 0 0 0-8.4 1.2z"/>',
+  personas: '<path class="b" d="M3.5 8.2c4.2 1.7 8.4 1.7 12.5 0 4.1 1.7 8.3 1.7 12.5 0v7c0 7.6-5.6 13.4-12.5 13.4S3.5 22.8 3.5 15.2z"/><path class="a" d="M3.5 6.7c4.2 1.7 8.4 1.7 12.5 0 4.1 1.7 8.3 1.7 12.5 0v7C28.5 21.3 22.9 27 16 27S3.5 21.3 3.5 13.7z"/><path class="w" d="M7.5 13.6c1.3-1.2 3.4-1.2 4.7 0-1.3 1-3.4 1-4.7 0zM19.8 13.6c1.3-1.2 3.4-1.2 4.7 0-1.3 1-3.4 1-4.7 0z"/><path class="t" d="M12.4 19.6c2.3 1.5 4.9 1.5 7.2 0"/>',
+  lorebooks: '<path class="w2" d="M8 24.5h18v4H9.6A1.6 1.6 0 0 1 8 26.9z"/><path class="a" d="M9.5 3.5H26a1.5 1.5 0 0 1 1.5 1.5v19.5H9.5A3.5 3.5 0 0 0 6 28V7a3.5 3.5 0 0 1 3.5-3.5z"/><path class="b" d="M9.5 3.5h2.5v21H9.5A3.5 3.5 0 0 0 6 28V7a3.5 3.5 0 0 1 3.5-3.5z"/><rect class="w" x="15.5" y="8.5" width="8.5" height="2.2" rx="1.1"/><rect class="l" x="15.5" y="12.8" width="6" height="2.2" rx="1.1"/><path class="b" d="M6 27.5A3.5 3.5 0 0 1 9.5 24h18v1.5H9.6A2 2 0 0 0 9.6 28.5h17.9V30H9.5A3.5 3.5 0 0 1 6 27.5z"/>',
+  presets: '<path class="a" d="M8 3h11l7 7v17a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path class="b" d="M19 3l7 7h-5a2 2 0 0 1-2-2z"/><rect class="w" x="10" y="15" width="12" height="2.2" rx="1.1"/><rect class="l" x="10" y="19.6" width="12" height="2.2" rx="1.1"/><rect class="l" x="10" y="24.2" width="7" height="2.2" rx="1.1"/>',
+  connections: '<path class="s2" d="M13.6 18.4a5.4 5.4 0 0 0 7.6 0l4.3-4.3a5.4 5.4 0 0 0-7.6-7.6l-1.4 1.4"/><path class="s1" d="M18.4 13.6a5.4 5.4 0 0 0-7.6 0l-4.3 4.3a5.4 5.4 0 0 0 7.6 7.6l1.4-1.4"/>',
+  agents: '<path class="a" d="M13.5 3.5c.4 0 .8.3.9.7l1.9 6.1 6.1 1.9a1 1 0 0 1 0 1.8l-6.1 1.9-1.9 6.1a1 1 0 0 1-1.8 0l-1.9-6.1-6.1-1.9a1 1 0 0 1 0-1.8l6.1-1.9 1.9-6.1c.1-.4.5-.7.9-.7z"/><path class="l" d="M13.5 3.5c.4 0 .8.3.9.7l1.9 6.1-2.8 2.8z"/><path class="b" d="M23.5 18.5c.3 0 .6.2.7.5l.9 2.8 2.8.9a.7.7 0 0 1 0 1.4l-2.8.9-.9 2.8a.7.7 0 0 1-1.4 0l-.9-2.8-2.8-.9a.7.7 0 0 1 0-1.4l2.8-.9.9-2.8c.1-.3.4-.5.7-.5z"/>',
+  settings: '<path class="b" d="M13.9 3.6a2.1 2.1 0 0 1 4.2 0l.3 2.2 1.9.8 1.8-1.3a2.1 2.1 0 0 1 3 3l-1.3 1.8.8 1.9 2.2.3a2.1 2.1 0 0 1 0 4.2l-2.2.3-.8 1.9 1.3 1.8a2.1 2.1 0 0 1-3 3l-1.8-1.3-1.9.8-.3 2.2a2.1 2.1 0 0 1-4.2 0l-.3-2.2-1.9-.8-1.8 1.3a2.1 2.1 0 0 1-3-3l1.3-1.8-.8-1.9-2.2-.3a2.1 2.1 0 0 1 0-4.2l2.2-.3.8-1.9-1.3-1.8a2.1 2.1 0 0 1 3-3l1.8 1.3 1.9-.8z"/><circle class="a" cx="16" cy="16" r="7.6"/><circle class="w" cx="16" cy="16" r="3.4"/>',
+  search: '<path class="s2" d="M20.4 20.4 27 27"/><circle class="s1" cx="13.5" cy="13.5" r="8.5"/><path class="l" d="M8.6 11.4a5.6 5.6 0 0 1 4-3.6"/>',
+  launchpad: '<rect class="a" x="4" y="4" width="11" height="11" rx="2"/><rect class="b" x="17" y="4" width="11" height="11" rx="2"/><rect class="b" x="4" y="17" width="11" height="11" rx="2"/><rect class="a" x="17" y="17" width="11" height="11" rx="2"/>',
+  wallpaper: '<rect class="a" x="3" y="5" width="26" height="22" rx="3"/><path class="b" d="M3 22.5 11.5 14l7 7 3.5-3.5 7 7V24a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z"/><circle class="w" cx="21.5" cy="11" r="2.6"/>',
+  classic: '<rect class="a" x="3" y="5" width="26" height="22" rx="3"/><path class="b" d="M6 5h20a3 3 0 0 1 3 3v3H3V8a3 3 0 0 1 3-3z"/><rect class="l" x="6" y="14" width="6" height="10" rx="1"/><rect class="w" x="14" y="14" width="12" height="10" rx="1"/>',
+  reload: '<path class="s1" d="M26 15.5A10 10 0 1 1 22.6 8"/><path class="b" d="M27.3 4.6v8.1a1.3 1.3 0 0 1-1.3 1.3h-8.1a1.3 1.3 0 0 1-.9-2.2l8.1-8.1a1.3 1.3 0 0 1 2.2.9z"/>',
+  info: '<circle class="b" cx="16" cy="17" r="12.5"/><circle class="a" cx="16" cy="16" r="12.5"/><rect class="w" x="14.4" y="13.8" width="3.2" height="9.2" rx="1.6"/><circle class="w" cx="16" cy="10" r="2"/>',
+  sliders: '<rect class="a" x="3.5" y="3.5" width="25" height="25" rx="6"/><rect class="l" x="8" y="9.8" width="16" height="2.4" rx="1.2"/><rect class="l" x="8" y="19.8" width="16" height="2.4" rx="1.2"/><circle class="w" cx="19.5" cy="11" r="3.3"/><circle class="w" cx="12.5" cy="21" r="3.3"/><circle class="b" cx="19.5" cy="11" r="1.5"/><circle class="b" cx="12.5" cy="21" r="1.5"/>',
+  widgets: '<rect class="a" x="3.5" y="3.5" width="11" height="11" rx="2.6"/><rect class="b" x="17.5" y="3.5" width="11" height="11" rx="2.6"/><rect class="b" x="3.5" y="17.5" width="25" height="11" rx="2.6"/><rect class="l" x="7" y="21" width="10" height="2.2" rx="1.1"/>',
+  brush: '<path class="b" d="M19.6 4.4a2 2 0 0 1 2.8 0l5.2 5.2a2 2 0 0 1 0 2.8l-8.9 8.9-8-8z"/><path class="l" d="M19.6 4.4a2 2 0 0 1 2.8 0l1.5 1.5-10.2 10.2-3-3z"/><path class="a" d="M9.8 14.2l8 8-1.6 1.6a3 3 0 0 1-2.8.8l-1.6-.4c-.7 2.6-3 4.3-5.8 4.3H3.5c1.5-1 2-2.4 2.2-4.4.2-2.4 1.6-4.3 4-4.9l-.4-1.6a3 3 0 0 1 .8-2.8z"/>',
+  notes: '<rect class="a" x="5" y="4" width="22" height="25" rx="3"/><path class="b" d="M8 4h16a3 3 0 0 1 3 3v3H5V7a3 3 0 0 1 3-3z"/><rect class="w" x="9" y="14" width="14" height="2.2" rx="1.1"/><rect class="l" x="9" y="18.6" width="14" height="2.2" rx="1.1"/><rect class="l" x="9" y="23.2" width="9" height="2.2" rx="1.1"/><rect class="w" x="10" y="2" width="2.4" height="5" rx="1.2"/><rect class="w" x="19.6" y="2" width="2.4" height="5" rx="1.2"/>',
+  compass: '<circle class="b" cx="16" cy="17" r="13"/><circle class="a" cx="16" cy="16" r="13"/><path class="l" d="M5 13.5a11.3 11.3 0 0 1 19.6-5.4A13 13 0 0 0 5 13.5z"/><path class="w" d="m21.9 10.1-3.4 8.4-8.4 3.4 3.4-8.4z"/><circle class="b" cx="16" cy="16" r="1.8"/>',
+  play: '<rect class="b" x="2.5" y="7" width="27" height="20" rx="6"/><rect class="a" x="2.5" y="5.5" width="27" height="20" rx="6"/><path class="w" d="M13 11.4a1 1 0 0 1 1.5-.9l7 4.1a1 1 0 0 1 0 1.8l-7 4.1a1 1 0 0 1-1.5-.9z"/>',
+  locker: '<path class="b" d="M6.5 5h19l3 7H3.5z"/><rect class="a" x="3.5" y="11" width="25" height="17" rx="3"/><rect class="w" x="12" y="15.5" width="8" height="2.6" rx="1.3"/><path class="l" d="M3.5 14a3 3 0 0 1 3-3h19a3 3 0 0 1 3 3z"/>',
+};
+const fluentSvg = (name) =>
+  FLUENT[name] ? `<svg class="mdos-fi" viewBox="0 0 32 32" aria-hidden="true">${FLUENT[name]}</svg>` : "";
 const svg = (name) =>
   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ICONS.launchpad}</svg>`;
 const LOGO =
@@ -995,7 +1027,7 @@ const DEFAULTS = {
   iconView: true,
   mainMinimized: false,
   windows: {},
-  iconStyle: "gradient",
+  iconStyle: "fluent",
   iconShape: "squircle",
   cursor: "system",
   cursorSize: "m",
@@ -1339,7 +1371,10 @@ function appIcon(app) {
       el.append(img);
     }
   } else {
-    el.innerHTML = svg(app.icon);
+    // Both drawings ship: the Fluent colour icon (default style) and the
+    // single-colour glyph the other icon styles put on a tile.
+    el.innerHTML = fluentSvg(app.icon) + svg(app.icon);
+    if (FLUENT[app.icon]) el.classList.add("has-fluent");
   }
   return el;
 }
@@ -5501,7 +5536,7 @@ function mountCustomize(win) {
       h(
         "button",
         { type: "button", class: "mdos-set-nav-item", "data-section": id, onclick: () => show(id) },
-        h("span", { class: "mdos-app-icon", style: `--g1:${g1};--g2:${g2}`, svg: svg(icon) }),
+        appIcon({ id: `set:${id}`, icon, g: [g1, g2] }),
         h("span", { text: label() }),
       ),
     );
