@@ -20,6 +20,18 @@
 
 const doc = document;
 const html = doc.documentElement;
+// Windows 11 edition: every Marinara app (Conversation, Roleplay, Game, each
+// library panel, Home tab apps, single chats) opens as its own window, which
+// is a separate Marinara page in a frame. Inside such a frame this script runs
+// in "embed" mode: no taskbar or desktop, just the one app filling the frame.
+const EMBED = (() => {
+  try {
+    return window.top !== window ? new URLSearchParams(location.search).get("mdos-embed") : null;
+  } catch {
+    return null;
+  }
+})();
+if (EMBED) html.classList.add("mdos-embed");
 const IS_MAC = /mac|iphone|ipad/i.test(navigator.userAgentData?.platform || navigator.platform || "");
 const KO = /^ko/i.test(html.lang || navigator.language || "");
 
@@ -38,6 +50,7 @@ const L = KO
       search: "검색",
       launchpad: "시작",
       snapLayouts: "스냅 레이아웃",
+      separateWindows: "앱마다 따로 창 열기",
       recommended: "추천",
       noRecent: "최근 채팅이 여기에 표시돼요.",
       showDesktop: "바탕 화면 보기",
@@ -397,6 +410,7 @@ const L = KO
       search: "Search",
       launchpad: "Start",
       snapLayouts: "Snap layouts",
+      separateWindows: "Open each app in its own window",
       recommended: "Recommended",
       noRecent: "Your recent chats show up here.",
       showDesktop: "Show desktop",
@@ -1139,6 +1153,17 @@ for (const key of ["apps", "bookmarks", "sbOrder", "sbHidden", "readerHosts"]) i
 state.chat = { convo: { ...(state.chat?.convo || {}) }, rp: { ...(state.chat?.rp || {}) } };
 state.yt = { mode: "link", apiKey: "", ...(state.yt || {}) };
 if (state.yt.mode === "api") state.yt.mode = "link";
+if (!("separateWindows" in state)) state.separateWindows = true;
+// App windows are frames of whole Marinara pages: like Windows after a restart
+// they don't reopen by themselves (each would load the app again).
+state.apps = state.apps.filter((a) => a.type !== "mwin");
+if (EMBED) {
+  // The frame shows one app; it never writes the desktop's saved layout.
+  state.enabled = true;
+  state.apps = [];
+  state.mainMinimized = false;
+  state.messengerPane = true;
+}
 if (!Array.isArray(state.desk)) {
   state.desk = UTIL_APPS.map((a) => ({ id: newId(), app: a.id, x: null, y: null }));
 }
@@ -1159,6 +1184,7 @@ function saveNotes() {
 
 let saveTimer = 0;
 function save() {
+  if (EMBED) return;
   marinara.clearTimeout(saveTimer);
   saveTimer = marinara.setTimeout(() => {
     saveTimer = 0;
@@ -1167,6 +1193,7 @@ function save() {
 }
 let imageTimer = 0;
 function saveImages() {
+  if (EMBED) return;
   marinara.clearTimeout(imageTimer);
   imageTimer = marinara.setTimeout(() => {
     imageTimer = 0;
@@ -1345,6 +1372,7 @@ function computeMode() {
   const main = $(SEL.main);
   if (!main) return "off";
   if (main.getAttribute("data-shell-overlay-mode") === "true") return "touch";
+  if (EMBED) return "desktop";
   return innerWidth >= MIN_VIEWPORT ? "desktop" : "off";
 }
 const isDesktop = () => mode === "desktop";
@@ -1405,7 +1433,14 @@ const winIds = () => [...WIN_IDS, ...appWins.keys()];
 const APP_SIZES = { notes: [660, 460], browser: [1000, 660], youtube: [640, 404], customize: [880, 620] };
 function defaultAppRect(rec) {
   const a = area();
-  const [w0, h0] = APP_SIZES[rec?.type] || [640, 460];
+  const [w0, h0] =
+    rec?.type === "mwin"
+      ? rec.target === "settings"
+        ? [920, 680]
+        : PANEL_IDS.includes(rec.target)
+          ? [560, 720]
+          : [1040, 720]
+      : APP_SIZES[rec?.type] || [640, 460];
   const w = Math.min(w0, a.right - a.left - 40);
   const hh = Math.min(h0, a.bottom - a.top - 40);
   const n = (state.apps.indexOf(rec) + 6) % 6;
@@ -1413,6 +1448,7 @@ function defaultAppRect(rec) {
 }
 
 function area() {
+  if (EMBED) return { left: 0, top: 0, right: innerWidth, bottom: innerHeight };
   const reserve = state.dockAutohide ? 4 : MENUBAR_H + 8;
   return { left: 8, top: TOP_H + 8, right: innerWidth - 8, bottom: innerHeight - reserve };
 }
@@ -1808,7 +1844,7 @@ function showDesktop() {
 function windowTitle(id) {
   if (isAppWin(id)) {
     const rec = appRec(id);
-    return rec ? appLabel(appById(rec.type)) : "";
+    return rec ? appLabel(recApp(rec)) : "";
   }
   if (id === "chats") {
     const mode = activeChatMode();
@@ -2361,6 +2397,7 @@ const MENUS = {
     })),
   ],
   dock: () => [
+    { label: L.separateWindows, checked: state.separateWindows !== false, action: () => updateSetting("separateWindows", state.separateWindows === false) },
     { label: L.autohide, checked: state.dockAutohide, action: () => updateSetting("dockAutohide", !state.dockAutohide) },
     { label: L.magnify, checked: state.magnify, action: () => updateSetting("magnify", !state.magnify) },
     { label: L.recents, checked: state.dockRecents, action: () => updateSetting("dockRecents", !state.dockRecents) },
@@ -2555,7 +2592,10 @@ function refreshDockFocus() {
 // The app whose window has focus gets the long accent pill (Windows 11).
 function focusedAppId() {
   if (!focused || desktopHome) return null;
-  if (isAppWin(focused)) return appRec(focused)?.type || null;
+  if (isAppWin(focused)) {
+    const rec = appRec(focused);
+    return rec ? (rec.type === "mwin" ? rec.target : rec.type) : null;
+  }
   if (focused === "panel") return activePanelId() || null;
   if (focused === "chats" || focused === "main") {
     const mode = chatsOpen() || paneOn() ? activeChatMode() : null;
@@ -2639,6 +2679,7 @@ function bounce(id) {
 
 function isAppRunning(id) {
   if (APP_TYPES[id]) return state.apps.some((a) => a.type === id);
+  if (separateWindows() && isWindowApp(id)) return state.apps.some((a) => a.type === "mwin" && a.target === id);
   if (id === "home") return homePageVisible();
   if (id === "chats") return chatsOpen() || (isTouch() && !!$('aside[data-component="ChatSidebarPanel"]'));
   if (id.startsWith("mode:")) return isAppRunning("chats") && activeChatMode() === id.slice(5);
@@ -2651,6 +2692,13 @@ function dockMenuItems(id) {
   const app = appById(id);
   const running = isAppRunning(id);
   const items = [];
+  const mwins = separateWindows() && isWindowApp(id) ? state.apps.filter((a) => a.type === "mwin" && a.target === id) : [];
+  if (mwins.length) {
+    items.push({ label: L.open, action: () => openApp("mwin", { target: id }) });
+    items.push({ label: L.close, action: () => mwins.forEach((a) => closeApp(`app:${a.id}`)) });
+    if (app) items.push(...appMenuExtras(app));
+    return items;
+  }
   if (id.startsWith("chat:")) items.push({ label: L.open, action: () => launch(id) });
   else if (app) {
     items.push({ label: running && (id === "chats" || PANEL_IDS.includes(id)) ? L.close : L.open, action: () => launch(id, { toggle: true }) });
@@ -2681,9 +2729,18 @@ function appMenuExtras(app, deskEntry) {
 
 // Opening a panel or the chat list brings its window forward; if it is
 // already in front, the Dock icon closes it again (like toggling the app).
+// Apps that open as their own window (a Marinara page in a frame).
+const isWindowApp = (id) =>
+  typeof id === "string" && (id.startsWith("mode:") || id.startsWith("chat:") || id.startsWith("tab:") || PANEL_IDS.includes(id));
+const separateWindows = () => !EMBED && isDesktop() && state.separateWindows !== false;
 function launch(id, { toggle = false } = {}) {
   closeMenu();
   closeLaunchpad();
+  if (separateWindows() && isWindowApp(id)) {
+    openMwin(id);
+    syncSoon();
+    return;
+  }
   if (id === "home") {
     goHome();
     focusWin("main");
@@ -4340,6 +4397,7 @@ const APP_TYPES = {
   browser: { mount: mountBrowser },
   youtube: { mount: mountYouTube },
   customize: { mount: (win) => mountCustomize(win) },
+  mwin: { mount: mountMwin },
 };
 function makeLights(id) {
   return h(
@@ -4365,9 +4423,10 @@ function makeLights(id) {
 function openApp(type, opts = {}) {
   if (!APP_TYPES[type] || mode === "off") return;
   closeLaunchpad();
-  let rec = state.apps.find((a) => a.type === type);
+  let rec = state.apps.find((a) => a.type === type && (type !== "mwin" || a.target === opts.target));
   if (!rec) {
     rec = { id: newId(), type, x: null, y: null, w: null, h: null, snap: null, min: false, pinned: false };
+    if (type === "mwin") rec.target = opts.target;
     state.apps.push(rec);
   }
   if (opts.url) rec.url = opts.url;
@@ -4380,14 +4439,63 @@ function openApp(type, opts = {}) {
   else win.refresh?.();
   setAttr(win.el, "aria-hidden", null);
   focusWin(id);
-  bounce(type);
+  bounce(type === "mwin" ? rec.target : type);
   save();
   syncSoon();
+}
+// What an app window shows: its own app, or for a Marinara window its target.
+function recApp(rec) {
+  if (rec.type !== "mwin") return appById(rec.type);
+  const app = appById(rec.target);
+  if (app) return app;
+  if (rec.target.startsWith("chat:")) {
+    const row = $(`${SEL.chatRows}[data-chat-id="${CSS.escape(rec.target.slice(5))}"]`);
+    const title = row?.getAttribute("title") || rec.title || L.chats;
+    rec.title = title;
+    return { id: rec.target, icon: "chat", g: ["#6ef08d", "#17a84d"], label: () => title };
+  }
+  return { id: rec.target, icon: "launchpad", g: ["#9aa6bb", "#4f5a70"], label: () => rec.title || "Marinara" };
+}
+// Taskbar click on an app: open it, bring it forward, or minimize it when it
+// already has focus (Windows behaviour).
+function openMwin(target) {
+  const rec = state.apps.find((a) => a.type === "mwin" && a.target === target);
+  const id = rec && `app:${rec.id}`;
+  if (rec && focused === id && !rec.min && appWins.has(id)) return setAppMinimized(id, true);
+  openApp("mwin", { target });
+}
+function mountMwin(win) {
+  const url = new URL(location.href);
+  url.searchParams.set("mdos-embed", win.rec.target);
+  url.hash = "";
+  const frame = h("iframe", {
+    class: "mdos-frame mdos-mframe",
+    src: url.href,
+    title: appLabel(recApp(win.rec)),
+    allow: "clipboard-read; clipboard-write; fullscreen; autoplay; microphone",
+  });
+  const loading = h("div", { class: "mdos-mframe-loading", "aria-hidden": "true" }, h("div", { class: "mdos-boot-bar" }));
+  frame.addEventListener("load", () => loading.classList.add("is-done"));
+  win.tools.append(
+    h("button", {
+      type: "button",
+      class: "mdos-tool",
+      "aria-label": L.reload,
+      title: L.reload,
+      svg: svg("reload"),
+      onclick: () => {
+        loading.classList.remove("is-done");
+        frame.src = url.href;
+      },
+    }),
+  );
+  win.body.append(frame, loading);
+  win.frame = frame;
 }
 function renderAppWin(rec) {
   ensureAppLayer();
   const id = `app:${rec.id}`;
-  const app = appById(rec.type);
+  const app = recApp(rec);
   const tools = h("div", { class: "mdos-appwin-tools" });
   const title = h("div", { class: "mdos-appwin-title", text: appLabel(app) });
   const bar = h("div", { class: "mdos-appwin-bar" }, makeLights(id), title, tools);
@@ -6748,6 +6856,7 @@ function refreshMode() {
   }
 }
 function setEnabled(enabled) {
+  if (EMBED) return;
   state.enabled = enabled;
   save();
   refreshMode();
@@ -9460,7 +9569,7 @@ function bootSplash() {
   } catch {
     /* private mode: just show it */
   }
-  if (shown || !state.bootSplash || mode === "off") return;
+  if (shown || EMBED || !state.bootSplash || mode === "off") return;
   const splash = h(
     "div",
     { id: "mdos-boot", "aria-hidden": "true", "data-exd": "" },
@@ -9475,10 +9584,78 @@ function bootSplash() {
   disposers.push(() => splash.remove());
 }
 
+// ── Embed: one app filling a window's frame ───────────────────
+
+function embedStart() {
+  const kind = EMBED.startsWith("mode:") || EMBED.startsWith("chat:") ? "chat" : PANEL_IDS.includes(EMBED) ? "panel" : "main";
+  html.dataset.mdosEmbedKind = kind;
+  const fit = () => {
+    const id = kind === "panel" ? "panel" : "main";
+    writeRect(id, { ...rectOf(id), snap: "max" });
+    applyAllRects();
+    focusWin(id);
+  };
+  let tries = 0;
+  const go = () => {
+    if (disposed) return;
+    tries++;
+    let ready = mode !== "off";
+    if (ready && EMBED.startsWith("chat:")) {
+      ready = !!$(`${SEL.chatRows}[data-chat-id="${CSS.escape(EMBED.slice(5))}"]`);
+      if (!ready && tries === 3 && !chatsOpen()) click($(SEL.chatsBtn));
+    } else if (ready && PANEL_IDS.includes(EMBED)) ready = !!panelBtn(EMBED);
+    else if (ready && EMBED.startsWith("tab:")) ready = !!$(SEL.homeTabs);
+    if (!ready && tries < 40) return marinara.setTimeout(go, 250);
+    launch(EMBED);
+    fit();
+    marinara.setTimeout(fit, 400);
+  };
+  go();
+  // Tell the desktop around the frame when this window is clicked (to bring
+  // it forward and close flyouts), and pass on window-management shortcuts.
+  const tell = (data) => {
+    try {
+      window.parent.postMessage({ mdos: true, ...data }, location.origin);
+    } catch {
+      /* the page around us is gone */
+    }
+  };
+  on(doc, "pointerdown", () => tell({ type: "focus" }), { capture: true, passive: true });
+  on(
+    window,
+    "keydown",
+    (event) => {
+      if (!(event.ctrlKey && event.altKey) || !/^(Arrow|Digit[123]$|KeyM$|KeyL$|KeyH$|Comma$)/.test(event.code)) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      tell({ type: "key", code: event.code });
+    },
+    true,
+  );
+}
+// The desktop side: messages from the app windows' frames.
+on(window, "message", (event) => {
+  if (EMBED || event.origin !== location.origin || !event.data?.mdos) return;
+  const win = [...appWins.values()].find((w) => w.frame && w.frame.contentWindow === event.source);
+  if (!win) return;
+  if (event.data.type === "focus") {
+    closeMenu();
+    closeCC();
+    closeCal();
+    closeLaunchpad();
+    closeSnapFly();
+    if (focused !== win.id) focusWin(win.id);
+  } else if (event.data.type === "key" && typeof event.data.code === "string") {
+    focusWin(win.id);
+    window.dispatchEvent(new KeyboardEvent("keydown", { code: event.data.code, ctrlKey: true, altKey: true, bubbles: true, cancelable: true }));
+  }
+});
+
 applySettings();
 sync();
 tick();
 bootSplash();
+if (EMBED) embedStart();
 marinara.log.info("Marinara Desktop ready");
 
 // ── Cleanup (extension disabled or updated) ───────────────────

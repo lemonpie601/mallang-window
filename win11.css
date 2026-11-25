@@ -1435,3 +1435,58 @@ html.mdos #mdos-cc {
 html.mdos-touch .mdos-qs-foot {
   margin: 0 -10px;
 }
+
+/* ── App windows that hold a Marinara page (desktop side) ────── */
+
+.mdos-appwin--mwin .mdos-appwin-body {
+  background: var(--mdos-win-bg);
+}
+.mdos-mframe {
+  background: var(--mdos-win-bg);
+}
+.mdos-mframe-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--mdos-win-bg);
+  transition: opacity 200ms linear;
+}
+.mdos-mframe-loading.is-done {
+  opacity: 0;
+  pointer-events: none;
+}
+.mdos-mframe-loading .mdos-boot-bar {
+  border-color: var(--mdos-fill-2);
+  border-top-color: var(--w-accent);
+}
+
+/* ── Inside such a window (embed): just the app, edge to edge ── */
+
+html.mdos-embed,
+html.mdos-embed body {
+  background: var(--mdos-win-bg) !important;
+}
+html.mdos-embed :is(#mdos-menubar, #mdos-dock, #mdos-widgets, #mdos-wallpaper, #mdos-return, #mdos-editbar, #mdos-boot, #mdos-focus-exit) {
+  display: none !important;
+}
+html.mdos-embed [data-mdos-win] {
+  border-radius: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+html.mdos-embed .mdos-grip,
+html.mdos-embed .mdos-lights {
+  display: none !important;
+}
+/* The frame's own window bar is outside; the headers keep only a little room. */
+html.mdos-embed [data-mdos-win] :is(.mari-sidebar-header, .mari-right-panel-header),
+html.mdos-embed [data-mdos-win="main"] [data-component="TopBar"] {
+  padding-right: 12px !important;
+}
+html.mdos-embed[data-mdos-embed-kind="panel"] :is([data-mdos-win="main"], [data-mdos-win="chats"]),
+html.mdos-embed[data-mdos-embed-kind="chat"] [data-mdos-win="panel"],
+html.mdos-embed[data-mdos-embed-kind="main"] :is([data-mdos-win="chats"], [data-mdos-win="panel"]) {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
