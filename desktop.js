@@ -2401,7 +2401,7 @@ const MENUS = {
     })),
   ],
   dock: () => [
-    { label: L.separateWindows, checked: state.separateWindows !== false, action: () => updateSetting("separateWindows", state.separateWindows === false) },
+    { label: L.separateWindows, checked: !frameDenied && state.separateWindows !== false, disabled: frameDenied, action: () => updateSetting("separateWindows", state.separateWindows === false) },
     { label: L.autohide, checked: state.dockAutohide, action: () => updateSetting("dockAutohide", !state.dockAutohide) },
     { label: L.recents, checked: state.dockRecents, action: () => updateSetting("dockRecents", !state.dockRecents) },
     "-",
@@ -2736,7 +2736,23 @@ function appMenuExtras(app, deskEntry) {
 // Apps that open as their own window (a Marinara page in a frame).
 const isWindowApp = (id) =>
   typeof id === "string" && (id.startsWith("mode:") || id.startsWith("chat:") || id.startsWith("tab:") || PANEL_IDS.includes(id));
-const separateWindows = () => !EMBED && isDesktop() && state.separateWindows !== false;
+// Marinara servers that send `X-Frame-Options: DENY` / `frame-ancestors 'none'`
+// refuse to load even in a same-origin frame ("127.0.0.1 refused to connect").
+// There, apps stay in Marinara's own windows (chat list, chat, panel) instead.
+const blocksFraming = (res) =>
+  /deny/i.test(res.headers.get("x-frame-options") || "") ||
+  /frame-ancestors\s+'none'/i.test(res.headers.get("content-security-policy") || "");
+let frameDenied = false;
+if (!EMBED)
+  window
+    .fetch(location.pathname, { credentials: "same-origin", cache: "no-store" })
+    .then((res) => {
+      res.body?.cancel();
+      frameDenied = blocksFraming(res);
+      if (frameDenied) syncSoon();
+    })
+    .catch(() => {});
+const separateWindows = () => !EMBED && !frameDenied && isDesktop() && state.separateWindows !== false;
 function launch(id, { toggle = false } = {}) {
   closeMenu();
   closeLaunchpad();
