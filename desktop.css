@@ -10,7 +10,7 @@
 
 :root {
   --mdos-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Pretendard,
-    "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
   --mdos-ease: cubic-bezier(0.2, 0.9, 0.25, 1);
   --mdos-radius: 12px;
   --mdos-side-header-h: 52px;
@@ -385,7 +385,7 @@ html.mdos-touch #mdos-menubar {
   align-items: center;
   gap: 6px;
   padding: 0 9px;
-  border-radius: 6px;
+  border-radius: 4px;
   white-space: nowrap;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   cursor: var(--mdos-cur, default);
@@ -425,7 +425,7 @@ html.mdos-touch #mdos-menubar {
   z-index: 8600;
   min-width: 230px;
   padding: 5px;
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--mdos-menu-bg);
   color: var(--mdos-menu-fg);
   backdrop-filter: var(--mdos-blur);
@@ -446,7 +446,7 @@ html.mdos-touch #mdos-menubar {
   align-items: center;
   gap: 6px;
   padding: 4px 10px 4px 6px;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: var(--mdos-cur, default);
 }
 .mdos-menu-item:hover:not(:disabled),
@@ -481,7 +481,7 @@ html.mdos-touch #mdos-menubar {
 /* ── App icons (Dock, Launchpad, springboard) ────────────────── */
 
 .mdos-app-icon {
-  --mdos-shape: 23%;
+  --mdos-shape: 22%;
   box-sizing: border-box;
   display: grid;
   place-items: center;
@@ -534,7 +534,7 @@ html[data-mdos-icon-style="pastel"] .mdos-app-icon:not(.has-image) {
 }
 html[data-mdos-icon-style="tinted"] .mdos-app-icon:not(.has-image) {
   background: linear-gradient(160deg, #2c2c30, #161618);
-  color: var(--mdos-accent, #0a84ff);
+  color: var(--mdos-accent, #0078d4);
   box-shadow:
     inset 0 0 0 0.5px rgba(255, 255, 255, 0.14),
     0 2px 6px rgba(0, 0, 0, 0.3);
@@ -630,7 +630,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   bottom: calc(100% + 12px);
   transform: translateX(-50%);
   padding: 4px 10px;
-  border-radius: 7px;
+  border-radius: 4px;
   white-space: nowrap;
   max-width: 220px;
   overflow: hidden;
@@ -702,7 +702,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   width: min(260px, 80vw);
   height: 30px;
   padding: 0 12px;
-  border-radius: 9px;
+  border-radius: 8px;
   color: #fff;
   font-size: 13px;
   text-align: center;
@@ -778,7 +778,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   display: grid;
   gap: 10px;
   padding: 10px;
-  border-radius: 18px;
+  border-radius: 8px;
   color: var(--mdos-menu-fg);
   font-size: 13px;
   background: rgba(36, 36, 44, 0.72);
@@ -801,14 +801,14 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   display: grid;
   gap: 10px;
   padding: 12px;
-  border-radius: 13px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.08);
   border: 0.5px solid rgba(255, 255, 255, 0.1);
   scroll-margin-top: 8px;
   transition: box-shadow 300ms ease;
 }
 .mdos-cc-card.is-flash {
-  box-shadow: 0 0 0 2px var(--mdos-accent, #0a84ff);
+  box-shadow: 0 0 0 2px var(--mdos-accent, #0078d4);
 }
 .mdos-cc-card h3 {
   margin: 0;
@@ -878,7 +878,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   min-width: 0;
   height: 28px;
   padding: 0 9px;
-  border-radius: 7px;
+  border-radius: 4px;
   font-size: 12px;
   background: rgba(0, 0, 0, 0.25);
   border: 0.5px solid rgba(255, 255, 255, 0.18);
@@ -895,7 +895,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   box-sizing: border-box;
   height: 28px;
   padding: 0 12px;
-  border-radius: 7px;
+  border-radius: 4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -953,7 +953,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   transition: transform 180ms var(--mdos-ease);
 }
 .mdos-cc-toggle input:checked {
-  background: #34c759;
+  background: var(--w-accent, #0078d4);
 }
 .mdos-cc-toggle input:checked::after {
   transform: translateX(14px);
@@ -972,7 +972,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   max-height: calc(100vh - 80px);
   overflow-y: auto;
   padding: 14px;
-  border-radius: 16px;
+  border-radius: 8px;
   color: var(--mdos-menu-fg);
   font: 13px var(--mdos-font);
   background: rgba(40, 40, 48, 0.86);
@@ -1045,7 +1045,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   color-scheme: dark;
 }
 .mdos-input:focus-visible {
-  border-color: var(--mdos-accent, #0a84ff);
+  border-color: var(--mdos-accent, #0078d4);
 }
 .mdos-pop input[type="color"] {
   width: 44px;
@@ -1073,14 +1073,14 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   background: rgba(255, 255, 255, 0.26);
 }
 .mdos-btn:focus-visible {
-  outline: 2px solid var(--mdos-accent, #0a84ff);
+  outline: 2px solid var(--mdos-accent, #0078d4);
   outline-offset: 2px;
 }
 .mdos-btn--primary {
-  background: var(--mdos-accent, #0a84ff);
+  background: var(--mdos-accent, #0078d4);
 }
 .mdos-btn--primary:hover {
-  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 85%, #fff);
+  background: color-mix(in srgb, var(--mdos-accent, #0078d4) 85%, #fff);
 }
 .mdos-btn--danger {
   color: #ff6961;
@@ -1101,7 +1101,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   flex: 1;
   min-height: 24px;
   padding: 0 6px;
-  border-radius: 6px;
+  border-radius: 4px;
   text-align: center;
   font-size: 12px;
   cursor: var(--mdos-cur, default);
@@ -1111,7 +1111,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   font-weight: 600;
 }
 .mdos-seg-btn:focus-visible {
-  outline: 2px solid var(--mdos-accent, #0a84ff);
+  outline: 2px solid var(--mdos-accent, #0078d4);
 }
 .mdos-swatches .mdos-swatch {
   all: unset;
@@ -1164,7 +1164,7 @@ html.mdos-desktop.mdos-dock-autohide #mdos-dock:not(.is-peek) {
   max-height: calc(100vh - 40px);
   overflow-y: auto;
   padding: 26px 24px 20px;
-  border-radius: 16px;
+  border-radius: 8px;
   text-align: center;
   color: var(--mdos-menu-fg);
   background: rgba(40, 40, 48, 0.9);
@@ -1400,7 +1400,7 @@ html.mdos-calm .mdos-wg {
   all: unset;
   width: 28px;
   height: 28px;
-  border-radius: 7px;
+  border-radius: 4px;
   display: grid;
   place-items: center;
   color: var(--mdos-fg-2, #6e6e73);
@@ -1411,10 +1411,10 @@ html.mdos-calm .mdos-wg {
   color: var(--mdos-fg, #1d1d1f);
 }
 .mdos-tool:focus-visible {
-  outline: 2px solid var(--mdos-accent, #0a84ff);
+  outline: 2px solid var(--mdos-accent, #0078d4);
 }
 .mdos-tool[aria-pressed="true"] {
-  color: var(--mdos-accent, #0a84ff);
+  color: var(--mdos-accent, #0078d4);
   background: var(--mdos-accent-soft, rgba(10, 132, 255, 0.14));
 }
 .mdos-tool:disabled {
@@ -1471,7 +1471,7 @@ html.mdos-calm .mdos-wg {
 }
 .mdos-appwin .mdos-btn--primary {
   color: #fff;
-  background: var(--mdos-accent, #0a84ff);
+  background: var(--mdos-accent, #0078d4);
 }
 
 /* Notes */
@@ -1508,14 +1508,14 @@ html.mdos-calm .mdos-wg {
   background: var(--mdos-fill, rgba(0, 0, 0, 0.05));
 }
 .mdos-notes-item[aria-selected="true"] {
-  background: var(--mdos-accent, #0a84ff);
+  background: var(--mdos-accent, #0078d4);
   color: #fff;
 }
 .mdos-notes-item[aria-selected="true"] span {
   color: rgba(255, 255, 255, 0.8);
 }
 .mdos-notes-item:focus-visible {
-  outline: 2px solid var(--mdos-accent, #0a84ff);
+  outline: 2px solid var(--mdos-accent, #0078d4);
 }
 .mdos-notes-editor {
   all: unset;
@@ -1573,7 +1573,7 @@ html.mdos-calm .mdos-wg {
   white-space: nowrap;
 }
 .mdos-web-fav:focus-visible .mdos-app-icon {
-  outline: 2px solid var(--mdos-accent, #0a84ff);
+  outline: 2px solid var(--mdos-accent, #0078d4);
   outline-offset: 3px;
 }
 .mdos-web-card {
@@ -1641,11 +1641,11 @@ html.mdos-desktop.mdos-edit[data-mdos-layout="grid"] #mdos-widgets {
     conic-gradient(#ffd36b, #ff7ab0, #8e9cff, #6ef08d, #ffd36b);
 }
 .mdos-cc-btn--accent {
-  background: var(--mdos-accent, #0a84ff);
+  background: var(--mdos-accent, #0078d4);
   color: #fff;
 }
 .mdos-cc-btn--accent:hover {
-  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 85%, #fff);
+  background: color-mix(in srgb, var(--mdos-accent, #0078d4) 85%, #fff);
 }
 .mdos-pop-note {
   margin: 0;
@@ -1678,7 +1678,7 @@ html.mdos-desktop.mdos-edit[data-mdos-layout="grid"] #mdos-widgets {
   gap: 9px;
   min-height: 32px;
   padding: 0 8px;
-  border-radius: 7px;
+  border-radius: 4px;
   font-size: 13px;
   font-weight: 500;
   cursor: var(--mdos-cur, default);
@@ -1686,7 +1686,7 @@ html.mdos-desktop.mdos-edit[data-mdos-layout="grid"] #mdos-widgets {
 .mdos-set-nav-item .mdos-app-icon {
   width: 22px;
   height: 22px;
-  border-radius: 6px;
+  border-radius: 4px;
   box-shadow: none;
 }
 .mdos-set-nav-item .mdos-app-icon svg {
@@ -1697,11 +1697,11 @@ html.mdos-desktop.mdos-edit[data-mdos-layout="grid"] #mdos-widgets {
   background: var(--mdos-fill, rgba(0, 0, 0, 0.05));
 }
 .mdos-set-nav-item[aria-current="true"] {
-  background: var(--mdos-accent, #0a84ff);
+  background: var(--mdos-accent, #0078d4);
   color: #fff;
 }
 .mdos-set-nav-item:focus-visible {
-  outline: 2px solid var(--mdos-accent, #0a84ff);
+  outline: 2px solid var(--mdos-accent, #0078d4);
 }
 .mdos-set-pane {
   overflow-y: auto;
@@ -1714,7 +1714,7 @@ html.mdos-desktop.mdos-edit[data-mdos-layout="grid"] #mdos-widgets {
   display: grid;
   gap: 10px;
   padding: 14px 16px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--mdos-card, #f5f5f7);
   box-shadow: inset 0 0 0 0.5px var(--mdos-sep, rgba(0, 0, 0, 0.08));
 }
@@ -1746,7 +1746,7 @@ html.mdos-desktop.mdos-edit[data-mdos-layout="grid"] #mdos-widgets {
 }
 .mdos-set-range input {
   width: 160px;
-  accent-color: var(--mdos-accent, #0a84ff);
+  accent-color: var(--mdos-accent, #0078d4);
 }
 .mdos-set-range output {
   min-width: 46px;
@@ -1760,7 +1760,7 @@ html.mdos-desktop.mdos-edit[data-mdos-layout="grid"] #mdos-widgets {
   height: 26px;
   padding: 0;
   border: 0;
-  border-radius: 7px;
+  border-radius: 4px;
   background: none;
   cursor: var(--mdos-cur-ptr, pointer);
 }
@@ -1815,7 +1815,7 @@ html:not([data-theme="light"]) .mdos-appwin .mdos-cc-select option {
   background: var(--mdos-fill-2, rgba(0, 0, 0, 0.12));
 }
 .mdos-appwin .mdos-cc-toggle input:checked {
-  background: #34c759;
+  background: var(--w-accent, #0078d4);
 }
 .mdos-appwin .mdos-cc-btn {
   color: var(--mdos-fg, #1d1d1f);
@@ -1833,7 +1833,7 @@ html:not([data-theme="light"]) .mdos-appwin .mdos-cc-select option {
   box-shadow:
     inset 0 0 0 0.5px rgba(0, 0, 0, 0.25),
     0 0 0 2px var(--mdos-win-bg, #fff),
-    0 0 0 4px var(--mdos-accent, #0a84ff);
+    0 0 0 4px var(--mdos-accent, #0078d4);
 }
 .mdos-appwin .mdos-about-keys {
   margin: 4px 0;
@@ -1860,14 +1860,14 @@ html:not([data-theme="light"]) .mdos-appwin .mdos-cc-select option {
   display: grid;
   gap: 4px;
   cursor: var(--mdos-cur-ptr, pointer);
-  border-radius: 10px;
+  border-radius: 8px;
 }
 .mdos-yt-item img,
 .mdos-yt-thumb {
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #222;
 }
 .mdos-yt-item b {
@@ -1886,7 +1886,7 @@ html:not([data-theme="light"]) .mdos-appwin .mdos-cc-select option {
   filter: brightness(0.9);
 }
 .mdos-yt-item:focus-visible {
-  outline: 2px solid var(--mdos-accent, #0a84ff);
+  outline: 2px solid var(--mdos-accent, #0078d4);
   outline-offset: 3px;
 }
 
@@ -1904,7 +1904,7 @@ html:not([data-theme="light"]) .mdos-appwin .mdos-cc-select option {
 .mdos-reader-note {
   margin: 0 0 14px;
   padding: 8px 12px;
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--mdos-fill);
   color: var(--mdos-fg-2);
   font-size: 12px;
@@ -1958,7 +1958,7 @@ html:not([data-theme="light"]) .mdos-appwin .mdos-cc-select option {
   object-fit: cover;
   margin: 2px 8px 2px 0;
   vertical-align: middle;
-  border-radius: 6px;
+  border-radius: 4px;
   background: var(--mdos-fill);
 }
 .mdos-reader li img {
@@ -2014,8 +2014,8 @@ html.mdos-touch .mdos-lp-app { --mdos-badge-icon: var(--mdos-sb-icon); }
   height: 20px;
   padding: 0 6px;
   box-sizing: border-box;
-  border-radius: 10px;
-  background: #ff3b30;
+  border-radius: 8px;
+  background: #c42b1c;
   color: #fff;
   font: 700 12px/20px var(--mdos-font);
   text-align: center;
@@ -2083,7 +2083,7 @@ html.mdos #mdos-count.is-on {
   z-index: 8700;
   translate: -100% -100%;
   padding: 2px 7px;
-  border-radius: 6px;
+  border-radius: 4px;
   background: color-mix(in srgb, var(--mdos-fg, #000) 72%, transparent);
   color: var(--mdos-win-bg, #fff);
   font: 600 11px/1.4 var(--mdos-font);
@@ -2119,7 +2119,7 @@ html.mdos-pane-ready .mdos-pane-toggle {
   width: 28px;
   height: 24px;
   margin-left: 6px;
-  border-radius: 6px;
+  border-radius: 4px;
   color: var(--mdos-fg-2, currentColor);
   pointer-events: auto;
   cursor: var(--mdos-cur-ptr, pointer);
@@ -2195,7 +2195,7 @@ html.mdos-desktop [data-mdos-win="chats"] .mari-sidebar-header h2[data-mdos-titl
 .mdos-pickchat-icon .mdos-app-icon {
   width: 64px;
   height: 64px;
-  border-radius: 15px;
+  border-radius: 8px;
   opacity: 0.9;
 }
 .mdos-pickchat p {
@@ -2240,7 +2240,7 @@ html.mdos-editing [data-component="ChatSidebarSlot"] {
 }
 .mdos-zoom-menu .mdos-menu-item.is-on {
   font-weight: 650;
-  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 22%, transparent);
+  background: color-mix(in srgb, var(--mdos-accent, #0078d4) 22%, transparent);
 }
 
 /* ── YouTube: browsing like the site (desktop.js mountYouTube) ── */
@@ -2266,7 +2266,7 @@ html.mdos-editing [data-component="ChatSidebarSlot"] {
 .mdos-yt .mdos-btn {
   all: unset;
   padding: 8px 18px;
-  border-radius: 18px;
+  border-radius: 8px;
   background: var(--yt-fg);
   color: var(--yt-bg);
   font-size: 14px;
@@ -2293,7 +2293,7 @@ html.mdos-editing [data-component="ChatSidebarSlot"] {
 .mdos-yt-logo {
   width: 64px;
   height: 45px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: #ff0033;
   position: relative;
 }
@@ -2348,7 +2348,7 @@ html.mdos-editing [data-component="ChatSidebarSlot"] {
   aspect-ratio: 16 / 9;
   margin-bottom: 6px;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 8px;
   background: #222;
 }
 .mdos-yt-thumbbox img {
@@ -2418,7 +2418,7 @@ html.mdos-editing [data-component="ChatSidebarSlot"] {
 .mdos-yt-player {
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 8px;
   background: #000;
 }
 .mdos-yt-player .mdos-frame {
@@ -2459,7 +2459,7 @@ html.mdos-editing [data-component="ChatSidebarSlot"] {
 }
 .mdos-yt-descbox {
   padding: 12px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--yt-chip);
   font-size: 13.5px;
 }

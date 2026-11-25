@@ -66,7 +66,7 @@ html.mdos {
   --mdos-accent-soft: color-mix(in srgb, var(--mdos-accent) 14%, transparent);
   --mdos-accent-ring: color-mix(in srgb, var(--mdos-accent) 42%, transparent);
   --mdos-ui-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Pretendard,
-    "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
 }
 
 /* ── Token swap ──────────────────────────────────────────────── */
@@ -287,12 +287,12 @@ html.mdos ::-webkit-scrollbar-thumb:hover {
 /* ── Buttons ─────────────────────────────────────────────────── */
 
 html.mdos .mari-chrome-control {
-  border-radius: 7px !important;
+  border-radius: 4px !important;
   font-weight: 500 !important;
   box-shadow: var(--mdos-control-shadow);
 }
 html.mdos .mari-chrome-control:focus-visible {
-  box-shadow: 0 0 0 3px var(--mdos-accent-ring) !important;
+  box-shadow: inset 0 -2px 0 var(--mdos-accent) !important;
 }
 html.mdos .mari-chrome-control--primary {
   min-height: 2rem !important;
@@ -313,7 +313,7 @@ html.mdos .mari-chrome-control[aria-pressed="true"] svg {
   color: #fff !important;
 }
 html.mdos .mari-chrome-control--danger {
-  color: #ff453a !important;
+  color: #c42b1c !important;
 }
 
 /* The chat list's three big action buttons become one compact toolbar row. */
@@ -323,7 +323,7 @@ html.mdos .mari-chat-sidebar > div:has(> .mari-chat-mode-action) {
 html.mdos .mari-chat-sidebar .mari-chat-mode-action {
   background: var(--mdos-accent) !important;
   color: #fff !important;
-  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: none !important;
 }
 html.mdos .mari-chat-sidebar .mari-chat-mode-action svg {
   color: #fff !important;
@@ -334,8 +334,8 @@ html.mdos.mdos-accent .mari-panel-gradient-button {
   background: var(--mdos-accent) !important;
   color: #fff !important;
   border: 0 !important;
-  border-radius: 7px !important;
-  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
   min-height: 2rem !important;
 }
 html.mdos.mdos-accent .mari-panel-gradient-button svg {
@@ -361,7 +361,7 @@ html.mdos .mari-chrome-segmented__button {
   min-height: 1.75rem !important;
   padding-block: 0.25rem !important;
   border: 0 !important;
-  border-radius: 6px !important;
+  border-radius: 4px !important;
   font-weight: 500 !important;
   color: var(--mdos-fg) !important;
   background: transparent !important;
@@ -373,7 +373,7 @@ html.mdos .mari-chrome-segmented__button:hover {
 html.mdos .mari-chrome-segmented__button--selected,
 html.mdos .mari-chrome-segmented__button[aria-pressed="true"] {
   background: var(--mdos-control) !important;
-  box-shadow: var(--mdos-control-shadow) !important;
+  box-shadow: inset 0 -2px 0 var(--mdos-accent), var(--mdos-control-shadow) !important;
   font-weight: 600 !important;
 }
 html:not([data-theme="light"]).mdos .mari-chrome-segmented__button--selected,
@@ -384,7 +384,7 @@ html:not([data-theme="light"]).mdos .mari-chrome-segmented__button[aria-pressed=
 /* ── Fields ──────────────────────────────────────────────────── */
 
 html.mdos :is(.mari-chrome-field, .mari-chrome-sort-field) {
-  border-radius: 7px !important;
+  border-radius: 4px !important;
   border: 0.5px solid var(--mdos-sep-strong) !important;
   background: var(--mdos-field) !important;
   box-shadow: inset 0 0.5px 1px rgba(0, 0, 0, 0.05) !important;
@@ -399,13 +399,13 @@ html.mdos [data-mdos-win]
   :is(.mari-chrome-field, .mari-chrome-sort-field, input:not([type="checkbox"], [type="radio"], [type="range"]), textarea, select):focus-visible {
   outline: none !important;
   border-color: var(--mdos-accent) !important;
-  box-shadow: 0 0 0 3px var(--mdos-accent-ring) !important;
+  box-shadow: inset 0 -2px 0 var(--mdos-accent) !important;
 }
 
 /* ── Lists (chat rows, library rows) ─────────────────────────── */
 
 html.mdos .mari-chat-sidebar :is(.rounded-lg, .rounded-xl).group {
-  border-radius: 7px !important;
+  border-radius: 4px !important;
 }
 html.mdos .mari-chat-sidebar .mari-chrome-accent-progress {
   display: none !important;
@@ -426,7 +426,7 @@ html.mdos [data-mdos-win] :is(.glass, .glass-strong) {
   backdrop-filter: none !important;
 }
 html.mdos .mari-home-widget {
-  border-radius: 14px !important;
+  border-radius: 8px !important;
   border: 0 !important;
   background: var(--mdos-card) !important;
   box-shadow: var(--mdos-elev) !important;
@@ -452,7 +452,7 @@ html.mdos .texting-bubble-user {
   color: #ffffff !important;
   border: 0 !important;
   box-shadow: none !important;
-  border-radius: 18px !important;
+  border-radius: 8px !important;
 }
 html.mdos .texting-bubble-user :is(a, code) {
   color: inherit !important;
@@ -462,7 +462,7 @@ html.mdos .texting-bubble-other {
   color: var(--mdos-bubble-other-fg) !important;
   border: 0 !important;
   box-shadow: none !important;
-  border-radius: 18px !important;
+  border-radius: 8px !important;
 }
 
 /* ── Roleplay: no background image, clean reading surface ───── */
@@ -476,7 +476,7 @@ html.mdos .rpg-chat-area > :is(.mari-background, .rpg-overlay, .rpg-vignette) {
 html.mdos [data-chat-mode="roleplay"] .mari-rp-bubble:not([data-roleplay-bubble-transparent="true"]) {
   background: var(--mdos-card) !important;
   border: 0 !important;
-  border-radius: 14px !important;
+  border-radius: 8px !important;
   box-shadow: var(--mdos-elev) !important;
   backdrop-filter: none !important;
 }
@@ -484,7 +484,7 @@ html.mdos [data-chat-mode="roleplay"] .mari-rp-bubble:not([data-roleplay-bubble-
 /* ── Composer ────────────────────────────────────────────────── */
 
 html.mdos [data-mdos-win] .marinara-chat-input-shell {
-  border-radius: 20px !important;
+  border-radius: 8px !important;
   border: 0.5px solid var(--mdos-sep-strong) !important;
   background: var(--mdos-field) !important;
   box-shadow: var(--mdos-elev) !important;
@@ -492,7 +492,7 @@ html.mdos [data-mdos-win] .marinara-chat-input-shell {
 }
 html.mdos [data-mdos-win] .marinara-chat-input-shell:focus-within {
   border-color: var(--mdos-accent) !important;
-  box-shadow: 0 0 0 3px var(--mdos-accent-ring) !important;
+  box-shadow: inset 0 -2px 0 var(--mdos-accent) !important;
 }
 html.mdos [data-mdos-win] .chat-input-container {
   background: transparent !important;
@@ -505,30 +505,30 @@ html.mdos .mari-modal-backdrop {
   backdrop-filter: none !important;
 }
 html.mdos .mari-modal-panel {
-  border-radius: 14px !important;
+  border-radius: 8px !important;
   border: 0 !important;
-  background: var(--mdos-popover) !important;
-  backdrop-filter: blur(20px) saturate(170%) !important;
+  background: var(--mdos-win-bg) !important;
+  backdrop-filter: none !important;
   box-shadow:
-    0 30px 80px -12px rgba(0, 0, 0, 0.5),
-    0 0 0 0.5px var(--mdos-sep-strong) !important;
+    0 32px 64px rgba(0, 0, 0, 0.28),
+    0 2px 21px rgba(0, 0, 0, 0.22),
+    0 0 0 1px var(--mdos-sep-strong) !important;
   font-family: var(--mdos-ui-font);
 }
 html.mdos [role="menu"]:not(.mdos-menu),
 html.mdos [role="listbox"] {
-  border-radius: 10px !important;
+  border-radius: 8px !important;
   background: var(--mdos-popover) !important;
-  backdrop-filter: blur(16px) saturate(170%);
   border-color: var(--mdos-sep) !important;
-  box-shadow: 0 16px 44px -8px rgba(0, 0, 0, 0.35) !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 0 0 1px var(--mdos-sep) !important;
 }
 html.mdos [role="menuitem"]:not(.mdos-menu-item):hover {
-  background: var(--mdos-accent) !important;
-  color: #fff !important;
+  background: var(--mdos-fill-2) !important;
+  color: inherit !important;
 }
 
 /* ── Toggles & sliders ───────────────────────────────────────── */
 
 html.mdos.mdos-accent [data-mdos-win] [role="switch"][aria-checked="true"] {
-  background: #34c759 !important;
+  background: var(--w-accent, #0078d4) !important;
 }

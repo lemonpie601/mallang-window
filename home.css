@@ -126,7 +126,7 @@ html.mdos-desktop-home [data-component="HomeBrowserHub.HomePage"] > div.relative
 .mdos-wg {
   box-sizing: border-box;
   border: 0 !important;
-  border-radius: 22px !important;
+  border-radius: 8px !important;
   background: var(--mdos-widget-glass) !important;
   box-shadow: var(--mdos-widget-shadow) !important;
   backdrop-filter: var(--mdos-widget-blur);
@@ -417,11 +417,11 @@ html.mdos-desktop-home #mac-credit-home .mlh-card:not(:hover, :focus-within) .ma
 }
 /* Budget card: segmented switch and the heat-map calendar follow the accent. */
 :is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-seg {
-  border-radius: 9px !important;
+  border-radius: 8px !important;
   background: var(--mdos-widget-fill) !important;
 }
 :is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-seg .is-on {
-  border-radius: 7px !important;
+  border-radius: 4px !important;
   background: var(--mdos-widget-fill-2) !important;
   color: var(--mdos-widget-ink) !important;
   box-shadow: none !important;
@@ -430,21 +430,21 @@ html.mdos-desktop-home #mac-credit-home .mlh-card:not(:hover, :focus-within) .ma
   background: var(--mdos-widget-fill) !important;
 }
 :is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mac-cal-day, i).lv1 {
-  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 24%, transparent) !important;
+  background: color-mix(in srgb, var(--mdos-accent, #0078d4) 24%, transparent) !important;
 }
 :is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mac-cal-day, i).lv2 {
-  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 44%, transparent) !important;
+  background: color-mix(in srgb, var(--mdos-accent, #0078d4) 44%, transparent) !important;
 }
 :is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mac-cal-day, i).lv3 {
-  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 68%, transparent) !important;
+  background: color-mix(in srgb, var(--mdos-accent, #0078d4) 68%, transparent) !important;
   color: #fff !important;
 }
 :is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home :is(.mac-cal-day, i).lv4 {
-  background: var(--mdos-accent, #0a84ff) !important;
+  background: var(--mdos-accent, #0078d4) !important;
   color: #fff !important;
 }
 :is(html.mdos-desktop-home, html.mdos-touch-home) #mac-credit-home .mac-cal-day {
-  border-radius: 7px !important;
+  border-radius: 4px !important;
   color: var(--mdos-widget-ink);
 }
 
@@ -513,7 +513,7 @@ html.mdos-desktop.mdos-edit #mdos-widgets {
 .mdos-wg.mdos-wg-style--accent {
   --mdos-widget-ink: #ffffff;
   --mdos-widget-ink-2: rgba(255, 255, 255, 0.82);
-  background: linear-gradient(150deg, color-mix(in srgb, var(--mdos-accent, #0a84ff) 80%, #fff), var(--mdos-accent, #0a84ff)) !important;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--mdos-accent, #0078d4) 80%, #fff), var(--mdos-accent, #0078d4)) !important;
   backdrop-filter: none;
 }
 .mdos-wg.mdos-wg-style--clear {
@@ -771,7 +771,7 @@ html.mdos-edit #mdos-editbar {
   transform: translateX(-50%);
   gap: 8px;
   padding: 8px;
-  border-radius: 16px;
+  border-radius: 8px;
   background: rgba(36, 36, 44, 0.78);
   backdrop-filter: var(--mdos-blur);
   -webkit-backdrop-filter: var(--mdos-blur);
@@ -798,8 +798,8 @@ html.mdos-desktop.mdos-edit #mdos-dock {
   cursor: var(--mdos-cur, default);
 }
 .mdos-gallery-item:focus-visible {
-  outline: 2px solid var(--mdos-accent, #0a84ff);
-  border-radius: 12px;
+  outline: 2px solid var(--mdos-accent, #0078d4);
+  border-radius: 8px;
 }
 .mdos-wg.is-sample {
   position: relative;
@@ -808,7 +808,7 @@ html.mdos-desktop.mdos-edit #mdos-dock {
   animation: none;
 }
 .mdos-gallery-item:hover .mdos-wg.is-sample {
-  box-shadow: 0 0 0 3px var(--mdos-accent, #0a84ff), var(--mdos-widget-shadow) !important;
+  box-shadow: 0 0 0 3px var(--mdos-accent, #0078d4), var(--mdos-widget-shadow) !important;
 }
 
 /* ── Desktop icons (apps & bookmarks on the desktop) ─────────── */
@@ -822,7 +822,7 @@ html.mdos-desktop.mdos-edit #mdos-dock {
   align-items: center;
   gap: 6px;
   padding: 6px 2px;
-  border-radius: 10px;
+  border-radius: 8px;
   pointer-events: auto;
   cursor: var(--mdos-cur, default);
   user-select: none;
@@ -853,7 +853,7 @@ html[data-mdos-wallpaper-tone="light"] .mdos-dicon-label {
   background: rgba(255, 255, 255, 0.16);
 }
 .mdos-dicon:focus-visible {
-  box-shadow: 0 0 0 2px var(--mdos-accent, #0a84ff);
+  box-shadow: 0 0 0 2px var(--mdos-accent, #0078d4);
 }
 .mdos-dicon.is-dragging {
   opacity: 0.85;
@@ -1035,7 +1035,7 @@ html.mdos-desktop-home.mdos-no-credits [data-component="HomeBrowserHub.HomePage"
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 11px;
+  border-radius: 8px;
   background: var(--mdos-widget-fill);
   color: var(--mdos-widget-ink);
   font: 700 16px var(--mdos-font);
@@ -1395,7 +1395,7 @@ html.mdos-touch-home #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-c
   color: var(--mdos-widget-ink);
 }
 .mdos-lg-chip.is-up {
-  background: color-mix(in srgb, #ff453a 16%, transparent);
+  background: color-mix(in srgb, #c42b1c 16%, transparent);
   color: #d63a30;
 }
 .mdos-lg-chip.is-down {
@@ -1624,7 +1624,7 @@ html.mdos-touch-home #mac-credit-home .mlh-crcard:not(:nth-child(4n + 2)) .mlh-c
 .mdos-lg-tile {
   min-width: 0;
   padding: 8px 10px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--mdos-widget-fill);
   display: flex;
   flex-direction: column;

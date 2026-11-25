@@ -1521,7 +1521,7 @@ html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-cell:nth-child(7n + 3) {
 html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-cell {
   min-width: 0;
 }
-html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-lp-app {
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-apps .mdos-lp-app {
   position: relative;
   display: block;
   width: 100%;
@@ -1533,7 +1533,7 @@ html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-lp-app {
 html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-cell:nth-child(7n + 3) .mdos-lp-app {
   aspect-ratio: auto;
 }
-html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-app-icon {
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-apps .mdos-app-icon {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1544,24 +1544,24 @@ html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-app-icon {
   overflow: hidden;
   color: #fff;
 }
-html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-app-icon.has-host-image {
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-apps .mdos-app-icon.has-host-image {
   background: #fff;
 }
-html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-app-icon > .mdos-fi {
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-apps .mdos-app-icon > .mdos-fi {
   display: none;
 }
-html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-app-icon > svg:not(.mdos-fi) {
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-apps .mdos-app-icon > svg:not(.mdos-fi) {
   display: block;
   width: 38%;
   height: 38%;
   margin-bottom: 10%;
   filter: none;
 }
-html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-cell:nth-child(-n + 2) .mdos-app-icon > svg:not(.mdos-fi) {
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-apps .mdos-sb-cell:nth-child(-n + 2) .mdos-app-icon > svg:not(.mdos-fi) {
   width: 30%;
   height: 30%;
 }
-html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-lp-label {
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-apps .mdos-lp-label {
   position: absolute;
   left: 8px;
   right: 8px;
@@ -1572,12 +1572,12 @@ html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-lp-label {
   color: #fff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
-html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-lp-app:active .mdos-app-icon {
+html.mdos-touch:not(.mdos-tablet) #mdos-sb .mdos-sb-apps .mdos-lp-app:active .mdos-app-icon {
   filter: none;
   transform: scale(0.96);
 }
 /* Tiles in edit mode lean back a little, like rearranging Start. */
-html.mdos-touch.mdos-edit:not(.mdos-tablet) #mdos-sb .mdos-lp-app {
+html.mdos-touch.mdos-edit:not(.mdos-tablet) #mdos-sb .mdos-sb-apps .mdos-lp-app {
   transform: scale(0.92);
   opacity: 0.9;
 }
@@ -2099,4 +2099,75 @@ html.mdos .mdos-gallery-item:hover .mdos-wg.is-sample {
 /* The taskbar already has Search; the tray keeps Quick Settings only. */
 html.mdos-tablet #mdos-menubar .mdos-mb-icon:not([data-mdos-cc-toggle]) {
   display: none;
+}
+
+/* ── Popovers, About, edit bar, sheets: Windows dark acrylic flyouts ── */
+/* Their inner controls are drawn for a dark surface, so they stay dark in
+   both themes (like Windows' dark context flyouts), with white text. */
+html.mdos .mdos-pop,
+html.mdos .mdos-about-card,
+html.mdos.mdos-edit #mdos-editbar {
+  color: #fff;
+  background: rgba(44, 44, 44, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 32px 64px rgba(0, 0, 0, 0.28);
+}
+html.mdos .mdos-about-card {
+  text-align: left;
+}
+html.mdos .mdos-pop.mdos-pop--sheet {
+  border-radius: 8px 8px 0 0;
+}
+html.mdos .mdos-pop.mdos-pop--sheet::before,
+html.mdos .mdos-qp-pop.is-sheet::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* ── Caption buttons on touch screens too (no coloured dots anywhere) ── */
+html.mdos.mdos-touch .mdos-light {
+  width: 44px;
+  height: 100%;
+  min-height: 32px;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mdos-fg, var(--w-fg));
+}
+html.mdos.mdos-touch .mdos-light svg {
+  width: 10px;
+  height: 10px;
+  opacity: 1;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linecap: butt;
+  color: inherit;
+  fill: none;
+}
+html.mdos.mdos-touch .mdos-lights {
+  gap: 0;
+  align-self: stretch;
+  order: 9;
+  margin-left: auto;
+}
+html.mdos.mdos-touch .mdos-appwin-bar {
+  padding-right: 0;
+}
+html.mdos.mdos-touch .mdos-light--close:active {
+  background: #c42b1c !important;
+  color: #fff;
+}
+html.mdos.mdos-touch .mdos-appwin-title {
+  order: 0;
+  text-align: left;
+  padding-right: 0;
+}
+html.mdos.mdos-touch .mdos-appwin-tools {
+  order: 1;
+}
+
+/* ── Notification badges: Windows InfoBadge red ──────────────── */
+html.mdos [data-mdos-badge]::after {
+  background: #c42b1c !important;
 }

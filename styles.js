@@ -35,7 +35,7 @@ const MDOS_LATE_CSS = [
 
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] {
   --mdos-bubble-max: min(74%, 560px);
-  --mdos-cv-bubble-me: var(--mdos-cv-me, var(--mdos-accent, #0a84ff));
+  --mdos-cv-bubble-me: var(--mdos-cv-me, var(--mdos-accent, #0078d4));
   --mdos-cv-bubble-me-fg: var(--mdos-cv-me-fg, #ffffff);
   --mdos-cv-bubble-them: var(--mdos-cv-them, var(--mdos-bubble-other));
   --mdos-cv-bubble-them-fg: var(--mdos-cv-them-fg, var(--mdos-bubble-other-fg));
@@ -69,7 +69,7 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-mess
   width: fit-content;
   max-width: var(--mdos-bubble-max);
   padding: 7px 13px;
-  border-radius: var(--mdos-cv-radius, 18px);
+  border-radius: var(--mdos-cv-radius, 8px);
   background: var(--mdos-cv-bubble-me);
   color: var(--mdos-cv-bubble-me-fg) !important;
   font-size: var(--mdos-cv-size, 15px) !important;
@@ -90,7 +90,7 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-mess
   border-radius: 50% !important;
 }
 html.mdos[data-mdos-convo="messages"][data-mdos-cv-avatar="rounded"] [data-chat-mode="conversation"] .mari-message-avatar > button {
-  border-radius: 9px !important;
+  border-radius: 8px !important;
 }
 html.mdos[data-mdos-convo="messages"][data-mdos-cv-avatar="hidden"] [data-chat-mode="conversation"] .mari-message-avatar {
   display: none !important;
@@ -114,7 +114,7 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-mess
   width: fit-content;
   max-width: var(--mdos-bubble-max);
   padding: 7px 13px;
-  border-radius: var(--mdos-cv-radius, 18px);
+  border-radius: var(--mdos-cv-radius, 8px);
   background: var(--mdos-cv-bubble-them);
   color: var(--mdos-cv-bubble-them-fg);
   font-size: var(--mdos-cv-size, 15px) !important;
@@ -131,7 +131,7 @@ html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-mess
 }
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message-content img {
   display: block;
-  border-radius: 14px;
+  border-radius: 8px;
 }
 /* Quiet message tools: they appear when you hover a message. */
 html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role]:not(:hover, :focus-within) .mari-message-actions {
@@ -191,7 +191,7 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) {
   --mdos-mark: color-mix(in srgb, var(--mdos-ink) 6%, transparent);
   --mdos-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "AppleMyungjo", "Nanum Myeongjo", "Noto Serif KR",
     "Noto Serif CJK KR", Batang, "바탕", serif;
-  --mdos-rp-sans: Pretendard, "Pretendard Variable", "Pretendard JP", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR",
+  --mdos-rp-sans: Pretendard, "Pretendard Variable", "Pretendard JP", "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR",
     system-ui, sans-serif;
   --mdos-rp-text: var(--mdos-rp-font, var(--mdos-rp-sans));
 }
@@ -285,7 +285,7 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-messa
 /* Your turns: a soft card in the column. */
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row.mari-message-user .mari-rp-bubble {
   background: var(--mdos-mark) !important;
-  border-radius: 14px !important;
+  border-radius: 8px !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .mari-roleplay-message-row.mari-message-user .mari-rp-bubble > div {
   padding: 12px 16px !important;
@@ -325,7 +325,7 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell {
   background: var(--mdos-paper-2) !important;
   border: 1px solid color-mix(in srgb, var(--mdos-ink) 10%, transparent) !important;
-  border-radius: 16px !important;
+  border-radius: 8px !important;
   box-shadow: 0 6px 22px -14px color-mix(in srgb, var(--mdos-ink) 45%, transparent) !important;
   backdrop-filter: none !important;
 }
@@ -383,7 +383,7 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari
     display: none;
   }
   html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell {
-    border-radius: 14px !important;
+    border-radius: 8px !important;
   }
 }
 /* Wide windows: the column stays a reading width, centred. */
@@ -398,13 +398,13 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mari
 .mdos-cv-preview {
   margin-top: 12px;
   padding: 16px;
-  border-radius: 14px;
+  border-radius: 8px;
   box-shadow: inset 0 0 0 0.5px var(--mdos-sep);
   display: grid;
   gap: 8px;
 }
 .mdos-cv-preview--convo {
-  --pv-me: var(--mdos-cv-me, var(--mdos-accent, #0a84ff));
+  --pv-me: var(--mdos-cv-me, var(--mdos-accent, #0078d4));
   --pv-me-fg: var(--mdos-cv-me-fg, #fff);
   --pv-them: var(--mdos-cv-them, var(--mdos-bubble-other));
   --pv-them-fg: var(--mdos-cv-them-fg, var(--mdos-bubble-other-fg));
@@ -453,7 +453,7 @@ html.mdos-cv-no-names .mdos-cv-preview--convo .mdos-pv-name {
   margin: 0;
   max-width: 78%;
   padding: 7px 13px;
-  border-radius: var(--mdos-cv-radius, 18px);
+  border-radius: var(--mdos-cv-radius, 8px);
   font-size: var(--mdos-cv-size, 15px);
   line-height: 1.4;
   background: var(--pv-them);
@@ -481,7 +481,7 @@ html[data-mdos-rp="night"] .mdos-cv-preview--rp {
 }
 .mdos-pv-rp {
   margin: 0;
-  font-family: var(--mdos-rp-font, Pretendard, "Pretendard Variable", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif);
+  font-family: var(--mdos-rp-font, Pretendard, "Pretendard Variable", "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif);
   font-size: var(--mdos-rp-size, 16px);
   line-height: var(--mdos-rp-line, 1.8);
 }
@@ -546,7 +546,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   padding: 0 !important;
 }
 html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell {
-  border-radius: 18px 18px 0 0 !important;
+  border-radius: 8px 8px 0 0 !important;
   border-width: 1px 0 0 !important;
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px) !important;
   box-shadow: 0 -6px 20px -14px color-mix(in srgb, var(--mdos-ink) 45%, transparent) !important;
@@ -590,7 +590,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
 .mdos-alert {
   width: min(280px, 100%);
   padding: 20px 18px 16px;
-  border-radius: 14px;
+  border-radius: 8px;
   text-align: center;
   color: var(--mdos-menu-fg, #fff);
   font: 13px/1.45 var(--mdos-font);
@@ -626,7 +626,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   gap: 8px;
 }
 .mdos-alert-actions .mdos-btn--danger {
-  background: #ff453a;
+  background: #c42b1c;
   color: #fff;
 }
 
@@ -668,7 +668,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   background: color-mix(in srgb, var(--mdos-fg, #000) 10%, transparent);
 }
 .mdos-scenebar-btn.is-danger:hover {
-  color: #ff453a;
+  color: #c42b1c;
 }
 .mdos-scenebar-btn:disabled {
   opacity: 0.3;
@@ -735,7 +735,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   cursor: var(--mdos-cur-ptr, pointer);
 }
 .mdos-qp-chip:hover {
-  background: var(--mdos-accent, #0a84ff);
+  background: var(--mdos-accent, #0078d4);
   color: #fff;
 }
 .mdos-qp-ico {
@@ -766,7 +766,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   display: grid;
   gap: 8px;
   padding: 10px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.06);
 }
 .mdos-snip-text {
@@ -789,11 +789,11 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   opacity: 0.6;
 }
 .mdos-snip-row {
-  border-radius: 12px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.06);
 }
 .mdos-snip-row.is-pinned {
-  box-shadow: inset 3px 0 0 var(--mdos-accent, #0a84ff);
+  box-shadow: inset 3px 0 0 var(--mdos-accent, #0078d4);
 }
 .mdos-snip-head {
   all: unset;
@@ -846,7 +846,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   box-sizing: border-box;
   display: grid;
   place-items: center;
-  border-radius: 7px;
+  border-radius: 4px;
   font-size: 13px;
   opacity: 0.7;
   cursor: var(--mdos-cur-ptr, pointer);
@@ -901,7 +901,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
 }
 .mdos-lk-row:hover,
 .mdos-lk-row:focus-visible {
-  background: var(--mdos-accent, #0a84ff);
+  background: var(--mdos-accent, #0078d4);
   color: #fff;
 }
 .mdos-lk-ico {
@@ -909,7 +909,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   place-items: center;
   width: 26px;
   height: 26px;
-  border-radius: 7px;
+  border-radius: 4px;
   background: rgba(255, 255, 255, 0.12);
   overflow: hidden;
   font-size: 14px;
@@ -1005,7 +1005,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   width: min(560px, 100vw) !important;
   max-height: 78vh;
   padding: 18px 16px calc(env(safe-area-inset-bottom, 0px) + 18px);
-  border-radius: 22px 22px 0 0;
+  border-radius: 8px 8px 0 0;
   box-shadow: 0 -10px 40px -10px rgba(0, 0, 0, 0.5) !important;
   animation: mdos-sheet-up 220ms var(--mdos-ease);
 }
@@ -1049,7 +1049,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
 .mdos-lk-list.is-grid .mdos-lk-ico {
   width: 56px;
   height: 56px;
-  border-radius: 14px;
+  border-radius: 8px;
   font-size: 26px;
   background: rgba(255, 255, 255, 0.14);
   transition: transform 120ms ease;
@@ -1096,7 +1096,7 @@ html.mdos .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
   column-gap: 6px !important;
   row-gap: 4px !important;
   padding: 14px 12px 10px 12px !important;
-  border-radius: 28px !important;
+  border-radius: 8px !important;
   border: 1px solid color-mix(in srgb, var(--mdos-fg, #000) 12%, transparent) !important;
   background: var(--mdos-win-bg, #fff) !important;
   box-shadow: 0 6px 24px -10px rgba(0, 0, 0, 0.22) !important;
@@ -1185,7 +1185,7 @@ html.mdos .marinara-chat-input-shell .mdos-qp-plus svg {
 }
 /* Phones: the side margin stays; the card keeps its round corners. */
 html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
-  border-radius: 24px 24px 0 0 !important;
+  border-radius: 8px 8px 0 0 !important;
 }
 
 /* The + menu: the Claude app's card — grouped rows on a light surface. */
@@ -1196,7 +1196,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   max-height: min(70vh, 560px);
   overflow-y: auto;
   padding: 12px;
-  border-radius: 26px;
+  border-radius: 8px;
   display: grid;
   gap: 12px;
   color: var(--mdos-fg, #1d1d1f);
@@ -1209,7 +1209,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
 }
 .mdos-qp-group {
   display: grid;
-  border-radius: 18px;
+  border-radius: 8px;
   background: var(--mdos-win-bg, #fff);
   overflow: hidden;
 }
@@ -1271,7 +1271,7 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
   transition: translate 150ms var(--mdos-ease);
 }
 .mdos-qp-switch.is-on {
-  background: #34c759;
+  background: var(--w-accent, #0078d4);
 }
 .mdos-qp-switch.is-on::after {
   translate: 18px 0;
@@ -1327,8 +1327,8 @@ html.mdos .marinara-chat-input-shell > div > button[aria-haspopup="dialog"]:has(
     transition: background 180ms ease, color 180ms ease;
   }
   html.mdos .mari-editor-header--with-nav .mari-editor-tab[data-active="true"] {
-    background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 16%, transparent) !important;
-    color: var(--mdos-accent, #0a84ff) !important;
+    background: color-mix(in srgb, var(--mdos-accent, #0078d4) 16%, transparent) !important;
+    color: var(--mdos-accent, #0078d4) !important;
     font-weight: 600;
   }
   html.mdos .mari-editor-navigation-tabs.mdos-jumping .mari-editor-tab[data-active="true"]:not([data-mdos-picked]) {
@@ -1337,8 +1337,8 @@ html.mdos .marinara-chat-input-shell > div > button[aria-haspopup="dialog"]:has(
     font-weight: 500;
   }
   html.mdos .mari-editor-navigation-tabs.mdos-jumping .mari-editor-tab[data-mdos-picked] {
-    background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 16%, transparent) !important;
-    color: var(--mdos-accent, #0a84ff) !important;
+    background: color-mix(in srgb, var(--mdos-accent, #0078d4) 16%, transparent) !important;
+    color: var(--mdos-accent, #0078d4) !important;
     font-weight: 600;
   }
 }
@@ -1443,13 +1443,13 @@ html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] 
 html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :is(span.rounded-lg, .mari-chat-mode-avatar) {
   width: 46px !important;
   height: 64px !important;
-  border-radius: 3px 6px 6px 3px !important;
+  border-radius: 3px 4px 4px 3px !important;
   box-shadow:
     inset 3px 0 0 rgba(0, 0, 0, 0.18),
     0 3px 8px -3px rgba(0, 0, 0, 0.35);
 }
 html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > span.rounded-lg > img {
-  border-radius: 3px 6px 6px 3px !important;
+  border-radius: 3px 4px 4px 3px !important;
 }
 html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
   font-family: "Iowan Old Style", "Noto Serif KR", "Nanum Myeongjo", Georgia, serif !important;
@@ -1464,7 +1464,7 @@ html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"]:
 html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] {
   min-height: 76px;
   margin: 4px 6px !important;
-  border-radius: 16px !important;
+  border-radius: 8px !important;
   background: color-mix(in srgb, var(--mdos-fg, #000) 4%, transparent);
 }
 html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"]::after {
@@ -1474,13 +1474,13 @@ html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .r
 html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :is(span.rounded-lg, .mari-chat-mode-avatar) {
   width: 54px !important;
   height: 54px !important;
-  border-radius: 14px !important;
+  border-radius: 8px !important;
 }
 html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > :is(span.rounded-lg, .mari-chat-mode-avatar) {
   box-shadow: 0 3px 10px -4px rgba(0, 0, 0, 0.4);
 }
 html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .relative.flex-shrink-0 > span.rounded-lg > img {
-  border-radius: 14px !important;
+  border-radius: 8px !important;
 }
 html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
   font-size: 15px !important;
@@ -1498,7 +1498,7 @@ html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .m
   max-height: 82vh;
   box-sizing: border-box;
   padding: 26px 12px calc(env(safe-area-inset-bottom, 0px) + 14px);
-  border-radius: 26px 26px 0 0;
+  border-radius: 8px 8px 0 0;
   animation: mdos-qp-up 220ms var(--mdos-ease);
 }
 .mdos-qp-pop.is-sheet::before {
@@ -1530,7 +1530,7 @@ html.mdos-touch:not(.mdos-tablet) [data-quick-connection-menu] {
   width: 100vw !important;
   max-width: none !important;
   height: min(82vh, 640px) !important;
-  border-radius: 28px 28px 0 0 !important;
+  border-radius: 8px 8px 0 0 !important;
   padding-bottom: env(safe-area-inset-bottom, 0px) !important;
   transform: none !important;
 }
@@ -1585,7 +1585,7 @@ html.mdos-touch:not(.mdos-tablet) #mdos-toast.is-on {
     display: inline !important;
   }
   html.mdos .mari-editor-header--with-nav .mari-editor-tab[data-active="true"] {
-    background: var(--mdos-accent, #0a84ff) !important;
+    background: var(--mdos-accent, #0078d4) !important;
     color: #fff !important;
   }
   html.mdos .mari-editor-header--with-nav {
@@ -1700,7 +1700,7 @@ html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > button 
   color: var(--foreground, var(--mdos-fg)) !important;
 }
 html.mdos-touch .mari-chat-sidebar > div:has(> .mari-chat-mode-action) > .mari-chat-mode-action {
-  background: var(--mdos-accent, #0a84ff) !important;
+  background: var(--mdos-accent, #0078d4) !important;
   color: #fff !important;
   order: 9;
 }
@@ -1715,7 +1715,7 @@ html.mdos-touch .mari-chat-sidebar .mari-chrome-segmented:has(> [data-chat-mode-
   padding: 2px !important;
   height: 34px;
   border: 0 !important;
-  border-radius: 10px !important;
+  border-radius: 8px !important;
   background: color-mix(in srgb, var(--foreground, #000) 8%, transparent) !important;
   box-shadow: none !important;
 }
@@ -1740,7 +1740,7 @@ html.mdos-touch .mari-chat-sidebar [data-chat-mode-tab] svg {
 html.mdos-touch .mari-chat-sidebar input.mari-chrome-field {
   height: 38px !important;
   border: 0 !important;
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   background: color-mix(in srgb, var(--foreground, #000) 7%, transparent) !important;
   box-shadow: none !important;
   font-size: 15px !important;
@@ -1748,7 +1748,7 @@ html.mdos-touch .mari-chat-sidebar input.mari-chrome-field {
 html.mdos-touch .mari-chat-sidebar select.mari-chrome-sort-field {
   height: 38px !important;
   border: 0 !important;
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   background-color: color-mix(in srgb, var(--foreground, #000) 7%, transparent) !important;
   box-shadow: none !important;
   font-size: 13px !important;
@@ -1759,7 +1759,7 @@ html.mdos-touch .mari-chat-sidebar div:has(> input.mari-chrome-field) ~ button.m
   height: 38px !important;
   min-height: 38px !important;
   border: 0 !important;
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   background: color-mix(in srgb, var(--foreground, #000) 7%, transparent) !important;
   box-shadow: none !important;
 }
@@ -1773,23 +1773,23 @@ html.mdos-touch .mari-chat-sidebar button.mari-chrome-control--small:has(svg.luc
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
-  color: var(--mdos-accent, #0a84ff) !important;
+  color: var(--mdos-accent, #0078d4) !important;
   font-size: 13px !important;
 }
 /* Rows: flat, the open chat a soft tint (not a solid block). */
 html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"] {
   margin-inline: 8px !important;
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   box-shadow: none !important;
 }
 html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) {
-  background: color-mix(in srgb, var(--mdos-accent, #0a84ff) 14%, transparent) !important;
+  background: color-mix(in srgb, var(--mdos-accent, #0078d4) 14%, transparent) !important;
 }
 html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) :is(span, svg, button) {
   color: inherit !important;
 }
 html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) > .min-w-0.flex-1 > span:first-child {
-  color: var(--mdos-accent, #0a84ff) !important;
+  color: var(--mdos-accent, #0078d4) !important;
 }
 html.mdos-touch .mari-chat-sidebar [data-drag-kind="chat"]:has(> .mari-chrome-accent-progress) .mdos-preview {
   color: var(--muted-foreground, inherit) !important;
@@ -1836,7 +1836,7 @@ html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="cha
 }
 /* Game: app icons. */
 html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] > .relative.flex-shrink-0 :is(span.rounded-lg, .mari-chat-mode-avatar, div.rounded-lg) {
-  border-radius: 7px !important;
+  border-radius: 4px !important;
 }
 /* Roleplay: book covers — taller than wide, a spine shadow. */
 html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] [data-drag-kind="chat"] {
@@ -1885,7 +1885,7 @@ html.mdos .mari-chat-sidebar[data-mdos-list] {
   --app-muted: var(--muted-foreground, var(--mdos-fg-2));
   --app-accent: var(--marinara-app-accent-solid, var(--primary, var(--mdos-accent)));
   --app-line: color-mix(in srgb, var(--app-ink) 10%, transparent);
-  --app-serif: "Iowan Old Style", "Palatino Linotype", "AppleMyungjo", "Nanum Myeongjo", "Noto Serif KR", Georgia, serif;
+  --app-serif: Georgia, Cambria, "Noto Serif KR", "Nanum Myeongjo", "Noto Serif KR", Georgia, serif;
 }
 html.mdos .mari-chat-sidebar[data-mdos-list="roleplay"] {
   background-color: color-mix(in srgb, var(--card, #fffdf7) 55%, var(--background, #f4f0e7)) !important;
@@ -1958,7 +1958,7 @@ html[data-mdos-chatapp="conversation"] .mdos-chat-title {
   display: none !important;
 }
 html[data-mdos-chatapp="roleplay"] .mdos-chat-title {
-  font: 600 14px/1 "Iowan Old Style", "Palatino Linotype", "AppleMyungjo", "Nanum Myeongjo", "Noto Serif KR", Georgia, serif;
+  font: 600 14px/1 Georgia, Cambria, "Noto Serif KR", "Nanum Myeongjo", "Noto Serif KR", Georgia, serif;
   letter-spacing: 0;
 }
 html[data-mdos-chatapp="game"] .mdos-chat-title {
@@ -1984,7 +1984,7 @@ html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="cha
   padding: 8px 10px !important;
   gap: 11px !important;
   margin: 0 4px !important;
-  border-radius: 10px !important;
+  border-radius: 8px !important;
 }
 html.mdos .mari-chat-sidebar[data-mdos-list="conversation"] [data-drag-kind="chat"] > .min-w-0.flex-1 > span:first-child {
   font-size: 14px !important;
@@ -2095,7 +2095,7 @@ html.mdos .mari-chat-sidebar[data-mdos-list="game"] [data-drag-kind="chat"] {
   margin: 5px 8px !important;
   padding: 10px 12px !important;
   gap: 12px !important;
-  border-radius: 14px !important;
+  border-radius: 8px !important;
   background: color-mix(in srgb, var(--card, #fff) 82%, transparent) !important;
   border: 1px solid var(--app-line) !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 6px 14px -10px rgba(0, 0, 0, 0.3) !important;
@@ -2157,7 +2157,7 @@ html.mdos-touch:not(.mdos-tablet) button.marinara-chat-input-shell {
   align-items: flex-start !important;
   justify-content: flex-start !important;
   padding: 16px 18px calc(env(safe-area-inset-bottom, 0px) + 20px) !important;
-  border-radius: 24px 24px 0 0 !important;
+  border-radius: 8px 8px 0 0 !important;
   border: 0 !important;
   border-top: 1px solid color-mix(in srgb, var(--mdos-fg, #000) 12%, transparent) !important;
   background: var(--mdos-win-bg, #fff) !important;
@@ -2252,13 +2252,13 @@ html.mdos-desktop [data-mdos-win="main"] :is(.mari-window-bubble, .mari-window.f
 html.mdos [data-quick-connection-menu] {
   --mp-ink: var(--foreground, var(--mdos-fg));
   --mp-muted: var(--muted-foreground, var(--mdos-fg-2));
-  --mp-accent: var(--marinara-app-accent-solid, var(--primary, var(--mdos-accent, #0a84ff)));
+  --mp-accent: var(--marinara-app-accent-solid, var(--primary, var(--mdos-accent, #0078d4)));
   --mp-bg: var(--card, var(--mdos-win-bg, #fff));
   --mp-fill: color-mix(in srgb, var(--mp-ink) 6%, transparent);
   --mp-line: color-mix(in srgb, var(--mp-ink) 10%, transparent);
   padding: 0 !important;
   border: 0 !important;
-  border-radius: 16px !important;
+  border-radius: 8px !important;
   background: var(--mp-bg) !important;
   color: var(--mp-ink) !important;
   box-shadow:
@@ -2305,7 +2305,7 @@ html.mdos [data-quick-connection-menu] [data-switcher-section="now"] {
   margin: 12px 14px 0 !important;
   padding: 2px 6px 2px 4px !important;
   border: 0 !important;
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   background: color-mix(in srgb, var(--mp-accent) 11%, transparent) !important;
   box-shadow: none !important;
 }
@@ -2335,7 +2335,7 @@ html.mdos [data-quick-connection-menu] [data-connection-switcher] > .mari-chrome
   margin: 10px 14px 12px !important;
   min-height: 38px !important;
   border: 0 !important;
-  border-radius: 10px !important;
+  border-radius: 8px !important;
   background: var(--mp-fill) !important;
   box-shadow: none !important;
 }
@@ -2380,7 +2380,7 @@ html.mdos [data-quick-connection-menu] [data-switcher-pane] {
   margin: 1px 0 !important;
   padding: 4px 8px !important;
   gap: 9px !important;
-  border-radius: 7px !important;
+  border-radius: 4px !important;
   background: transparent !important;
   font-size: 13px !important;
   font-weight: 500 !important;
@@ -2417,11 +2417,11 @@ html.mdos [data-quick-connection-menu] [data-switcher-pane] strong ~ * {
 html.mdos [data-quick-connection-menu] [data-switcher-pane] .mari-provider-icon {
   width: 20px !important;
   height: 20px !important;
-  border-radius: 5px !important;
+  border-radius: 4px !important;
 }
 html.mdos [data-quick-connection-menu] [data-switcher-add] {
   min-height: 30px !important;
-  border-radius: 7px !important;
+  border-radius: 4px !important;
   font-size: 12.5px !important;
   color: var(--mp-muted) !important;
 }
@@ -2442,7 +2442,7 @@ html.mdos [data-quick-connection-menu] [data-switcher-edit-order],
 html.mdos [data-quick-connection-menu] [data-switcher-search-all] {
   min-height: 26px !important;
   padding: 0 8px !important;
-  border-radius: 7px !important;
+  border-radius: 4px !important;
   font-size: 12px !important;
   color: var(--mp-accent) !important;
 }
@@ -2459,7 +2459,7 @@ html.mdos [data-quick-connection-menu] .mari-connection-model {
   align-items: center !important;
   margin: 1px 4px !important;
   padding-right: 4px !important;
-  border-radius: 9px !important;
+  border-radius: 8px !important;
   background: transparent !important;
   box-shadow: none !important;
 }
@@ -2480,7 +2480,7 @@ html.mdos [data-quick-connection-menu] .mari-connection-model-choice {
 html.mdos [data-quick-connection-menu] .mari-connection-model-choice .mari-provider-icon {
   width: 28px !important;
   height: 28px !important;
-  border-radius: 7px !important;
+  border-radius: 4px !important;
 }
 html.mdos [data-quick-connection-menu] [data-connection-model-copy] {
   flex: 1 1 auto !important;
@@ -2519,7 +2519,7 @@ html.mdos [data-quick-connection-menu] [data-connection-badges] > [data-connecti
 html.mdos [data-quick-connection-menu] [data-model-cost] {
   border: 0 !important;
   padding: 2px 7px !important;
-  border-radius: 6px !important;
+  border-radius: 4px !important;
   background: var(--mp-fill) !important;
   color: var(--mp-muted) !important;
   font-size: 11px !important;
@@ -2585,7 +2585,7 @@ html.mdos [data-quick-connection-menu] [data-switcher-pane] > span:first-child {
   height: 20px !important;
   min-width: 20px !important;
   margin: 0 !important;
-  border-radius: 5px !important;
+  border-radius: 4px !important;
   background: transparent !important;
 }
 html.mdos [data-quick-connection-menu] [data-switcher-pane] > span:first-child svg {
@@ -2818,7 +2818,7 @@ html.mdos-touch .mdos-dock-inner {
   gap: 18px;
   height: auto;
   padding: 12px 16px;
-  border-radius: 30px;
+  border-radius: 8px;
 }
 html.mdos-touch .mdos-dock-item {
   width: var(--mdos-sb-icon) !important;
@@ -2889,7 +2889,7 @@ html.mdos-touch :is(.mari-right-panel-header, .mari-sidebar-header) > .absolute.
 /* Rows get the comfortable height of a phone list. */
 html.mdos-touch [data-drag-kind="chat"] {
   min-height: 58px;
-  border-radius: 12px !important;
+  border-radius: 8px !important;
 }
 html.mdos-touch [data-component="TopBar"] {
   background: color-mix(in srgb, var(--mdos-win-bg) 86%, transparent) !important;
@@ -2902,7 +2902,7 @@ html.mdos-touch [data-component="TopBar"] {
 html.mdos-tablet [data-component="RightPanelMobile"] {
   inset: 36px max(36px, calc((100vw - 720px) / 2)) 36px !important;
   width: auto !important;
-  border-radius: 20px !important;
+  border-radius: 8px !important;
   overflow: hidden !important;
   box-shadow: 0 30px 80px -16px rgba(0, 0, 0, 0.55) !important;
   --mari-right-panel-width: min(720px, calc(100vw - 72px)) !important;
@@ -2910,7 +2910,7 @@ html.mdos-tablet [data-component="RightPanelMobile"] {
 html.mdos-tablet aside[data-component="ChatSidebarPanel"] {
   inset: 24px auto 24px 24px !important;
   width: min(400px, calc(100vw - 48px)) !important;
-  border-radius: 20px !important;
+  border-radius: 8px !important;
   overflow: hidden !important;
   box-shadow: 0 30px 80px -16px rgba(0, 0, 0, 0.55) !important;
 }
@@ -3018,7 +3018,7 @@ html.mdos-touch #mdos-cc {
   bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
   width: auto;
   max-height: 82vh;
-  border-radius: 24px;
+  border-radius: 8px;
   transform: translateY(20px);
 }
 html.mdos-tablet #mdos-cc {
@@ -3031,7 +3031,7 @@ html.mdos-touch #mdos-cc.is-open {
 .mdos-cc-done {
   width: 100%;
   height: 38px !important;
-  background: var(--mdos-accent, #0a84ff) !important;
+  background: var(--mdos-accent, #0078d4) !important;
   font-size: 14px !important;
 }
 html.mdos-touch.mdos-edit #mdos-editbar {
@@ -3061,7 +3061,7 @@ html.mdos-tablet .mdos-appwin {
   top: 24px !important;
   width: min(900px, calc(100vw - 48px)) !important;
   height: calc(100% - 48px) !important;
-  border-radius: 20px !important;
+  border-radius: 8px !important;
   box-shadow: 0 30px 80px -16px rgba(0, 0, 0, 0.55) !important;
   padding-top: 0;
 }
@@ -3115,7 +3115,7 @@ html.mdos-edit .mdos-sb-move {
   all: unset;
   width: 26px;
   height: 22px;
-  border-radius: 6px;
+  border-radius: 4px;
   display: grid;
   place-items: center;
   font-size: 10px;
@@ -3265,7 +3265,7 @@ html.mdos-touch:not(.mdos-tablet) [data-chat-mode="conversation"] :is(.mari-chat
 }
 html.mdos-touch:not(.mdos-tablet) [data-chat-mode="conversation"] .marinara-chat-input-shell:has(> textarea[data-chat-composer]) {
   margin: 0 !important;
-  border-radius: 24px 24px 0 0 !important;
+  border-radius: 8px 8px 0 0 !important;
   border-width: 1px 0 0 !important;
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px) !important;
   box-shadow: 0 -6px 20px -14px rgba(0, 0, 0, 0.35) !important;

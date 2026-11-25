@@ -36,7 +36,7 @@ html.mdos [data-mdos-win="chats"] .mari-chat-sidebar > div:has(> .mari-chat-mode
   height: 26px !important;
   min-height: 26px !important;
   padding: 0 !important;
-  border-radius: 7px !important;
+  border-radius: 4px !important;
   background: transparent !important;
   box-shadow: none !important;
   color: var(--mdos-fg-2) !important;
@@ -143,7 +143,7 @@ html.mdos [data-mdos-win="panel"] {
     min-height: 30px !important;
     padding: 0 8px !important;
     border: 0 !important;
-    border-radius: 7px !important;
+    border-radius: 4px !important;
     background: transparent !important;
     box-shadow: none !important;
     font-size: 13px !important;
@@ -161,33 +161,47 @@ html.mdos [data-mdos-win="panel"] {
   html.mdos .mari-settings-panel-chrome [role="tab"]:hover {
     background: var(--mdos-fill) !important;
   }
+  /* Windows Settings: the selected category is a grey row with a short
+     accent bar on its left edge. */
   html.mdos .mari-settings-panel-chrome [role="tab"][aria-selected="true"] {
-    background: var(--mdos-accent) !important;
-    color: #fff !important;
+    position: relative;
+    background: var(--mdos-fill-2) !important;
+    color: var(--mdos-fg) !important;
+  }
+  html.mdos .mari-settings-panel-chrome [role="tab"][aria-selected="true"]::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 16px;
+    margin-top: -8px;
+    border-radius: 2px;
+    background: var(--mdos-accent);
   }
 
-  /* Category icons become small coloured squares. */
+  /* Category icons: coloured glyphs without a tile, like Windows Settings. */
   html.mdos .mari-settings-panel-chrome [role="tab"] > span:not(.absolute):first-of-type {
-    width: 22px !important;
-    height: 22px !important;
+    width: 20px !important;
+    height: 20px !important;
     border: 0 !important;
-    border-radius: 6px !important;
-    color: #fff !important;
-    background: var(--mdos-cat, #8e8e93) !important;
-    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+    border-radius: 0 !important;
+    color: var(--mdos-cat, #767676) !important;
+    background: transparent !important;
+    box-shadow: none;
   }
   html.mdos .mari-settings-panel-chrome [role="tab"] > span:not(.absolute):first-of-type svg {
-    width: 14px !important;
-    height: 14px !important;
-    color: #fff !important;
+    width: 16px !important;
+    height: 16px !important;
+    color: var(--mdos-cat, #767676) !important;
   }
-  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(1) { --mdos-cat: #8e8e93; }
-  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(2) { --mdos-cat: #0a84ff; }
-  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(3) { --mdos-cat: #a259e6; }
-  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(4) { --mdos-cat: #30b956; }
-  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(5) { --mdos-cat: #ff9500; }
-  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(6) { --mdos-cat: #636366; }
-  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(n + 7) { --mdos-cat: #ec4b8f; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(1) { --mdos-cat: #767676; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(2) { --mdos-cat: #0078d4; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(3) { --mdos-cat: #8764b8; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(4) { --mdos-cat: #107c10; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(5) { --mdos-cat: #ca5010; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(6) { --mdos-cat: #5d5a58; }
+  html.mdos .mari-settings-panel-chrome [role="tab"]:nth-child(n + 7) { --mdos-cat: #c239b3; }
 }
 
 /* ── Character & persona libraries: icon grid ────────────────── */
@@ -214,7 +228,7 @@ html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"
   gap: 6px !important;
   min-height: 0 !important;
   padding: 10px 4px 8px !important;
-  border-radius: 10px !important;
+  border-radius: 8px !important;
   text-align: center;
 }
 html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]):hover {
@@ -223,11 +237,11 @@ html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"
 html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]) .mari-avatar-placeholder {
   width: 58px !important;
   height: 58px !important;
-  border-radius: 15px !important;
+  border-radius: 8px !important;
   box-shadow: var(--mdos-elev) !important;
 }
 html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]) .mari-avatar-placeholder > div {
-  border-radius: 15px !important;
+  border-radius: 8px !important;
 }
 html.mdos.mdos-icon-view [data-mdos-win="panel"] :is([data-drag-kind="character"], [data-drag-kind="persona"]) > div.min-w-0 {
   width: 100%;
@@ -277,7 +291,7 @@ html.mdos [data-component="HomeBrowserHub.TabList"] {
   align-items: center !important;
   gap: 2px !important;
   padding: 2px;
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--mdos-fill);
   flex: 0 1 auto !important;
 }
@@ -288,7 +302,7 @@ html.mdos [data-component="HomeBrowserHub.TabStrip"] {
 html.mdos [data-component="HomeBrowserHub.TabList"] > [role="tab"] {
   min-height: 26px !important;
   border: 0 !important;
-  border-radius: 7px !important;
+  border-radius: 4px !important;
   background: transparent !important;
   box-shadow: none !important;
   font-weight: 500 !important;
@@ -344,7 +358,7 @@ html.mdos .mari-folder-helper[data-mdos-tip]::after {
   right: 0;
   width: 230px;
   padding: 8px 10px;
-  border-radius: 9px;
+  border-radius: 8px;
   font: 500 12px/1.45 var(--mdos-font);
   color: #f5f5f7;
   background: rgba(40, 40, 48, 0.94);
@@ -359,7 +373,7 @@ html.mdos .mari-folder-helper[data-mdos-tip]::after {
     transform 140ms ease;
 }
 html.mdos .mari-folder-helper[data-mdos-tip]:is(:hover, :focus-visible, [data-mdos-tip-open]) {
-  color: var(--mdos-accent, #0a84ff);
+  color: var(--mdos-accent, #0078d4);
 }
 html.mdos .mari-folder-helper[data-mdos-tip]:is(:hover, :focus-visible, [data-mdos-tip-open])::after {
   opacity: 1;
@@ -470,7 +484,7 @@ html.mdos.mdos-hub-app[data-mdos-hub-tone="dark"] [data-mdos-win="main"] .mdos-l
     min-height: 32px;
     padding: 0 10px !important;
     border: 0 !important;
-    border-radius: 7px !important;
+    border-radius: 4px !important;
     background: transparent;
     box-shadow: none !important;
     font-size: 13px !important;
@@ -511,11 +525,11 @@ html.mdos.mdos-hub-app[data-mdos-hub-tone="dark"] [data-mdos-win="main"] .mdos-l
 }
 /* Grouped cards and fields at every width: softer, flatter, macOS radii. */
 html.mdos .mari-editor-shell .mari-editor-panel {
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   box-shadow: none !important;
 }
 html.mdos .mari-editor-shell .mari-editor-field {
-  border-radius: 7px !important;
+  border-radius: 4px !important;
 }
 html.mdos .mari-editor-shell .mari-editor-field:focus-within,
 html.mdos .mari-editor-shell .mari-editor-field:focus {
@@ -539,7 +553,7 @@ html.mdos .mari-chat-sidebar [data-drag-kind="chat"] {
   min-height: 60px;
   padding: 8px 10px !important;
   gap: 10px !important;
-  border-radius: 10px !important;
+  border-radius: 8px !important;
   align-items: center !important;
 }
 /* The avatar slot itself is 42px, so the picture never runs under the name. */

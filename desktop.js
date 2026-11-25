@@ -62,7 +62,7 @@ const L = KO
       classic: "클래식 레이아웃",
       desktop: "데스크톱 모드",
       reload: "새로 고침",
-      about: "Marinara Desktop에 관하여",
+      about: "정보",
       aboutShort: "정보",
       view: "보기",
       window: "창",
@@ -70,8 +70,8 @@ const L = KO
       help: "도움말",
       close: "닫기",
       minimize: "최소화",
-      zoom: "확대/축소",
-      tile: "창 정리",
+      zoom: "최대화/이전 크기로",
+      tile: "창 바둑판식 배열",
       resetLayout: "창 배치 초기화",
       nextWindow: "다음 창",
       showDesktop: "데스크톱 보기",
@@ -99,13 +99,13 @@ const L = KO
       rpNight: "리더 (다크)",
       rpClean: "깔끔하게",
       convoStyle: "대화 화면",
-      convoMessages: "메시지 앱",
+      convoMessages: "메신저",
       convoMarinara: "마리나라 기본",
       customize: "꾸미기",
       iconStyle: "아이콘 스타일",
       iconShape: "아이콘 모양",
       iconStyles: { fluent: "Fluent (Windows 11)", gradient: "그라데이션", glass: "유리", pastel: "파스텔", tinted: "틴트", dark: "다크" },
-      iconShapes: { squircle: "둥근 사각", circle: "동그라미", rounded: "각진 사각" },
+      iconShapes: { squircle: "둥근 모서리", circle: "원", rounded: "작은 모서리" },
       cursor: "마우스 포인터",
       cursorSize: "포인터 크기",
       cursors: { system: "시스템 기본", mac: "검은 화살표", white: "흰 화살표", accent: "강조색 화살표", dot: "동그라미", custom: "내 이미지" },
@@ -382,7 +382,7 @@ const L = KO
         ["Ctrl + Alt + N", "지금 모드에서 새 채팅"],
         ["Ctrl + Alt + F", "집중 모드 (채팅 창만 꽉 차게)"],
         ["Ctrl + Alt + ,", "설정"],
-        ["Ctrl(⌘) + S", "편집 화면 저장"],
+        ["Ctrl + S", "편집 화면 저장"],
         ["Ctrl + Alt + D", "데스크톱 ↔ 클래식 레이아웃"],
         ["Ctrl + Alt + L", "시작 메뉴"],
         ["Ctrl + Alt + H", "데스크톱 보기"],
@@ -391,8 +391,10 @@ const L = KO
         ["Ctrl + K", "검색"],
         ["바탕화면 오른쪽 클릭", "위젯·배경화면·꾸미기 메뉴"],
         ["작업 표시줄 아이콘 오른쪽 클릭", "열기·닫기·아이콘 편집"],
-        ["제목 표시줄 더블클릭", "확대/축소"],
-        ["창을 화면 위/왼쪽/오른쪽 끝으로", "꽉 채우기 / 반쪽 배치"],
+        ["제목 표시줄 더블클릭", "최대화 / 이전 크기로"],
+        ["창을 화면 위/가장자리/모서리로", "최대화 / 반쪽 / 4분의 1"],
+        ["Ctrl + Alt + 방향키", "창 스냅 (Win + 방향키)"],
+        ["최대화 버튼에 마우스 올리기", "스냅 레이아웃"],
       ],
       aboutBody: "마리나라를 데스크톱처럼 쓰게 해 주는 확장이에요. 원래 화면으로 돌아가려면 Ctrl + Alt + D를 누르세요.",
     }
@@ -422,7 +424,7 @@ const L = KO
       classic: "Classic layout",
       desktop: "Desktop mode",
       reload: "Reload",
-      about: "About Marinara Desktop",
+      about: "About",
       aboutShort: "About",
       view: "View",
       window: "Window",
@@ -430,8 +432,8 @@ const L = KO
       help: "Help",
       close: "Close",
       minimize: "Minimize",
-      zoom: "Zoom",
-      tile: "Tile windows",
+      zoom: "Maximize / Restore",
+      tile: "Arrange windows",
       resetLayout: "Reset window layout",
       nextWindow: "Next window",
       showDesktop: "Show desktop",
@@ -459,13 +461,13 @@ const L = KO
       rpNight: "Reader (dark)",
       rpClean: "Clean",
       convoStyle: "Conversation view",
-      convoMessages: "Messages app",
+      convoMessages: "Messenger",
       convoMarinara: "Marinara default",
       customize: "Customize",
       iconStyle: "Icon style",
       iconShape: "Icon shape",
       iconStyles: { fluent: "Fluent (Windows 11)", gradient: "Gradient", glass: "Glass", pastel: "Pastel", tinted: "Tinted", dark: "Dark" },
-      iconShapes: { squircle: "Squircle", circle: "Circle", rounded: "Rounded" },
+      iconShapes: { squircle: "Rounded", circle: "Circle", rounded: "Slightly rounded" },
       cursor: "Mouse pointer",
       cursorSize: "Pointer size",
       cursors: { system: "System", mac: "Black arrow", white: "White arrow", accent: "Accent arrow", dot: "Dot", custom: "My image" },
@@ -742,7 +744,7 @@ const L = KO
         ["Ctrl + Alt + N", "New chat in the current mode"],
         ["Ctrl + Alt + F", "Focus mode (the chat window fills the screen)"],
         ["Ctrl + Alt + ,", "Settings"],
-        ["Ctrl(⌘) + S", "Save the open editor"],
+        ["Ctrl + S", "Save the open editor"],
         ["Ctrl + Alt + D", "Desktop ↔ classic layout"],
         ["Ctrl + Alt + L", "Start"],
         ["Ctrl + Alt + H", "Show desktop"],
@@ -751,8 +753,10 @@ const L = KO
         ["Ctrl + K", "Search"],
         ["Right-click the desktop", "Widgets, wallpaper, customize"],
         ["Right-click a taskbar icon", "Open, close, edit icon"],
-        ["Double-click a title bar", "Zoom"],
-        ["Drag a window to the top/left/right edge", "Fill / half the screen"],
+        ["Double-click a title bar", "Maximize / restore"],
+        ["Drag a window to the top / an edge / a corner", "Maximize / half / quarter"],
+        ["Ctrl + Alt + arrows", "Snap the window (Win + arrows)"],
+        ["Hover the maximize button", "Snap layouts"],
       ],
       aboutBody: "Use Marinara like a desktop. Press Ctrl + Alt + D to switch back to the classic layout at any time.",
     };
@@ -846,16 +850,16 @@ const WALLPAPERS = [
 const ACCENTS = [
   { id: "theme", color: null, theme: true, name: L.themeAccent },
   { id: "blue", color: "#0078d4", name: KO ? "파랑" : "Blue" },
-  { id: "purple", color: "#a259e6", name: KO ? "보라" : "Purple" },
-  { id: "pink", color: "#ec4b8f", name: KO ? "분홍" : "Pink" },
-  { id: "red", color: "#ff453a", name: KO ? "빨강" : "Red" },
-  { id: "orange", color: "#ff9500", name: KO ? "주황" : "Orange" },
-  { id: "yellow", color: "#e6b800", name: KO ? "노랑" : "Yellow" },
-  { id: "green", color: "#30b956", name: KO ? "초록" : "Green" },
-  { id: "graphite", color: "#8e8e93", name: KO ? "흑연" : "Graphite" },
+  { id: "purple", color: "#744da9", name: KO ? "보라" : "Purple" },
+  { id: "pink", color: "#e3008c", name: KO ? "분홍" : "Pink" },
+  { id: "red", color: "#e81123", name: KO ? "빨강" : "Red" },
+  { id: "orange", color: "#ff8c00", name: KO ? "주황" : "Orange" },
+  { id: "yellow", color: "#ffb900", name: KO ? "노랑" : "Yellow" },
+  { id: "green", color: "#107c10", name: KO ? "초록" : "Green" },
+  { id: "graphite", color: "#767676", name: KO ? "흑연" : "Graphite" },
   { id: "marinara", color: null, name: "Marinara" },
 ];
-const NOTE_COLORS = ["#ffe57a", "#ffc2d6", "#b8e4ff", "#c4f0b4", "#e2ccff", "#ffffff"];
+const NOTE_COLORS = ["#fff7d1", "#f4cde6", "#cde4f4", "#cdf4cd", "#e0d4f4", "#ffffff"];
 
 // Icons: simple 24×24 strokes drawn for this extension.
 const ICONS = {
@@ -2399,7 +2403,6 @@ const MENUS = {
   dock: () => [
     { label: L.separateWindows, checked: state.separateWindows !== false, action: () => updateSetting("separateWindows", state.separateWindows === false) },
     { label: L.autohide, checked: state.dockAutohide, action: () => updateSetting("dockAutohide", !state.dockAutohide) },
-    { label: L.magnify, checked: state.magnify, action: () => updateSetting("magnify", !state.magnify) },
     { label: L.recents, checked: state.dockRecents, action: () => updateSetting("dockRecents", !state.dockRecents) },
     "-",
     ...[
@@ -5505,7 +5508,7 @@ function accentRow() {
         "aria-label": accent.name,
         "aria-checked": String(state.accent === accent.id),
         "data-accent": accent.id,
-        style: accent.color ? `--c:${accent.color}` : accent.theme ? `--c:${themePalette.accent || "#0a84ff"}` : "",
+        style: accent.color ? `--c:${accent.color}` : accent.theme ? `--c:${themePalette.accent || "#0078d4"}` : "",
         onclick: () => {
           updateSetting("accent", accent.id);
           refreshCC();
@@ -5905,7 +5908,6 @@ function mountCustomize(win) {
           }),
         ),
         settingToggle("dockAutohide", L.autohide),
-        settingToggle("magnify", L.magnify),
         settingToggle("dockRecents", L.recents),
       ),
     ],
@@ -6084,7 +6086,7 @@ function chatDesignSection(win, { group, row, hint, btn, rerender }) {
         L.font,
         ...fontPicker(),
         row(L.textSize, range("size", 12, 22, 1, 15, "px")),
-        row(L.corner, range("radius", 2, 26, 1, 18, "px")),
+        row(L.corner, range("radius", 0, 20, 1, 8, "px")),
         row(L.columnWidth, range("width", 520, 1200, 20, 860, "px")),
       ),
       group(
@@ -6489,7 +6491,7 @@ function computeThemePalette() {
 function themeWallpaperCss() {
   const p = themePalette;
   if (p.decor) return p.decor;
-  const accent = p.accent || "#0a84ff";
+  const accent = p.accent || "#0078d4";
   const bg = p.bg || "#2b1242";
   const light = luminance(bg) > 0.5;
   return light
@@ -6529,17 +6531,17 @@ themeObserver.observe(html, { attributes: true, attributeFilter: ["data-theme"] 
 
 function applyAccent() {
   const accent = ACCENTS.find((a) => a.id === state.accent) || ACCENTS[0];
-  const color = accent.theme ? themePalette.accent || "#0a84ff" : accent.color;
+  const color = accent.theme ? themePalette.accent || "#0078d4" : accent.color;
   toggleClass("mdos-accent", !!color);
   setVar("--mdos-accent", color || "var(--primary)");
-  cursorAccent = color || "#0a84ff";
+  cursorAccent = color || "#0078d4";
   applyCursor();
 }
 // ── Mouse pointer ─────────────────────────────────────────────
 // Drawn as small SVGs (or the user's own PNG) and set on <html>, so every
 // element that doesn't ask for its own cursor (resize edges, grab handles,
 // text fields) shows it. Links and buttons get --mdos-cur-ptr.
-let cursorAccent = "#0a84ff";
+let cursorAccent = "#0078d4";
 const CURSOR_PX = { m: 24, l: 34, xl: 48 };
 const ARROW_PATH = "M5 2.5v17.2l4.3-4.1 2.7 6.2 2.8-1.2-2.7-6.1h6z";
 function cursorCss(svg, px, hx, hy, fallback) {
@@ -6555,7 +6557,7 @@ function dotSvg(fill, r) {
 function applyCursor() {
   const kind = state.cursor || "system";
   const px = CURSOR_PX[state.cursorSize] || 24;
-  const accent = /^#[0-9a-f]{3,8}$|^rgb/i.test(cursorAccent) ? cursorAccent : "#0a84ff";
+  const accent = /^#[0-9a-f]{3,8}$|^rgb/i.test(cursorAccent) ? cursorAccent : "#0078d4";
   let cur = "";
   let ptr = "pointer";
   if (kind === "mac") cur = cursorCss(arrowSvg("#000", "#fff"), px, 5, 2.5, "default");
@@ -6624,10 +6626,10 @@ const fontStack = (spec) => {
 };
 const CV_PRESETS = {
   base: {},
-  yellow: { me: "#fee500", meFg: "#191919", them: "#ffffff", themFg: "#191919", bgMode: "color", bg: "#b2c7da", radius: 16 },
-  green: { me: "#06c755", meFg: "#ffffff", them: "#ffffff", themFg: "#1d1d1f", bgMode: "color", bg: "#8fb3dd", radius: 20 },
+  yellow: { me: "#fee500", meFg: "#191919", them: "#ffffff", themFg: "#191919", bgMode: "color", bg: "#b2c7da", radius: 8 },
+  green: { me: "#06c755", meFg: "#ffffff", them: "#ffffff", themFg: "#1d1d1f", bgMode: "color", bg: "#8fb3dd", radius: 8 },
   dark: { me: "", them: "#2c2c2e", themFg: "#f5f5f7", bgMode: "color", bg: "#000000" },
-  pastel: { me: "#ffc8dd", meFg: "#5a2a3a", them: "#e2f0cb", themFg: "#2f4a1f", bgMode: "color", bg: "#fff7fb", radius: 22, font: "rounded" },
+  pastel: { me: "#ffc8dd", meFg: "#5a2a3a", them: "#e2f0cb", themFg: "#2f4a1f", bgMode: "color", bg: "#fff7fb", radius: 8, font: "rounded" },
 };
 const RP_PRESETS = {
   book: { style: "book" },
