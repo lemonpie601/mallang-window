@@ -3307,7 +3307,39 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mcc-
   }
 }
 `,
-  String.raw`/* ══════════════ sheets.css ══════════════ */
+  String.raw`/* ══════════════ tokens (Open Props scales, Radix Colors states) ══════════════ */
+/* One scale for the redesigned pieces (settings, Quick Settings, sheets,
+   toasts): radii, easing, durations, shadows, and status colours picked
+   from Radix Colors steps that pass WCAG AA on light and dark surfaces. */
+html.mdos {
+  --mdos-r-1: 10px;
+  --mdos-r-2: 14px;
+  --mdos-r-3: 20px;
+  --mdos-r-4: 24px;
+  --mdos-r-pill: 999px;
+  --mdos-ease-out: cubic-bezier(0, 0, 0.3, 1);
+  --mdos-ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+  --mdos-ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --mdos-dur-1: 120ms;
+  --mdos-dur-2: 200ms;
+  --mdos-dur-3: 360ms;
+  --mdos-shadow-1: 0 0 0 1px var(--mdos-sep, rgba(0, 0, 0, 0.06)), 0 1px 2px hsl(220 3% 15% / 0.05);
+  --mdos-shadow-2: 0 0 0 1px var(--mdos-sep, rgba(0, 0, 0, 0.06)), 0 3px 8px -2px hsl(220 3% 15% / 0.1), 0 8px 20px -6px hsl(220 3% 15% / 0.12);
+  --mdos-shadow-3: 0 0 0 1px var(--mdos-sep, rgba(0, 0, 0, 0.08)), 0 10px 30px -8px hsl(220 3% 15% / 0.25), 0 24px 60px -12px hsl(220 3% 15% / 0.2);
+  --mdos-success: #18794e; /* Radix green 11 */
+  --mdos-danger: #ce2c31; /* Radix red 11 */
+  --mdos-warning: #ab6400; /* Radix amber 11 */
+}
+html.mdos:not([data-theme="light"]) {
+  --mdos-success: #3dd68c; /* Radix green dark 11 */
+  --mdos-danger: #ff9592; /* Radix red dark 11 */
+  --mdos-warning: #ffca16; /* Radix amber dark 11 */
+  --mdos-shadow-1: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --mdos-shadow-2: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 8px 20px -6px rgba(0, 0, 0, 0.5);
+  --mdos-shadow-3: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 24px 60px -12px rgba(0, 0, 0, 0.65);
+}
+
+/* ══════════════ sheets.css ══════════════ */
 /* ── Mobile panels as clean settings sheets ───────────────────
    Phone/tablet (html.mdos-touch): Marinara's chat settings sheet, the
    right panel (characters, presets, settings…), editors and modals get
@@ -3338,7 +3370,7 @@ html.mdos-touch:not(.mdos-tablet) aside[data-component="MobileDetailSheet"] {
   --mari-window-backdrop-filter: none;
   background: var(--mdos-sh-page) !important;
   color: var(--mdos-sh-fg);
-  border-radius: 22px 22px 0 0 !important;
+  border-radius: var(--mdos-r-4) var(--mdos-r-4) 0 0 !important;
   border: 0 !important;
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.18) !important;
   backdrop-filter: none !important;
@@ -3399,7 +3431,7 @@ html.mdos-touch .mari-right-panel-header button[aria-label] {
   box-shadow: none !important;
 }
 html.mdos-touch [data-component="RightPanelHeaderIcon"] {
-  border-radius: 10px !important;
+  border-radius: var(--mdos-r-1) !important;
 }
 
 /* Scroll bodies sit on the grey page with card gutters. */
@@ -3426,9 +3458,9 @@ html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer {
   flex-shrink: 0 !important;
   margin: 0 0 8px;
   border: 0 !important;
-  border-radius: 16px;
+  border-radius: var(--mdos-r-3);
   background: var(--mdos-sh-card) !important;
-  box-shadow: 0 0 0 1px var(--mdos-sh-sep), 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--mdos-shadow-1);
 }
 html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__title {
   font-size: 15px !important;
@@ -3441,12 +3473,12 @@ html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__summary {
 html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__count {
   min-width: 22px;
   padding: 1px 8px !important;
-  border-radius: 999px !important;
+  border-radius: var(--mdos-r-pill) !important;
   font-size: 11px !important;
   font-weight: 700;
 }
 html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__header {
-  border-radius: 16px;
+  border-radius: var(--mdos-r-3);
 }
 html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__body {
   border-top: 1px solid var(--mdos-sh-sep);
@@ -3474,7 +3506,7 @@ html.mdos-touch .mdos-cs-chip {
   min-width: 0;
   max-width: 110px;
   padding: 5px 10px;
-  border-radius: 10px;
+  border-radius: var(--mdos-r-1);
   background: var(--mdos-sh-card);
   box-shadow: 0 0 0 1px var(--mdos-sh-sep);
   color: var(--mdos-sh-fg);
@@ -3516,7 +3548,7 @@ html.mdos-touch .mari-settings-panel-chrome [role="tab"] {
   flex: none !important;
   min-height: 36px !important;
   padding: 0 14px !important;
-  border-radius: 999px !important;
+  border-radius: var(--mdos-r-pill) !important;
   border: 0 !important;
   font-size: 13px !important;
   font-weight: 600 !important;
@@ -3532,9 +3564,9 @@ html.mdos-touch .mari-settings-panel-chrome [role="tab"][aria-selected="true"] {
 html.mdos-touch [data-panel-key] section.overflow-hidden.rounded-lg.border,
 html.mdos-touch [role="tabpanel"] section.overflow-hidden.rounded-lg.border {
   border: 0 !important;
-  border-radius: 16px !important;
+  border-radius: var(--mdos-r-3) !important;
   background: var(--mdos-sh-card) !important;
-  box-shadow: 0 0 0 1px var(--mdos-sh-sep), 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--mdos-shadow-1);
 }
 html.mdos-touch [data-panel-key] section.overflow-hidden.rounded-lg.border > .flex.items-start.gap-2 .text-xs.font-semibold,
 html.mdos-touch [role="tabpanel"] section.overflow-hidden.rounded-lg.border > .flex.items-start.gap-2 .text-xs.font-semibold {
@@ -3548,7 +3580,7 @@ html.mdos-touch [data-panel-key] section.overflow-hidden.rounded-lg.border > .bo
 
 /* Inner cards inside chat settings and agents. */
 html.mdos-touch .mari-window[data-presentation="sheet"] .space-y-2.rounded-lg.p-2\.5.ring-1 {
-  border-radius: 14px !important;
+  border-radius: var(--mdos-r-2) !important;
   background: var(--mdos-sh-page) !important;
   --tw-ring-color: transparent !important;
 }
@@ -3593,12 +3625,12 @@ html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-panel-key], [
   gap: 2px !important;
   padding: 3px !important;
   border: 0 !important;
-  border-radius: 12px !important;
+  border-radius: var(--mdos-r-2) !important;
   background: var(--mdos-sh-fill) !important;
 }
 html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-panel-key], [role="tabpanel"]) .grid.gap-1.rounded-lg.border.p-1 > button[aria-pressed] {
   min-height: 34px !important;
-  border-radius: 9px !important;
+  border-radius: var(--mdos-r-1) !important;
   font-weight: 600;
   background: transparent !important;
   --tw-ring-color: transparent !important;
@@ -3612,18 +3644,18 @@ html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-panel-key], [
 /* Small chrome buttons (quick access, actions) as chips. */
 html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-component="RightPanel"]) .mari-chrome-control--small:not(.mari-right-panel-header *) {
   min-height: 30px;
-  border-radius: 10px !important;
+  border-radius: var(--mdos-r-1) !important;
 }
 
 /* Fields: taller, rounder, filled. */
 html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-component="RightPanel"], aside[data-component="MobileDetailSheet"]) :is(.mari-chrome-field, select, input[type="text"], input[type="number"], input[type="search"], textarea) {
   min-width: 0;
-  border-radius: 12px !important;
+  border-radius: var(--mdos-r-2) !important;
   font-size: 16px; /* no iOS zoom on focus */
 }
 html.mdos-touch [data-chat-settings-search] {
   min-height: 40px;
-  border-radius: 12px !important;
+  border-radius: var(--mdos-r-2) !important;
   background: var(--mdos-sh-fill) !important;
   border: 0 !important;
 }
@@ -3641,7 +3673,7 @@ html.mdos-touch:not(.mdos-tablet) .mari-editor-header .mari-editor-action:not(.m
   height: 38px !important;
   min-height: 38px !important;
   padding: 0 !important;
-  border-radius: 12px !important;
+  border-radius: var(--mdos-r-2) !important;
   border: 0 !important;
   box-shadow: none !important;
   background: var(--mdos-sh-fill) !important;
@@ -3700,7 +3732,7 @@ html.mdos-touch:not(.mdos-tablet) [data-lorebook-entry-row-id] > div.group.flex 
   height: 30px;
   padding: 0 4px !important;
   border: 0 !important;
-  border-radius: 8px !important;
+  border-radius: var(--mdos-r-1) !important;
   box-shadow: none !important;
   background: transparent !important;
   font-size: 15px !important;
@@ -3728,7 +3760,7 @@ html.mdos-touch:not(.mdos-tablet) .mari-editor-tab {
   padding: 0 13px !important;
   font-size: 13px !important;
   font-weight: 600;
-  border-radius: 999px !important;
+  border-radius: var(--mdos-r-pill) !important;
   border: 0 !important;
   background: var(--mdos-sh-card) !important;
   box-shadow: 0 0 0 1px var(--mdos-sh-sep);
@@ -3740,7 +3772,7 @@ html.mdos-touch:not(.mdos-tablet) .mari-editor-tab[data-active="true"] {
 }
 html.mdos-touch:not(.mdos-tablet) .mari-editor-navigation-select {
   min-height: 40px;
-  border-radius: 12px !important;
+  border-radius: var(--mdos-r-2) !important;
 }
 
 /* ── 8. Modals on a phone = bottom sheets ───────────────────── */
@@ -3754,7 +3786,7 @@ html.mdos-touch:not(.mdos-tablet) [data-component="Modal"] .mari-modal-panel {
   max-height: calc(100dvh - 3rem) !important;
   margin: 0 !important;
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  border-radius: 22px 22px 0 0 !important;
+  border-radius: var(--mdos-r-4) var(--mdos-r-4) 0 0 !important;
   border: 0 !important;
   background: var(--mdos-sh-page) !important;
   color: var(--mdos-sh-fg);
@@ -3790,13 +3822,13 @@ html[data-marinara-reduced-effects="true"] [data-component="Modal"] .mari-modal-
 /* Drag-to-close sheets (desktop.js SHEETS): translate follows the finger,
    then springs back or slides away with an iOS-like curve. */
 html.mdos-touch:not(.mdos-tablet) :is(.mari-window[data-presentation="sheet"], aside[data-component="RightPanelMobile"], [data-component="Modal"] .mari-modal-panel) {
-  transition: translate 360ms cubic-bezier(0.32, 0.72, 0, 1);
+  transition: translate 360ms var(--mdos-ease-spring);
 }
 html.mdos-touch:not(.mdos-tablet) #mdos-cc {
   transition:
     opacity 167ms linear,
     transform 280ms var(--mdos-ease),
-    translate 360ms cubic-bezier(0.32, 0.72, 0, 1);
+    translate 360ms var(--mdos-ease-spring);
 }
 [data-mdos-dragging] {
   transition: none !important;
@@ -3863,6 +3895,17 @@ html.mdos .mdos-chip[aria-checked="true"] {
   box-shadow: inset 0 0 0 1.5px var(--mdos-accent, #0078d4);
 }
 
+/* Help bubble flipped above its "?" when there is no room below. */
+html.mdos .mdos-help.is-above .mdos-help-pop {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+/* Keyboard focus: one clear ring everywhere in the redesigned pieces. */
+html.mdos :is(.mdos-chip, .mdos-seg-btn, .mdos-set-nav-item, .mdos-ov-row, .mdos-set-result, .mdos-qs-stat, .mdos-qs-pill, .mdos-qs-link, .mdos-cs-chip, .mdos-help-btn, .mdos-toast-action):focus-visible {
+  outline: 2px solid var(--mdos-accent, #0078d4);
+  outline-offset: 2px;
+}
+
 /* ══════════════ toasts (desktop.js toast) ══════════════ */
 /* A Sonner-like stack: the newest in front, older ones peeking behind,
    fanned out while hovered. Bottom right on a desktop, top centre on a
@@ -3900,20 +3943,18 @@ html.mdos-dock-autohide #mdos-toasts {
   gap: 10px;
   min-height: 48px;
   padding: 12px 14px;
-  border-radius: 14px;
+  border-radius: var(--mdos-r-2);
   color: var(--mdos-fg, #1d1d1f);
   background: var(--mdos-popover, var(--mdos-card-raised, #fff));
-  box-shadow:
-    0 0 0 1px var(--mdos-sep, rgba(0, 0, 0, 0.08)),
-    0 8px 24px -6px rgba(0, 0, 0, 0.22);
+  box-shadow: var(--mdos-shadow-3);
   pointer-events: auto;
   opacity: 0;
   translate: var(--x) calc(-1 * var(--y) + 16px);
   scale: var(--s);
   transform-origin: 50% 0;
   transition:
-    translate 400ms cubic-bezier(0.21, 1.02, 0.73, 1),
-    scale 400ms cubic-bezier(0.21, 1.02, 0.73, 1),
+    translate 400ms var(--mdos-ease-spring),
+    scale 400ms var(--mdos-ease-spring),
     opacity 300ms ease,
     height 300ms ease;
   touch-action: pan-y;
@@ -3959,10 +4000,10 @@ html.mdos-dock-autohide #mdos-toasts {
   height: 100%;
 }
 .mdos-toast[data-type="success"] .mdos-toast-icon {
-  color: #1f9d55;
+  color: var(--mdos-success);
 }
 .mdos-toast[data-type="error"] .mdos-toast-icon {
-  color: #d93025;
+  color: var(--mdos-danger);
 }
 .mdos-toast-text {
   flex: 1;
@@ -3973,7 +4014,7 @@ html.mdos-dock-autohide #mdos-toasts {
   all: unset;
   flex: none;
   padding: 5px 10px;
-  border-radius: 8px;
+  border-radius: var(--mdos-r-1);
   font-size: 12px;
   font-weight: 700;
   color: var(--mdos-card-raised, #fff);
@@ -3983,17 +4024,6 @@ html.mdos-dock-autohide #mdos-toasts {
 .mdos-toast-action:focus-visible {
   outline: 2px solid var(--mdos-accent, #0078d4);
   outline-offset: 2px;
-}
-html:not([data-theme="light"]) .mdos-toast {
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    0 10px 30px -6px rgba(0, 0, 0, 0.6);
-}
-html:not([data-theme="light"]) .mdos-toast[data-type="success"] .mdos-toast-icon {
-  color: #4cd982;
-}
-html:not([data-theme="light"]) .mdos-toast[data-type="error"] .mdos-toast-icon {
-  color: #ff6b5e;
 }
 /* Phone: top centre, the stack grows downward. */
 html.mdos-touch:not(.mdos-tablet) #mdos-toasts {

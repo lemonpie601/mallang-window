@@ -1,0 +1,86 @@
+<!-- Mock screens for tools/shots.mjs. Each [data-story] is one shot.
+     Marinara's own markup is copied from its source (class names and data
+     attributes the stylesheets target); our own markup mirrors what
+     desktop.js builds. Keep it in step when either side changes. -->
+
+<!-- ── Settings window: overview ─────────────────────────── -->
+<template data-story="settings-overview" data-width="760" data-phone-width="390">
+  <div class="mdos-appwin story-win">
+    <div class="mdos-set" data-narrow-on-phone>
+      <div class="mdos-set-side">
+        <div class="mdos-set-search"><span class="mdos-set-search-icon"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20.5 20.5 15.3 15.3"/></svg></span><input class="mdos-set-search-input" placeholder="설정 검색"><button class="mdos-set-search-clear"></button></div>
+        <nav class="mdos-set-nav">
+          <button class="mdos-set-nav-item" aria-current="true"><span class="mdos-app-icon" style="background:linear-gradient(#7ad7ff,#4f8cff)"></span><span>전체</span></button>
+          <button class="mdos-set-nav-item"><span class="mdos-app-icon" style="background:linear-gradient(#ff7ab0,#b25cff)"></span><span>모양</span></button>
+          <button class="mdos-set-nav-item"><span class="mdos-app-icon" style="background:linear-gradient(#7ad7ff,#2f7cf2)"></span><span>배경화면</span></button>
+          <button class="mdos-set-nav-item"><span class="mdos-app-icon" style="background:linear-gradient(#ffd36b,#ff8a3d)"></span><span>홈</span></button>
+          <button class="mdos-set-nav-item"><span class="mdos-app-icon" style="background:linear-gradient(#6ef08d,#17a84d)"></span><span>채팅 디자인</span></button>
+        </nav>
+      </div>
+      <div class="mdos-set-pane">
+        <section class="mdos-set-block"><h3 class="mdos-set-cap">앱 전체</h3><div class="mdos-set-list">
+          <button class="mdos-ov-row"><span class="mdos-app-icon" style="background:linear-gradient(#ff7ab0,#b25cff)"></span><span class="mdos-ov-label">모양</span><span class="mdos-ov-desc">테마 · 강조 색상 · 꾸미기 · 마우스 포인터</span><span class="mdos-ov-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg></span></button>
+          <button class="mdos-ov-row"><span class="mdos-app-icon" style="background:linear-gradient(#7ad7ff,#2f7cf2)"></span><span class="mdos-ov-label">배경화면</span><span class="mdos-ov-desc">배경화면 · 이미지 · 흐림</span><span class="mdos-ov-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg></span></button>
+          <button class="mdos-ov-row"><span class="mdos-app-icon" style="background:linear-gradient(#ffd36b,#ff8a3d)"></span><span class="mdos-ov-label">홈</span><span class="mdos-ov-desc">배치 · 홈 구성 · 위젯 편집</span><span class="mdos-ov-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 5 7 7-7 7"/></svg></span></button>
+        </div></section>
+        <section class="mdos-set-group"><h3><span class="mdos-set-title">꾸미기</span><span class="mdos-help"><button class="mdos-help-btn">?</button><span class="mdos-help-pop">설명</span></span></h3>
+          <div class="mdos-set-row"><span>아이콘 모양</span><div class="mdos-chips" role="radiogroup"><button class="mdos-chip" role="radio" aria-checked="true">둥근 모서리</button><button class="mdos-chip" role="radio" aria-checked="false">원</button><button class="mdos-chip" role="radio" aria-checked="false">작은 모서리</button></div></div>
+          <div class="mdos-set-row"><span>아이콘 스타일</span><select class="mdos-cc-select"><option>Fluent (Windows 11)</option></select></div>
+          <div class="mdos-set-row"><span>글자 크기</span><label class="mdos-set-range"><input type="range"><output>16px</output></label></div>
+          <label class="mdos-cc-toggle"><span>캐릭터·페르소나 아이콘으로 보기</span><input type="checkbox" role="switch" checked></label>
+        </section>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- ── Quick Settings ────────────────────────────────────── -->
+<template data-story="quick-settings" data-width="380" data-phone-width="390">
+  <div id="mdos-cc" class="is-open story-static">
+    <div class="mdos-qs-grip phone-only"></div>
+    <header class="mdos-qs-head"><span class="mdos-qs-head-icon"></span><h2 class="mdos-qs-title">빠른 설정</h2><span class="mdos-qs-head-actions"><button class="mdos-start-btn">⚙</button><button class="mdos-start-btn">✕</button></span></header>
+    <section class="mdos-qs-stats">
+      <button class="mdos-qs-stat"><span class="mdos-qs-stat-icon" style="--g1:#7ad7ff;--g2:#2f7cf2"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></span><span class="mdos-qs-stat-text"><b>창</b><small>채팅 목록</small></span><span class="mdos-qs-stat-val"><strong>3</strong><small>열림</small></span></button>
+      <button class="mdos-qs-stat"><span class="mdos-qs-stat-icon" style="--g1:#ffd36b;--g2:#ff8a3d"><svg viewBox="0 0 24 24"><path d="M3.5 8 5 4.5h14L20.5 8"/><rect x="3.5" y="8" width="17" height="11.5" rx="2"/></svg></span><span class="mdos-qs-stat-text"><b>확장</b><small>보관함에 둔 항목</small></span><span class="mdos-qs-stat-val"><strong>7</strong><small>보관함</small></span></button>
+    </section>
+    <section class="mdos-qs-quick"><div class="mdos-qs-quick-head"><h3>빠른 스위치</h3><button class="mdos-qs-link">전체 12개</button></div><div class="mdos-qs-list">
+      <label class="mdos-qs-row mdos-cc-toggle"><span class="mdos-qs-row-text"><span>작업 표시줄 자동 숨기기</span><small>작업 표시줄</small></span><input type="checkbox" role="switch" checked></label>
+      <label class="mdos-qs-row mdos-cc-toggle"><span class="mdos-qs-row-text"><span>진짜 유리</span><small>성능</small></span><input type="checkbox" role="switch"></label>
+    </div></section>
+    <section class="mdos-qs-pills"><button class="mdos-qs-pill"><span></span><span>위젯 편집</span></button><button class="mdos-qs-pill"><span></span><span>창 정렬</span></button></section>
+  </div>
+</template>
+
+<!-- ── Toasts (built by the real toast() in shots.mjs) ───── -->
+<template data-story="toasts" data-width="420" data-phone-width="390" data-run="toasts"></template>
+
+<!-- ── Marinara: chat settings sheet (phone) ─────────────── -->
+<template data-story="chat-settings-sheet" data-phone-only data-phone-width="390">
+  <div class="mari-window mari-chat-settings-drawer story-static" role="dialog" data-window="chat-settings" data-presentation="sheet" style="position:relative;display:flex;flex-direction:column;height:640px">
+    <div class="mari-window__header" style="display:flex;align-items:center;justify-content:space-between"><div class="mari-window__title-row"><h2 class="mari-window__title" style="margin:0">채팅 설정</h2></div><div class="mari-window__controls" style="display:flex;gap:6px"><button class="mari-window__control">↺</button><button class="mari-window__control" data-window-control="close">✕</button></div></div>
+    <nav class="mdos-cs-jump"><button class="mdos-cs-chip" aria-current="true"><b>로어북</b><small>3</small></button><button class="mdos-cs-chip"><b>채팅 요약</b><small>45</small></button><button class="mdos-cs-chip"><b>활성 컨텍스트</b></button></nav>
+    <div class="mari-window__body" style="flex:1;overflow:auto"><div class="marinara-chat-popover__scroll" style="display:flex;flex-direction:column">
+      <div class="mari-drawer" data-chat-settings-section="roleplay-lorebooks"><div class="mari-drawer__header" style="display:flex;gap:8px;align-items:center"><span class="mari-drawer__title">로어북</span><span class="mari-drawer__count">3</span><span style="flex:1"></span><span data-drawer-toggle role="button" aria-expanded="false">⌄</span></div></div>
+      <div class="mari-drawer" data-chat-settings-section="roleplay-chat-summary"><div class="mari-drawer__header" style="display:flex;gap:8px;align-items:center"><span class="mari-drawer__title">채팅 요약</span><span class="mari-drawer__count">45</span><span style="flex:1"></span><span data-drawer-toggle role="button" aria-expanded="true">⌃</span></div>
+        <div class="mari-drawer__body" style="padding:10px 14px;display:grid;gap:10px">
+          <div class="flex items-center gap-3 rounded-xl p-2" style="display:flex;justify-content:space-between;align-items:center"><span>자동 요약</span><label class="relative inline-flex h-5 w-9"><input type="checkbox" class="peer sr-only" checked style="position:absolute;opacity:0"><span data-settings-switch-track style="display:inline-flex;align-items:center;border-radius:999px"><span data-settings-switch-thumb style="display:block;border-radius:50%"></span></span></label></div>
+          <div class="grid gap-1 rounded-lg border p-1" style="display:grid;grid-template-columns:1fr 1fr"><button aria-pressed="true">최근 N개</button><button aria-pressed="false">직접 범위</button></div>
+          <div style="height:300px"></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</template>
+
+<!-- ── Marinara: lorebook rows and preset sections (phone) ── -->
+<template data-story="editor-rows" data-phone-only data-phone-width="390">
+  <div style="display:grid;gap:8px;padding:12px">
+    <div data-lorebook-entry-row-id="a" class="mari-editor-panel" style="border:1px solid var(--mdos-sep);border-radius:12px"><div class="group flex min-w-0 cursor-pointer items-center gap-0.5 px-1.5 py-1.5" style="display:flex;align-items:center;gap:6px;padding:6px">
+      <button>⠿</button><button>›</button><label class="relative inline-flex h-5 w-9"><input type="checkbox" class="peer sr-only" checked style="position:absolute;opacity:0"><span data-settings-switch-track style="display:inline-flex;align-items:center;border-radius:999px"><span data-settings-switch-thumb style="display:block;border-radius:50%;translate:16px 0"></span></span></label>
+      <div class="min-w-0 flex-1" data-mari-field="entries.a.name"><input value="시간표 · 월요일 1교시 마법의 약 수업" style="width:100%"></div><span>9회</span><button>⋯</button><button>⧉</button><button>🗑</button>
+    </div></div>
+    <div class="mari-editor-panel" style="border:1px solid var(--mdos-sep);border-radius:12px"><div class="flex min-w-0 items-center gap-2 px-3 py-2.5" style="display:flex;align-items:center;gap:6px;padding:8px">
+      <button>⠿</button><button>↑</button><button>↓</button><button>›</button><span class="min-w-0 flex-1 cursor-pointer truncate font-medium" style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis">! 매크로 · 유저 페르소나 정의와 출력 규칙</span><span data-preset-section-tokens>약 29 토큰</span><button>⧉</button><button>👁</button><button>🗑</button>
+    </div></div>
+  </div>
+</template>

@@ -3471,6 +3471,39 @@ function field(label, control) {
   if (control.matches?.("input, select, textarea")) control.setAttribute("aria-label", label);
   return h("div", { class: "mdos-field" }, h("span", { class: "mdos-field-label", text: label }), control);
 }
+// Arrow-key movement inside a group (WAI-ARIA APG): one tab stop for the
+// group, arrows/Home/End move between items. For radio groups the move
+// also selects (select = true), like native radios.
+function rovingKeys(group, itemSel, { select = false, vertical = false } = {}) {
+  const items = () => [...group.querySelectorAll(itemSel)].filter((b) => !b.disabled && b.offsetParent !== null);
+  const sync = () => {
+    const list = items();
+    const current = list.find((b) => b.getAttribute("aria-checked") === "true" || b.getAttribute("aria-current") === "true") || list[0];
+    for (const b of list) b.tabIndex = b === current ? 0 : -1;
+  };
+  group.addEventListener("keydown", (e) => {
+    const list = items();
+    const i = list.indexOf(doc.activeElement);
+    if (i < 0) return;
+    const prev = vertical ? ["ArrowUp", "ArrowLeft"] : ["ArrowLeft", "ArrowUp"];
+    const next = vertical ? ["ArrowDown", "ArrowRight"] : ["ArrowRight", "ArrowDown"];
+    let j = -1;
+    if (prev.includes(e.key)) j = (i - 1 + list.length) % list.length;
+    else if (next.includes(e.key)) j = (i + 1) % list.length;
+    else if (e.key === "Home") j = 0;
+    else if (e.key === "End") j = list.length - 1;
+    if (j < 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+    for (const b of list) b.tabIndex = -1;
+    list[j].tabIndex = 0;
+    list[j].focus();
+    if (select) list[j].click();
+  });
+  group.addEventListener("click", () => raf(sync));
+  raf(sync);
+  return sync;
+}
 function segmented(options, value, onChange) {
   const el = h("div", { class: "mdos-seg", role: "radiogroup" });
   for (const [id, label] of options) {
@@ -3490,6 +3523,7 @@ function segmented(options, value, onChange) {
       }),
     );
   }
+  rovingKeys(el, ".mdos-seg-btn", { select: true });
   return el;
 }
 
@@ -3512,9 +3546,11 @@ function chips(options, value, onChange) {
       }),
     );
   }
+  rovingKeys(el, ".mdos-chip", { select: true });
   return el;
 }
 // A small round "?" that toggles a little popover with the explanation.
+let helpSeq = 0;
 function help(text) {
   const btn = h("button", { type: "button", class: "mdos-help-btn", "aria-label": L.helpLabel, "aria-expanded": "false", text: "?" });
   const pop = h("span", { class: "mdos-help-pop", role: "tooltip", text });
@@ -3527,9 +3563,22 @@ function help(text) {
     doc.removeEventListener("pointerdown", close, true);
     doc.removeEventListener("keydown", close, true);
   };
+  // Keep the bubble on screen: shift it left from the right edge, flip it
+  // above the button when there is no room below (Floating UI's shift/flip).
+  const place = () => {
+    pop.style.translate = "";
+    wrap.classList.remove("is-above");
+    const r = pop.getBoundingClientRect();
+    const dx = Math.min(0, innerWidth - 8 - r.right) || Math.max(0, 8 - r.left);
+    if (dx) pop.style.translate = `${dx}px 0`;
+    if (r.bottom > innerHeight - 8 && r.height + 20 < btn.getBoundingClientRect().top) wrap.classList.add("is-above");
+  };
+  pop.id = `mdos-help-${++helpSeq}`;
+  btn.setAttribute("aria-describedby", pop.id);
   btn.addEventListener("click", () => {
     if (wrap.classList.contains("is-open")) return close();
     wrap.classList.add("is-open");
+    place();
     btn.setAttribute("aria-expanded", "true");
     doc.addEventListener("pointerdown", close, true);
     doc.addEventListener("keydown", close, true);
@@ -6149,12 +6198,22 @@ function buildCC() {
     isTouch() ? h("button", { type: "button", class: "mdos-cc-btn mdos-cc-done", text: L.done, onclick: () => closeCC() }) : null,
   );
   ui.append(ccEl);
-  raf(() => ccEl?.classList.add("is-open"));
+  ccReturn = doc.activeElement;
+  raf(() => {
+    ccEl?.classList.add("is-open");
+    // Keyboard users land inside the panel (the first status card).
+    if (ccReturn && ccReturn !== doc.body) ccEl?.querySelector(".mdos-qs-stat, button")?.focus({ preventScroll: true });
+  });
 }
+let ccReturn = null;
 function closeCC() {
   if (!ccEl) return;
+  const hadFocus = ccEl.contains(doc.activeElement);
   ccEl.remove();
   ccEl = null;
+  // Give focus back to whatever opened the panel.
+  if (hadFocus && ccReturn?.isConnected) ccReturn.focus({ preventScroll: true });
+  ccReturn = null;
 }
 
 // ── Customize window (all settings) ───────────────────────────
@@ -6492,6 +6551,7 @@ function mountCustomize(win) {
       ),
     );
   }
+  rovingKeys(nav, ".mdos-set-nav-item", { select: true, vertical: true });
   const side = h(
     "div",
     { class: "mdos-set-side" },
@@ -7467,7 +7527,10 @@ function sheetJumps() {
   const sig = info.map((i) => `${i.id}|${i.title}|${i.sub}|${i.open}`).join("\n");
   if (bar && bar.nextElementSibling === body && sig === jumpSig) return;
   jumpSig = sig;
-  if (!bar) bar = h("nav", { class: "mdos-cs-jump", "data-exd": "", "aria-label": L.setSearch });
+  if (!bar) {
+    bar = h("nav", { class: "mdos-cs-jump", "data-exd": "", "aria-label": L.setSearch });
+    bar.syncKeys = rovingKeys(bar, ".mdos-cs-chip");
+  }
   if (bar.nextElementSibling !== body) sheet.insertBefore(bar, body);
   const keep = bar.scrollLeft;
   bar.replaceChildren(
@@ -7492,6 +7555,7 @@ function sheetJumps() {
     ),
   );
   bar.scrollLeft = keep;
+  bar.syncKeys?.();
 }
 function syncSoon() {
   if (syncTimer || disposed) return;

@@ -2241,7 +2241,7 @@ html.mdos .mdos-set-search {
   margin: 12px 10px 4px;
   height: 36px;
   padding: 0 8px 0 34px;
-  border-radius: 12px;
+  border-radius: var(--mdos-r-2);
   background: var(--mdos-fill, rgba(0, 0, 0, 0.05));
   box-shadow: inset 0 0 0 1px var(--mdos-sep, rgba(0, 0, 0, 0.06));
 }
@@ -2295,7 +2295,7 @@ html.mdos .mdos-set-search-clear:hover {
   background: var(--mdos-fill-2, rgba(0, 0, 0, 0.08));
 }
 html.mdos .mdos-set-nav-item[aria-current="true"] {
-  border-radius: 8px;
+  border-radius: var(--mdos-r-1);
 }
 html.mdos .mdos-set-pane {
   padding: 18px 22px 28px;
@@ -2303,9 +2303,9 @@ html.mdos .mdos-set-pane {
 }
 html.mdos .mdos-set-group {
   padding: 14px 16px;
-  border-radius: 16px;
+  border-radius: var(--mdos-r-3);
   background: var(--mdos-card-raised, #fff);
-  box-shadow: 0 0 0 1px var(--mdos-sep, rgba(0, 0, 0, 0.06)), 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--mdos-shadow-1);
 }
 html.mdos .mdos-set-group > h3 {
   display: flex;
@@ -2324,7 +2324,7 @@ html.mdos .mdos-set-group > .mdos-cc-toggle {
   font-size: 13px;
 }
 html.mdos .mdos-set-flash {
-  border-radius: 10px;
+  border-radius: var(--mdos-r-1);
   animation: mdos-set-flash 1.6s ease;
 }
 @keyframes mdos-set-flash {
@@ -2349,9 +2349,9 @@ html.mdos .mdos-set-cap {
 html.mdos .mdos-set-list {
   display: grid;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: var(--mdos-r-3);
   background: var(--mdos-card-raised, #fff);
-  box-shadow: 0 0 0 1px var(--mdos-sep, rgba(0, 0, 0, 0.06)), 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--mdos-shadow-1);
 }
 html.mdos .mdos-ov-row,
 html.mdos .mdos-set-result {
@@ -2391,7 +2391,7 @@ html.mdos .mdos-set-result:focus-visible {
 html.mdos .mdos-ov-row .mdos-app-icon {
   width: 26px;
   height: 26px;
-  border-radius: 7px;
+  border-radius: var(--mdos-r-1);
   box-shadow: none;
 }
 html.mdos .mdos-ov-row .mdos-app-icon svg {
@@ -2453,7 +2453,7 @@ html.mdos .mdos-set--narrow .mdos-set-nav-item {
   justify-content: center;
   min-height: 36px;
   padding: 0;
-  border-radius: 12px;
+  border-radius: var(--mdos-r-2);
   background: none;
   color: inherit;
 }
@@ -2498,7 +2498,7 @@ html.mdos .mdos-chip {
   padding: 0 11px;
   display: inline-grid;
   place-items: center;
-  border-radius: 9px;
+  border-radius: var(--mdos-r-1);
   font-size: 12.5px;
   font-weight: 500;
   color: var(--mdos-fg, #1d1d1f);
@@ -2550,7 +2550,7 @@ html.mdos .mdos-help-pop {
   width: max-content;
   max-width: min(300px, 70vw);
   padding: 9px 11px;
-  border-radius: 10px;
+  border-radius: var(--mdos-r-1);
   white-space: pre-line;
   font-size: 12px;
   font-weight: 400;
@@ -2587,7 +2587,7 @@ html.mdos .mdos-qs-head-icon {
   place-items: center;
   width: 32px;
   height: 32px;
-  border-radius: 10px;
+  border-radius: var(--mdos-r-1);
   background: var(--w-card);
   border: 1px solid var(--w-stroke);
 }
@@ -2623,7 +2623,7 @@ html.mdos .mdos-qs-stat {
   gap: 12px;
   min-height: 52px;
   padding: 10px 14px 10px 10px;
-  border-radius: 14px;
+  border-radius: var(--mdos-r-2);
   background: var(--w-card);
   border: 1px solid var(--w-stroke);
   cursor: var(--mdos-cur-ptr, pointer);
@@ -2642,7 +2642,7 @@ html.mdos .mdos-qs-stat-icon {
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 12px;
+  border-radius: var(--mdos-r-2);
   color: #fff;
   background: linear-gradient(160deg, var(--g1), var(--g2));
 }
@@ -2689,7 +2689,7 @@ html.mdos .mdos-qs-stat-val strong {
 html.mdos .mdos-qs-quick {
   display: grid;
   padding: 12px 14px 4px;
-  border-radius: 14px;
+  border-radius: var(--mdos-r-2);
   background: var(--w-card);
   border: 1px solid var(--w-stroke);
 }
@@ -2740,7 +2740,7 @@ html.mdos .mdos-qs-pill {
   gap: 6px;
   min-height: 32px;
   padding: 0 12px;
-  border-radius: 999px;
+  border-radius: var(--mdos-r-pill);
   font-size: 12px;
   font-weight: 600;
   background: var(--w-card);
@@ -2776,7 +2776,7 @@ html.mdos-touch:not(.mdos-tablet) #mdos-cc {
   width: auto;
   max-height: 88vh;
   padding: 14px 14px calc(env(safe-area-inset-bottom, 0px) + 14px);
-  border-radius: 20px 20px 0 0;
+  border-radius: var(--mdos-r-3) var(--mdos-r-3) 0 0;
   border-bottom: 0;
   transform: translateY(100%);
   transition:
@@ -2835,7 +2835,7 @@ html.mdos .mdos-set .mdos-cc-select {
   min-height: 36px;
   padding: 0 28px 0 12px;
   line-height: 34px;
-  border-radius: 10px;
+  border-radius: var(--mdos-r-1);
   font-size: 13px;
   white-space: nowrap;
   overflow: hidden;
