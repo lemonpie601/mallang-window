@@ -3347,7 +3347,7 @@ html.mdos:not([data-theme="light"]) {
    pill tabs and chips, and bigger switches. Marinara's own CSS variables
    are used where it offers them (--mari-window-*, --mari-drawer-*). */
 
-html.mdos-touch {
+html.mdos {
   --mdos-sh-page: var(--mdos-win-bg, #f2f2f6);
   --mdos-sh-card: var(--mdos-card-raised, #fff);
   --mdos-sh-fg: var(--mdos-fg, #1c1c1e);
@@ -3485,7 +3485,7 @@ html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__body {
 }
 
 /* Section jump chips (desktop.js sheetJumps): a scrolling pill row. */
-html.mdos-touch .mdos-cs-jump {
+html.mdos .mdos-cs-jump {
   display: flex;
   flex: none;
   gap: 6px;
@@ -3495,10 +3495,10 @@ html.mdos-touch .mdos-cs-jump {
   margin: 0 0 2px;
   border-bottom: 1px solid var(--mdos-sh-sep);
 }
-html.mdos-touch .mdos-cs-jump::-webkit-scrollbar {
+html.mdos .mdos-cs-jump::-webkit-scrollbar {
   display: none;
 }
-html.mdos-touch .mdos-cs-chip {
+html.mdos .mdos-cs-chip {
   all: unset;
   flex: none;
   display: grid;
@@ -3512,21 +3512,21 @@ html.mdos-touch .mdos-cs-chip {
   color: var(--mdos-sh-fg);
   -webkit-tap-highlight-color: transparent;
 }
-html.mdos-touch .mdos-cs-chip b {
+html.mdos .mdos-cs-chip b {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 12px;
   font-weight: 700;
 }
-html.mdos-touch .mdos-cs-chip small {
+html.mdos .mdos-cs-chip small {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 11px;
   color: var(--mdos-sh-fg2);
 }
-html.mdos-touch .mdos-cs-chip[aria-current="true"] {
+html.mdos .mdos-cs-chip[aria-current="true"] {
   box-shadow: 0 0 0 1.5px var(--mdos-sh-fg);
 }
 
@@ -3845,7 +3845,7 @@ html.mdos {
 html.mdos .mdos-set {
   background: var(--mdos-page);
 }
-html.mdos-touch {
+html.mdos {
   --mdos-sh-page: var(--mdos-page);
 }
 /* Touch targets: 36px chips and tabs, a 32px hit area round "?". */
@@ -4512,6 +4512,159 @@ html.mdos-touch .mari-message-swipes > button {
 .mdos-wg-empty-btn:focus-visible {
   outline: 2px solid var(--mdos-accent, #0078d4);
   outline-offset: 2px;
+}
+
+/* ══════════════ desktop floating windows (chat settings etc.) ══════════════ */
+/* Marinara's floating windows (chat settings, popped-out sections like the
+   chat summary) get the same look as the phone sheets: a grey page, a
+   quiet header, sections as white cards, the jump chips under the header.
+   Through Marinara's own --mari-window-* / --mari-drawer-* variables where
+   it has them. */
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) {
+  --mari-window-bg: var(--mdos-sh-page);
+  --mari-window-radius: var(--mdos-r-3, 20px);
+  --mari-window-border: var(--mdos-sh-sep);
+  --mari-window-header-bg: transparent;
+  --mari-window-header-padding: 12px 12px 8px 18px;
+  --mari-window-text: var(--mdos-sh-fg);
+  --mari-window-backdrop-filter: none;
+  background: var(--mdos-sh-page) !important;
+  color: var(--mdos-sh-fg);
+  border-radius: var(--mdos-r-3, 20px) !important;
+  box-shadow: var(--mdos-shadow-3) !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-window__header {
+  border-bottom: 0 !important;
+  background: transparent !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-window__title {
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em;
+  color: var(--mdos-sh-fg) !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-window__control {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: var(--mdos-r-1, 10px) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--mdos-sh-fg2) !important;
+  background: transparent !important;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-window__control:hover {
+  color: var(--mdos-sh-fg) !important;
+  background: var(--mdos-sh-fill) !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-window__body {
+  background: var(--mdos-sh-page) !important;
+}
+/* Sections: white cards with air between them (no overflow clipping:
+   drawers are flex items and would collapse). */
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .marinara-chat-popover__scroll {
+  padding: 6px 12px 14px !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-drawer {
+  --mari-drawer-bg: var(--mdos-sh-card);
+  --mari-drawer-header-bg: var(--mdos-sh-card);
+  --mari-drawer-border: transparent;
+  --mari-drawer-header-padding: 12px 14px;
+  --mari-drawer-title-color: var(--mdos-sh-fg);
+  --mari-drawer-count-bg: var(--mdos-sh-fill);
+  --mari-drawer-count-text: var(--mdos-sh-fg2);
+  flex-shrink: 0 !important;
+  margin: 0 0 8px;
+  border: 0 !important;
+  border-radius: var(--mdos-r-2, 14px);
+  background: var(--mdos-sh-card) !important;
+  box-shadow: var(--mdos-shadow-1);
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-drawer__header {
+  border-radius: var(--mdos-r-2, 14px);
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-drawer__header:hover {
+  background: color-mix(in srgb, var(--mdos-sh-fg) 3%, var(--mdos-sh-card)) !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-drawer__title {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-drawer__count {
+  min-width: 20px;
+  padding: 1px 7px !important;
+  border-radius: var(--mdos-r-pill, 999px) !important;
+  font-size: 11px !important;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-drawer__body {
+  border-top: 1px solid var(--mdos-sh-sep);
+}
+/* Help / pop-out / chevron icons stay quiet until the row is hovered. */
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-drawer__header :is(.mari-drawer__help, .mari-drawer__popout) {
+  opacity: 0.45;
+  transition: opacity 120ms ease;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-drawer__header:hover :is(.mari-drawer__help, .mari-drawer__popout),
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .mari-drawer__header :is(.mari-drawer__help, .mari-drawer__popout):focus-visible {
+  opacity: 1;
+}
+/* Inner cards and segmented controls, as on the phone. */
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .space-y-2.rounded-lg.p-2\.5.ring-1 {
+  border-radius: var(--mdos-r-2, 14px) !important;
+  background: var(--mdos-sh-page) !important;
+  --tw-ring-color: transparent !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .grid.gap-1.rounded-lg.border.p-1 {
+  gap: 2px !important;
+  padding: 3px !important;
+  border: 0 !important;
+  border-radius: var(--mdos-r-1, 10px) !important;
+  background: var(--mdos-sh-fill) !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .grid.gap-1.rounded-lg.border.p-1 > button[aria-pressed] {
+  border-radius: 8px !important;
+  font-weight: 600;
+  background: transparent !important;
+  --tw-ring-color: transparent !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .grid.gap-1.rounded-lg.border.p-1 > button[aria-pressed="true"] {
+  color: var(--mdos-sh-fg) !important;
+  background: var(--mdos-sh-card) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) :is(select, .mari-chrome-field, input[type="text"], input[type="number"], input[type="search"]) {
+  border-radius: var(--mdos-r-1, 10px) !important;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) [data-settings-switch-track] {
+  background: var(--mdos-sh-fill) !important;
+  box-shadow: inset 0 0 0 1px var(--mdos-sh-sep);
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) input:checked + [data-settings-switch-track] {
+  background: var(--mdos-sh-acc) !important;
+  box-shadow: none;
+}
+html.mdos:not(.mdos-touch) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) [data-settings-switch-thumb] {
+  background: #fff !important;
+  --tw-ring-color: transparent !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+}
+/* Dark: the chosen segment lifts above the track. */
+html.mdos:not(.mdos-touch):not([data-theme="light"]) .mari-window:not([data-presentation="sheet"], .mari-window-bubble) .grid.gap-1.rounded-lg.border.p-1 > button[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--mdos-sh-card) 80%, #fff) !important;
+}
+/* Jump chips on desktop: a single scrolling row, mouse wheel friendly. */
+html.mdos:not(.mdos-touch) .mdos-cs-jump {
+  padding: 3px 12px 10px;
+  margin: 0;
+  border-bottom: 0;
+}
+html.mdos:not(.mdos-touch) .mdos-cs-chip:hover {
+  background: color-mix(in srgb, var(--mdos-sh-fg) 4%, var(--mdos-sh-card));
+}
+html.mdos:not(.mdos-touch) .mdos-cs-chip {
+  cursor: pointer;
 }
 `,
 ].join("\n");

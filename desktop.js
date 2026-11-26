@@ -7599,12 +7599,12 @@ function watchViewBox() {
   viewBox = box;
   if (box) viewObserver.observe(box, { childList: true });
 }
-// Phone chat settings sheet: a row of section chips under the header, each
+// Chat settings (phone sheet or desktop window): a row of section chips under the header, each
 // with its state ("3", "on", the drawer summary). Tapping one opens that
 // section and scrolls to it, like jumping between tabs.
 let jumpSig = "";
 function sheetJumps() {
-  const sheet = $once('.mari-chat-settings-drawer[data-presentation="sheet"]');
+  const sheet = $once(".mari-chat-settings-drawer");
   if (!sheet) return void (jumpSig = "");
   const body = sheet.querySelector(".mari-window__body");
   if (!body) return;
@@ -7700,7 +7700,7 @@ function syncBody() {
   }
   toggleClass("mdos-split", split && (listOpen || performance.now() < splitHoldUntil));
   toggleClass("mdos-touch-panel", isTouch() && !!$once('[data-component="RightPanelMobile"], [data-component="MobileDetailSheet"]'));
-  if (isTouch()) sheetJumps();
+  sheetJumps();
   if (isTouch()) {
     placeTouchControls();
     // The open composer's height, so the folded one keeps its shape (apps.css).
