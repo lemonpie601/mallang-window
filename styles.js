@@ -1,4 +1,4 @@
-// Marinara Desktop — the last two stylesheets (apps, touch).
+// Marinara Desktop — the last stylesheets (apps, touch, sheets).
 //
 // Marinara caps an extension's CSS at 256 KiB: the manifest's cssPath files
 // are joined and checked on import ("Validation Error" past the cap). These
@@ -553,28 +553,6 @@ html.mdos-touch:not(.mdos-tablet):is([data-mdos-rp="book"], [data-mdos-rp="night
 }
 
 /* ── Chat tools (desktop.js: scene bar on top, quick palette) ── */
-
-/* Toast: a pill near the bottom edge. */
-#mdos-toast {
-  position: fixed;
-  left: 50%;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
-  z-index: 9000;
-  translate: -50% 12px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: rgba(40, 40, 48, 0.88);
-  color: #fff;
-  font: 500 13px/1.3 var(--mdos-font);
-  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 160ms ease, translate 160ms var(--mdos-ease);
-}
-#mdos-toast.is-on {
-  opacity: 1;
-  translate: -50% 0;
-}
 
 /* Alert: the macOS dialog — app icon, bold title, message, two buttons. */
 .mdos-alert-overlay {
@@ -1533,16 +1511,6 @@ html.mdos-touch:not(.mdos-tablet) [data-quick-connection-menu] {
   border-radius: 8px 8px 0 0 !important;
   padding-bottom: env(safe-area-inset-bottom, 0px) !important;
   transform: none !important;
-}
-
-/* Toasts sit near the top, clear of the composer. */
-html.mdos-touch:not(.mdos-tablet) #mdos-toast {
-  top: calc(env(safe-area-inset-top, 0px) + 58px);
-  bottom: auto;
-  translate: -50% -12px;
-}
-html.mdos-touch:not(.mdos-tablet) #mdos-toast.is-on {
-  translate: -50% 0;
 }
 
 /* Editors on narrow screens: the sections as a row of chips that scrolls
@@ -3337,6 +3305,723 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .mcc-
   .mcc-meter[data-mcc-owned] > span {
     padding: 0 5px;
   }
+}
+`,
+  String.raw`/* ══════════════ sheets.css ══════════════ */
+/* ── Mobile panels as clean settings sheets ───────────────────
+   Phone/tablet (html.mdos-touch): Marinara's chat settings sheet, the
+   right panel (characters, presets, settings…), editors and modals get
+   the same look: a soft grey page, white rounded cards, grouped rows,
+   pill tabs and chips, and bigger switches. Marinara's own CSS variables
+   are used where it offers them (--mari-window-*, --mari-drawer-*). */
+
+html.mdos-touch {
+  --mdos-sh-page: var(--mdos-win-bg, #f2f2f6);
+  --mdos-sh-card: var(--mdos-card-raised, #fff);
+  --mdos-sh-fg: var(--mdos-fg, #1c1c1e);
+  --mdos-sh-fg2: var(--mdos-fg-2, #6e6e73);
+  --mdos-sh-sep: var(--mdos-sep, rgba(0, 0, 0, 0.08));
+  --mdos-sh-fill: var(--mdos-fill, rgba(0, 0, 0, 0.05));
+  --mdos-sh-acc: var(--mdos-accent, var(--primary));
+}
+
+/* ── 1. Sheet shells: grabber, round top, page background ───── */
+html.mdos-touch .mari-window[data-presentation="sheet"],
+html.mdos-touch:not(.mdos-tablet) aside[data-component="RightPanelMobile"],
+html.mdos-touch:not(.mdos-tablet) aside[data-component="MobileDetailSheet"] {
+  --mari-window-bg: var(--mdos-sh-page);
+  --mari-window-radius: 22px;
+  --mari-window-border: transparent;
+  --mari-window-header-bg: transparent;
+  --mari-window-header-padding: 18px 16px 10px;
+  --mari-window-text: var(--mdos-sh-fg);
+  --mari-window-backdrop-filter: none;
+  background: var(--mdos-sh-page) !important;
+  color: var(--mdos-sh-fg);
+  border-radius: 22px 22px 0 0 !important;
+  border: 0 !important;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.18) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.mdos-touch .mari-window[data-presentation="sheet"] {
+  top: auto !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-height: calc(100dvh - 3.5rem - env(safe-area-inset-top, 0px)) !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+html.mdos-touch .mari-window[data-presentation="sheet"]::before,
+html.mdos-touch:not(.mdos-tablet) aside[data-component="RightPanelMobile"]::before,
+html.mdos-touch:not(.mdos-tablet) aside[data-component="MobileDetailSheet"]::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  z-index: 3;
+  width: 38px;
+  height: 5px;
+  margin-left: -19px;
+  border-radius: 3px;
+  background: var(--mdos-sh-fg2);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* ── 2. Headers: big bold title, round close button ─────────── */
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-window__header {
+  border: 0 !important;
+}
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-window__title,
+html.mdos-touch .mari-right-panel-header h2 {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em;
+  color: var(--mdos-sh-fg) !important;
+}
+html.mdos-touch .mari-right-panel-header {
+  height: 60px !important;
+  padding-top: 8px;
+  background: transparent !important;
+}
+html.mdos-touch .mari-right-panel-header > .absolute.inset-x-0.bottom-0 {
+  display: none;
+}
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-window__control,
+html.mdos-touch .mari-right-panel-header button[aria-label] {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  color: var(--mdos-sh-fg) !important;
+  background: var(--mdos-sh-fill) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html.mdos-touch [data-component="RightPanelHeaderIcon"] {
+  border-radius: 10px !important;
+}
+
+/* Scroll bodies sit on the grey page with card gutters. */
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-window__body,
+html.mdos-touch section[data-component="RightPanel"] [data-panel-key] {
+  background: var(--mdos-sh-page) !important;
+}
+
+/* ── 3. Chat settings drawers = white grouped cards ─────────── */
+html.mdos-touch .mari-window[data-presentation="sheet"] .marinara-chat-popover__scroll {
+  padding: 4px 12px 16px !important;
+}
+/* No overflow:hidden here: the drawers are flex items, and clipping drops
+   their minimum height to 0, so long open sections (chat summary) were
+   squashed to a line. flex-shrink: 0 keeps every section its full height. */
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer {
+  --mari-drawer-bg: var(--mdos-sh-card);
+  --mari-drawer-header-bg: var(--mdos-sh-card);
+  --mari-drawer-border: transparent;
+  --mari-drawer-header-padding: 11px 14px;
+  --mari-drawer-title-color: var(--mdos-sh-fg);
+  --mari-drawer-count-bg: var(--mdos-sh-fill);
+  --mari-drawer-count-text: var(--mdos-sh-fg2);
+  flex-shrink: 0 !important;
+  margin: 0 0 8px;
+  border: 0 !important;
+  border-radius: 16px;
+  background: var(--mdos-sh-card) !important;
+  box-shadow: 0 0 0 1px var(--mdos-sh-sep), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__title {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__summary {
+  font-size: 12px !important;
+  color: var(--mdos-sh-fg2) !important;
+}
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__count {
+  min-width: 22px;
+  padding: 1px 8px !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 700;
+}
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__header {
+  border-radius: 16px;
+}
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__body {
+  border-top: 1px solid var(--mdos-sh-sep);
+}
+
+/* Section jump chips (desktop.js sheetJumps): a scrolling pill row. */
+html.mdos-touch .mdos-cs-jump {
+  display: flex;
+  flex: none;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 12px 10px;
+  margin: 0 0 2px;
+  border-bottom: 1px solid var(--mdos-sh-sep);
+}
+html.mdos-touch .mdos-cs-jump::-webkit-scrollbar {
+  display: none;
+}
+html.mdos-touch .mdos-cs-chip {
+  all: unset;
+  flex: none;
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  max-width: 110px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  background: var(--mdos-sh-card);
+  box-shadow: 0 0 0 1px var(--mdos-sh-sep);
+  color: var(--mdos-sh-fg);
+  -webkit-tap-highlight-color: transparent;
+}
+html.mdos-touch .mdos-cs-chip b {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  font-weight: 700;
+}
+html.mdos-touch .mdos-cs-chip small {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  color: var(--mdos-sh-fg2);
+}
+html.mdos-touch .mdos-cs-chip[aria-current="true"] {
+  box-shadow: 0 0 0 1.5px var(--mdos-sh-fg);
+}
+
+/* ── 4. Settings panel: categories as pill tabs, sections as cards ── */
+html.mdos-touch .mari-settings-panel-chrome [role="tablist"] {
+  display: flex !important;
+  gap: 6px !important;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 4px 2px 8px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+html.mdos-touch .mari-settings-panel-chrome [role="tablist"]::-webkit-scrollbar {
+  display: none;
+}
+html.mdos-touch .mari-settings-panel-chrome [role="tab"] {
+  flex: none !important;
+  min-height: 36px !important;
+  padding: 0 14px !important;
+  border-radius: 999px !important;
+  border: 0 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--mdos-sh-fg) !important;
+  background: var(--mdos-sh-card) !important;
+  box-shadow: 0 0 0 1px var(--mdos-sh-sep) !important;
+}
+html.mdos-touch .mari-settings-panel-chrome [role="tab"][aria-selected="true"] {
+  color: var(--mdos-sh-page) !important;
+  background: var(--mdos-sh-fg) !important;
+  box-shadow: none !important;
+}
+html.mdos-touch [data-panel-key] section.overflow-hidden.rounded-lg.border,
+html.mdos-touch [role="tabpanel"] section.overflow-hidden.rounded-lg.border {
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: var(--mdos-sh-card) !important;
+  box-shadow: 0 0 0 1px var(--mdos-sh-sep), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+html.mdos-touch [data-panel-key] section.overflow-hidden.rounded-lg.border > .flex.items-start.gap-2 .text-xs.font-semibold,
+html.mdos-touch [role="tabpanel"] section.overflow-hidden.rounded-lg.border > .flex.items-start.gap-2 .text-xs.font-semibold {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
+html.mdos-touch [role="tabpanel"] section.overflow-hidden.rounded-lg.border > .border-t,
+html.mdos-touch [data-panel-key] section.overflow-hidden.rounded-lg.border > .border-t {
+  border-color: var(--mdos-sh-sep) !important;
+}
+
+/* Inner cards inside chat settings and agents. */
+html.mdos-touch .mari-window[data-presentation="sheet"] .space-y-2.rounded-lg.p-2\.5.ring-1 {
+  border-radius: 14px !important;
+  background: var(--mdos-sh-page) !important;
+  --tw-ring-color: transparent !important;
+}
+
+/* ── 5. Controls: switches, segmented, chips, fields ────────── */
+/* Switch: 44×26 pill, dark track when on (accent with the theme). */
+html.mdos-touch label.relative.inline-flex.h-5.w-9 {
+  width: 44px !important;
+  height: 26px !important;
+}
+html.mdos-touch [data-settings-switch-track] {
+  width: 44px !important;
+  height: 26px !important;
+  padding: 3px !important;
+  background: var(--mdos-sh-fill) !important;
+  box-shadow: inset 0 0 0 1px var(--mdos-sh-sep);
+}
+html.mdos-touch input:checked + [data-settings-switch-track] {
+  background: var(--mdos-sh-acc) !important;
+  box-shadow: none;
+}
+html.mdos-touch [data-settings-switch-thumb] {
+  width: 20px !important;
+  height: 20px !important;
+  background: #fff !important;
+  --tw-ring-color: transparent !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
+}
+/* Tailwind 4 moves the thumb with the translate property; reset it so
+   only our transform applies (both together pushed it off the track). */
+html.mdos-touch [data-settings-switch-thumb] {
+  translate: none !important;
+  transform: none;
+  transition: transform 180ms ease !important;
+}
+html.mdos-touch input:checked + [data-settings-switch-track] [data-settings-switch-thumb] {
+  transform: translateX(18px) !important;
+}
+
+/* Segmented controls (aria-pressed groups) as a pill track. */
+html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-panel-key], [role="tabpanel"]) .grid.gap-1.rounded-lg.border.p-1 {
+  gap: 2px !important;
+  padding: 3px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: var(--mdos-sh-fill) !important;
+}
+html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-panel-key], [role="tabpanel"]) .grid.gap-1.rounded-lg.border.p-1 > button[aria-pressed] {
+  min-height: 34px !important;
+  border-radius: 9px !important;
+  font-weight: 600;
+  background: transparent !important;
+  --tw-ring-color: transparent !important;
+}
+html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-panel-key], [role="tabpanel"]) .grid.gap-1.rounded-lg.border.p-1 > button[aria-pressed="true"] {
+  color: var(--mdos-sh-fg) !important;
+  background: var(--mdos-sh-card) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Small chrome buttons (quick access, actions) as chips. */
+html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-component="RightPanel"]) .mari-chrome-control--small:not(.mari-right-panel-header *) {
+  min-height: 30px;
+  border-radius: 10px !important;
+}
+
+/* Fields: taller, rounder, filled. */
+html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-component="RightPanel"], aside[data-component="MobileDetailSheet"]) :is(.mari-chrome-field, select, input[type="text"], input[type="number"], input[type="search"], textarea) {
+  min-width: 0;
+  border-radius: 12px !important;
+  font-size: 16px; /* no iOS zoom on focus */
+}
+html.mdos-touch [data-chat-settings-search] {
+  min-height: 40px;
+  border-radius: 12px !important;
+  background: var(--mdos-sh-fill) !important;
+  border: 0 !important;
+}
+
+/* ── 6. Editor header (character, persona, preset, lorebook) ─── */
+/* Row 1: back, avatar, name. Row 2: compact actions. Row 3: a full-width
+   strip of section tabs that scrolls sideways (Marinara caps it at 8rem). */
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav {
+  gap: 8px !important;
+  padding: 18px 14px 10px !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header .mari-editor-action:not(.mari-editor-tab) {
+  width: 38px !important;
+  min-width: 38px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: var(--mdos-sh-fill) !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header .mari-editor-action--primary:not(.mari-editor-tab) {
+  background: var(--mdos-sh-acc) !important;
+  color: #fff !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header .mari-editor-action:not(.mari-editor-tab) svg {
+  width: 18px;
+  height: 18px;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-actions {
+  gap: 6px !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-navigation {
+  order: 9;
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 0 100% !important;
+  overflow: visible !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-navigation-compact {
+  display: none !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-navigation-tabs {
+  display: flex !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-tab-label {
+  display: inline !important;
+}
+
+/* Preset sections and lorebook entries: the name gets its own full-width
+   line above the row of small controls instead of a sliver between them. */
+html.mdos-touch:not(.mdos-tablet) .mari-editor-panel > div.flex.min-w-0.items-center,
+html.mdos-touch:not(.mdos-tablet) [data-lorebook-entry-row-id] > div.group.flex {
+  flex-wrap: wrap !important;
+  row-gap: 6px !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-panel > div.flex.min-w-0.items-center > span.min-w-0.flex-1.truncate.font-medium {
+  order: -1;
+  flex: 1 0 100% !important;
+  padding: 0 4px;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  line-height: 1.35;
+}
+html.mdos-touch:not(.mdos-tablet) [data-lorebook-entry-row-id] > div.group.flex > [data-mari-field$=".name"] {
+  order: -1;
+  flex: 1 0 100% !important;
+  min-width: 0 !important;
+}
+html.mdos-touch:not(.mdos-tablet) [data-lorebook-entry-row-id] > div.group.flex > [data-mari-field$=".name"] input {
+  height: 30px;
+  padding: 0 4px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  text-overflow: ellipsis;
+}
+
+/* ── 7. Editor tabs as pills ──────────────────────────────────── */
+html.mdos-touch:not(.mdos-tablet) .mari-editor-navigation-tabs {
+  gap: 6px !important;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 1px 1px 2px;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-navigation-tabs::-webkit-scrollbar {
+  display: none;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-tab {
+  flex: none !important;
+  gap: 6px;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 13px !important;
+  font-size: 13px !important;
+  font-weight: 600;
+  border-radius: 999px !important;
+  border: 0 !important;
+  background: var(--mdos-sh-card) !important;
+  box-shadow: 0 0 0 1px var(--mdos-sh-sep);
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-tab[data-active="true"] {
+  color: var(--mdos-sh-page) !important;
+  background: var(--mdos-sh-fg) !important;
+  box-shadow: none;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-navigation-select {
+  min-height: 40px;
+  border-radius: 12px !important;
+}
+
+/* ── 8. Modals on a phone = bottom sheets ───────────────────── */
+html.mdos-touch:not(.mdos-tablet) [data-component="Modal"] {
+  align-items: flex-end !important;
+}
+html.mdos-touch:not(.mdos-tablet) [data-component="Modal"] .mari-modal-panel {
+  position: relative;
+  width: 100% !important;
+  max-width: none !important;
+  max-height: calc(100dvh - 3rem) !important;
+  margin: 0 !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-radius: 22px 22px 0 0 !important;
+  border: 0 !important;
+  background: var(--mdos-sh-page) !important;
+  color: var(--mdos-sh-fg);
+  animation: mdos-sheet-up 260ms var(--mdos-ease, ease-out);
+}
+html.mdos-touch:not(.mdos-tablet) [data-component="Modal"] .mari-modal-panel::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  width: 38px;
+  height: 5px;
+  margin-left: -19px;
+  border-radius: 3px;
+  background: var(--mdos-sh-fg2);
+  opacity: 0.35;
+}
+html.mdos-touch:not(.mdos-tablet) [data-component="Modal"] .mari-modal-panel h2 {
+  font-size: 19px !important;
+  font-weight: 800 !important;
+}
+@keyframes mdos-sheet-up {
+  from {
+    transform: translateY(40%);
+    opacity: 0;
+  }
+}
+html.mdos-calm [data-component="Modal"] .mari-modal-panel,
+html[data-marinara-reduced-effects="true"] [data-component="Modal"] .mari-modal-panel {
+  animation: none;
+}
+
+/* Drag-to-close sheets (desktop.js SHEETS): translate follows the finger,
+   then springs back or slides away with an iOS-like curve. */
+html.mdos-touch:not(.mdos-tablet) :is(.mari-window[data-presentation="sheet"], aside[data-component="RightPanelMobile"], [data-component="Modal"] .mari-modal-panel) {
+  transition: translate 360ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-cc {
+  transition:
+    opacity 167ms linear,
+    transform 280ms var(--mdos-ease),
+    translate 360ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+[data-mdos-dragging] {
+  transition: none !important;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ══════════════ polish pass (audit fixes) ══════════════ */
+/* Surface hierarchy: the page sits a step darker than its cards, so
+   white-on-white cards still read as cards without heavy borders. */
+html.mdos {
+  --mdos-page: color-mix(in srgb, var(--mdos-win-bg, #fff) 95%, var(--mdos-fg, #000));
+}
+html.mdos .mdos-set {
+  background: var(--mdos-page);
+}
+html.mdos-touch {
+  --mdos-sh-page: var(--mdos-page);
+}
+/* Touch targets: 36px chips and tabs, a 32px hit area round "?". */
+html.mdos-touch .mdos-chip {
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+html.mdos .mdos-help-btn {
+  position: relative;
+}
+html.mdos .mdos-help-btn::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+html.mdos-touch .mdos-qs-link {
+  padding: 8px 0 8px 12px;
+  margin: -8px 0;
+}
+html.mdos-touch .mdos-set-search {
+  height: 40px;
+}
+html.mdos-touch .mdos-set-search-input {
+  font-size: 16px;
+}
+/* Motion: honour reduced motion for the flash and sheet slides. */
+@media (prefers-reduced-motion: reduce) {
+  html.mdos .mdos-set-flash {
+    animation: none;
+    outline: 2px solid var(--mdos-accent, #0078d4);
+    outline-offset: 2px;
+  }
+  html.mdos-touch :is(.mari-window[data-presentation="sheet"], aside[data-component="RightPanelMobile"], [data-component="Modal"] .mari-modal-panel, #mdos-cc) {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+/* Disabled-looking help text stays readable (fg-2, not fg-3). */
+html.mdos .mdos-set-search-input::placeholder {
+  color: var(--mdos-fg-2, #6e6e73);
+}
+/* The selected chip shows its state with more than an outline. */
+html.mdos .mdos-chip[aria-checked="true"] {
+  color: var(--mdos-fg, #1d1d1f);
+  background: var(--mdos-accent-soft, rgba(0, 120, 212, 0.12));
+  box-shadow: inset 0 0 0 1.5px var(--mdos-accent, #0078d4);
+}
+
+/* ══════════════ toasts (desktop.js toast) ══════════════ */
+/* A Sonner-like stack: the newest in front, older ones peeking behind,
+   fanned out while hovered. Bottom right on a desktop, top centre on a
+   phone (clear of the composer). Positions come from --y / --s / --h. */
+#mdos-toasts {
+  position: fixed;
+  right: 16px;
+  bottom: calc(var(--w-tb-h, 48px) + 16px);
+  z-index: 9600;
+  width: min(356px, calc(100vw - 32px));
+  height: var(--mdos-toasts-h, 0px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+  font: 500 13px/1.4 var(--mdos-font, system-ui);
+}
+#mdos-toasts[data-open] {
+  pointer-events: auto;
+}
+html.mdos-dock-autohide #mdos-toasts {
+  bottom: 16px;
+}
+.mdos-toast {
+  --y: 0px;
+  --s: 1;
+  --x: 0px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: var(--mdos-fg, #1d1d1f);
+  background: var(--mdos-popover, var(--mdos-card-raised, #fff));
+  box-shadow:
+    0 0 0 1px var(--mdos-sep, rgba(0, 0, 0, 0.08)),
+    0 8px 24px -6px rgba(0, 0, 0, 0.22);
+  pointer-events: auto;
+  opacity: 0;
+  translate: var(--x) calc(-1 * var(--y) + 16px);
+  scale: var(--s);
+  transform-origin: 50% 0;
+  transition:
+    translate 400ms cubic-bezier(0.21, 1.02, 0.73, 1),
+    scale 400ms cubic-bezier(0.21, 1.02, 0.73, 1),
+    opacity 300ms ease,
+    height 300ms ease;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+.mdos-toast[data-mounted] {
+  opacity: 1;
+  translate: var(--x) calc(-1 * var(--y));
+}
+.mdos-toast[data-behind] {
+  height: var(--h);
+  overflow: hidden;
+}
+.mdos-toast[data-behind] > * {
+  opacity: 0;
+}
+.mdos-toast[data-hidden],
+.mdos-toast[data-leaving] {
+  opacity: 0;
+  pointer-events: none;
+}
+.mdos-toast[data-leaving] {
+  translate: var(--x) calc(-1 * var(--y) + 12px);
+}
+.mdos-toast[data-swiping] {
+  transition: none;
+}
+.mdos-toast:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--mdos-accent, #0078d4),
+    0 8px 24px -6px rgba(0, 0, 0, 0.22);
+}
+.mdos-toast-icon {
+  display: grid;
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+.mdos-toast-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.mdos-toast[data-type="success"] .mdos-toast-icon {
+  color: #1f9d55;
+}
+.mdos-toast[data-type="error"] .mdos-toast-icon {
+  color: #d93025;
+}
+.mdos-toast-text {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.mdos-toast-action {
+  all: unset;
+  flex: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mdos-card-raised, #fff);
+  background: var(--mdos-fg, #1d1d1f);
+  cursor: pointer;
+}
+.mdos-toast-action:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0078d4);
+  outline-offset: 2px;
+}
+html:not([data-theme="light"]) .mdos-toast {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 10px 30px -6px rgba(0, 0, 0, 0.6);
+}
+html:not([data-theme="light"]) .mdos-toast[data-type="success"] .mdos-toast-icon {
+  color: #4cd982;
+}
+html:not([data-theme="light"]) .mdos-toast[data-type="error"] .mdos-toast-icon {
+  color: #ff6b5e;
+}
+/* Phone: top centre, the stack grows downward. */
+html.mdos-touch:not(.mdos-tablet) #mdos-toasts {
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  right: 16px;
+  bottom: auto;
+  left: 16px;
+  width: auto;
+}
+html.mdos-touch:not(.mdos-tablet) .mdos-toast {
+  top: 0;
+  bottom: auto;
+  transform-origin: 50% 100%;
+  translate: var(--x) calc(var(--y) - 16px);
+}
+html.mdos-touch:not(.mdos-tablet) .mdos-toast[data-mounted] {
+  translate: var(--x) var(--y);
+}
+html.mdos-touch:not(.mdos-tablet) .mdos-toast[data-leaving] {
+  translate: var(--x) calc(var(--y) - 12px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mdos-toast {
+    transition: opacity 150ms linear;
+  }
+}
+html.mdos-calm .mdos-toast {
+  transition: opacity 150ms linear;
 }
 `,
 ].join("\n");

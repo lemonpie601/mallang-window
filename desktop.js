@@ -1430,7 +1430,7 @@ function pickImage(onPicked, { maxSide, maxBytes, square }) {
       onPicked(data);
     } catch (error) {
       marinara.log.warn("Image upload failed", error);
-      window.alert(L.tooLarge);
+      toast(L.tooLarge, { type: "error" });
     }
   });
   doc.body.append(input);
@@ -1442,7 +1442,7 @@ function storeImage(apply) {
   apply();
   if (imagesSize() > STORAGE_BUDGET) {
     Object.assign(images, JSON.parse(backup));
-    window.alert(L.storageFull);
+    toast(L.storageFull, { type: "error" });
     return false;
   }
   saveImages();
@@ -4927,7 +4927,7 @@ function mountNotes(win) {
     saveNotes();
     if (!notesWarned && imagesSize() > STORAGE_BUDGET) {
       notesWarned = true;
-      window.alert(L.storageFull);
+      toast(L.storageFull, { type: "error" });
     }
     marinara.clearTimeout(listTimer);
     listTimer = marinara.setTimeout(renderList, 400);
@@ -6200,6 +6200,7 @@ function mountCustomize(win) {
   const clearBtn = h("button", { type: "button", class: "mdos-set-search-clear", "aria-label": L.setSearchClear, title: L.setSearchClear, svg: LIGHT_GLYPHS.close });
   const show = (id) => {
     if (!SECTION_BUILDERS[id]) id = "overview";
+    pane.removeAttribute("aria-live");
     win.rec.section = id;
     save();
     searchInput.value = "";
@@ -6256,6 +6257,7 @@ function mountCustomize(win) {
     if (!q) return show(win.rec.section || "overview");
     for (const b of nav.children) b.setAttribute("aria-current", "false");
     const hits = buildIndex().items.filter((it) => it.key.includes(q)).slice(0, 60);
+    pane.setAttribute("aria-live", "polite");
     pane.replaceChildren(
       hits.length
         ? h(
@@ -6484,7 +6486,7 @@ function mountCustomize(win) {
     nav.append(
       h(
         "button",
-        { type: "button", class: "mdos-set-nav-item", "data-section": id, title: label(), onclick: () => show(id) },
+        { type: "button", class: "mdos-set-nav-item", "data-section": id, title: label(), "aria-label": label(), onclick: () => show(id) },
         appIcon({ id: `set:${id}`, icon, g: [g1, g2] }),
         h("span", { text: label() }),
       ),
@@ -7123,7 +7125,7 @@ function pickCursorImage(onPicked) {
       onPicked(canvas.toDataURL("image/png"));
     } catch (error) {
       marinara.log.warn("Pointer image failed", error);
-      window.alert(L.tooLarge);
+      toast(L.tooLarge, { type: "error" });
     }
   });
   doc.body.append(input);
@@ -7794,6 +7796,80 @@ const dlgTimer = marinara.setInterval(() => {
 // ── Global listeners ──────────────────────────────────────────
 
 on(doc, "pointerdown", onPointerDown, true);
+
+// Phone sheets close like a native drawer (Vaul): drag the grabber or the
+// header down and let go. Past a third of the sheet (or a quick flick) it
+// slides away and the sheet's own close runs; otherwise it springs back.
+// Dragging up stretches a little. Only the top strip starts a drag, so
+// scrolling, buttons and fields inside the sheet work as before.
+const SHEETS = [
+  { sel: "#mdos-cc", close: () => closeCC() },
+  { sel: '.mari-window[data-presentation="sheet"]', close: (el) => click(el.querySelector('[data-window-control="close"]')) },
+  { sel: 'aside[data-component="RightPanelMobile"]', close: (el) => click(el.querySelector(".mari-right-panel-header > div:last-child > button:last-of-type")) },
+  { sel: '[data-component="Modal"] .mari-modal-panel', close: () => doc.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })) },
+];
+const SHEET_GRAB = 64;
+let sheetDrag = null;
+on(
+  doc,
+  "pointerdown",
+  (e) => {
+    if (!isPhone() || e.button !== 0 || sheetDrag) return;
+    const t = e.target instanceof Element ? e.target : null;
+    if (!t || t.closest('button, a, input, select, textarea, label, [role="button"], [role="tab"], [role="switch"], [contenteditable="true"], .mdos-cs-jump')) return;
+    for (const s of SHEETS) {
+      const el = t.closest(s.sel);
+      if (!el) continue;
+      const r = el.getBoundingClientRect();
+      if (e.clientY - r.top > SHEET_GRAB || r.bottom < innerHeight - 4) return;
+      sheetDrag = { el, s, id: e.pointerId, y: e.clientY, t: performance.now(), h: r.height, dy: 0, live: false };
+      return;
+    }
+  },
+  true,
+);
+on(
+  doc,
+  "pointermove",
+  (e) => {
+    const d = sheetDrag;
+    if (!d || e.pointerId !== d.id) return;
+    const dy = e.clientY - d.y;
+    if (!d.live) {
+      if (Math.abs(dy) < 6) return;
+      d.live = true;
+      d.el.setAttribute("data-mdos-dragging", "");
+    }
+    // Rubber band upward, 1:1 downward.
+    d.dy = dy < 0 ? -Math.sqrt(-dy) * 2 : dy;
+    d.el.style.translate = `0 ${d.dy}px`;
+    e.preventDefault();
+  },
+  { capture: true, passive: false },
+);
+const endSheetDrag = (e) => {
+  const d = sheetDrag;
+  if (!d || e.pointerId !== d.id) return;
+  sheetDrag = null;
+  if (!d.live) return;
+  // The tap that ended a drag must not also press what is under the finger.
+  const swallow = (ev) => (ev.stopPropagation(), ev.preventDefault());
+  doc.addEventListener("click", swallow, { capture: true, once: true });
+  marinara.setTimeout(() => doc.removeEventListener("click", swallow, true), 0);
+  const v = d.dy / Math.max(1, performance.now() - d.t);
+  const el = d.el;
+  el.removeAttribute("data-mdos-dragging");
+  if (d.dy > d.h / 3 || (v > 0.5 && d.dy > 30)) {
+    el.style.translate = `0 ${d.h + 40}px`;
+    marinara.setTimeout(() => {
+      d.s.close(el);
+      // Marinara may keep the node (hidden) around: clear our offset.
+      marinara.setTimeout(() => (el.style.translate = ""), 400);
+    }, reducedMotion() ? 0 : 200);
+  } else el.style.translate = "";
+};
+on(doc, "pointerup", endSheetDrag, true);
+on(doc, "pointercancel", endSheetDrag, true);
 on(window, "pointermove", onPointerMove, { passive: true });
 on(window, "pointerup", onPointerUp);
 on(window, "pointercancel", onPointerUp);
@@ -7921,15 +7997,123 @@ function refreshChatTools() {
   mountQuickPalette();
 }
 
-// Toast: a small pill at the bottom of the screen.
-const toastEl = h("div", { id: "mdos-toast", role: "status" });
-ui.append(toastEl);
-let toastTimer = 0;
-function toast(text) {
-  toastEl.textContent = text;
-  toastEl.classList.add("is-on");
-  marinara.clearTimeout(toastTimer);
-  toastTimer = marinara.setTimeout(() => toastEl.classList.remove("is-on"), 2200);
+// Toasts, stacked like Sonner: the newest in front, up to three peeking
+// behind it. Hovering (or focusing) the stack fans it out and pauses the
+// timers; a toast can be swiped sideways to dismiss. Types: "info"
+// (default), "success", "error"; an optional action button.
+//   toast(text) · toast(text, { type, action: { label, run }, duration })
+const toastHost = h("ol", { id: "mdos-toasts", "data-exd": "", "aria-live": "polite", "aria-label": KO ? "알림" : "Notifications" });
+ui.append(toastHost);
+const toasts = [];
+const TOAST_MAX = 3;
+const TOAST_GAP = 8;
+let toastsOpen = false;
+function layoutToasts() {
+  // Front (newest) toast sits at the edge; the rest stack behind it, or
+  // fan out with their real heights while the stack is open.
+  let offset = 0;
+  const frontH = toasts.length ? toasts[toasts.length - 1].el.offsetHeight : 0;
+  toastHost.toggleAttribute("data-open", toastsOpen);
+  toastHost.style.setProperty("--mdos-toasts-h", `${toastsOpen ? toasts.reduce((sum, t) => sum + t.el.offsetHeight + TOAST_GAP, 0) : frontH + 20}px`);
+  for (let i = toasts.length - 1, depth = 0; i >= 0; i--, depth++) {
+    const t = toasts[i];
+    const hidden = depth >= TOAST_MAX;
+    t.el.style.setProperty("--y", `${toastsOpen ? offset : depth * 10}px`);
+    t.el.style.setProperty("--s", String(toastsOpen ? 1 : 1 - depth * 0.05));
+    t.el.style.setProperty("--h", `${toastsOpen ? t.el.offsetHeight : frontH}px`);
+    t.el.style.zIndex = String(100 - depth);
+    t.el.toggleAttribute("data-behind", depth > 0 && !toastsOpen);
+    t.el.toggleAttribute("data-hidden", hidden);
+    offset += t.el.offsetHeight + TOAST_GAP;
+  }
+}
+function dismissToast(t) {
+  const i = toasts.indexOf(t);
+  if (i < 0) return;
+  toasts.splice(i, 1);
+  marinara.clearTimeout(t.timer);
+  t.el.setAttribute("data-leaving", "");
+  marinara.setTimeout(() => t.el.remove(), reducedMotion() ? 0 : 220);
+  if (!toasts.length) toastsOpen = false;
+  layoutToasts();
+}
+function armToast(t) {
+  marinara.clearTimeout(t.timer);
+  if (toastsOpen || t.left <= 0) return;
+  t.started = performance.now();
+  t.timer = marinara.setTimeout(() => dismissToast(t), t.left);
+}
+function pauseToasts(open) {
+  if (toastsOpen === open) return;
+  toastsOpen = open;
+  for (const t of toasts) {
+    if (open) {
+      marinara.clearTimeout(t.timer);
+      t.left -= performance.now() - t.started;
+    } else armToast(t);
+  }
+  layoutToasts();
+}
+toastHost.addEventListener("pointerenter", (e) => e.pointerType === "mouse" && pauseToasts(true));
+toastHost.addEventListener("pointerleave", (e) => e.pointerType === "mouse" && pauseToasts(false));
+toastHost.addEventListener("focusin", () => pauseToasts(true));
+toastHost.addEventListener("focusout", (e) => !toastHost.contains(e.relatedTarget) && pauseToasts(false));
+const TOAST_ICONS = {
+  success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.7 2.7L16.2 9.5"/></svg>',
+  error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.4v.1"/></svg>',
+};
+function toast(text, { type = "info", action, duration } = {}) {
+  const el = h(
+    "li",
+    { class: "mdos-toast", "data-type": type, role: type === "error" ? "alert" : "status", tabindex: "0" },
+    TOAST_ICONS[type] ? h("span", { class: "mdos-toast-icon", svg: TOAST_ICONS[type] }) : null,
+    h("span", { class: "mdos-toast-text", text }),
+    action
+      ? h("button", {
+          type: "button",
+          class: "mdos-toast-action",
+          text: action.label,
+          onclick: () => {
+            action.run?.();
+            dismissToast(t);
+          },
+        })
+      : null,
+  );
+  const t = { el, timer: 0, left: duration ?? (type === "error" ? 5000 : action ? 4500 : 2600), started: 0 };
+  // Swipe sideways to dismiss (any pointer); a short drag springs back.
+  let drag = null;
+  el.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0 || e.target.closest("button")) return;
+    drag = { x: e.clientX, id: e.pointerId, t: performance.now() };
+    el.setPointerCapture(e.pointerId);
+    el.setAttribute("data-swiping", "");
+  });
+  el.addEventListener("pointermove", (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    el.style.setProperty("--x", `${e.clientX - drag.x}px`);
+  });
+  const end = (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x;
+    const v = Math.abs(dx) / Math.max(1, performance.now() - drag.t);
+    drag = null;
+    el.removeAttribute("data-swiping");
+    if (Math.abs(dx) > 70 || v > 0.45) {
+      el.style.setProperty("--x", `${Math.sign(dx || 1) * 120}%`);
+      dismissToast(t);
+    } else el.style.setProperty("--x", "0px");
+  };
+  el.addEventListener("pointerup", end);
+  el.addEventListener("pointercancel", end);
+  el.addEventListener("keydown", (e) => (e.key === "Escape" || e.key === "Delete") && dismissToast(t));
+  toasts.push(t);
+  toastHost.append(el);
+  while (toasts.length > 8) dismissToast(toasts[0]);
+  layoutToasts();
+  raf(() => el.setAttribute("data-mounted", ""));
+  armToast(t);
+  return () => dismissToast(t);
 }
 
 // A macOS alert: title, message, Cancel and a default (or destructive) button.
@@ -8448,7 +8632,7 @@ function snipRow(m, canMove) {
     snip.confirm = null;
     save();
     renderSnippets();
-    toast(L.qp.deleted);
+    toast(L.qp.deleted, { type: "success" });
   };
   return h(
     "div",
@@ -8477,12 +8661,12 @@ function snipRow(m, canMove) {
         text: L.qp.insert,
         onclick: () => {
           closePop();
-          if (insertText(m.content)) toast(L.qp.inserted);
+          if (insertText(m.content)) toast(L.qp.inserted, { type: "success" });
         },
       }),
       act(L.qp.copy, "⧉", () => {
-        const done = () => toast(L.qp.copied);
-        navigator.clipboard?.writeText(m.content).then(done, () => toast("✕"));
+        const done = () => toast(L.qp.copied, { type: "success" });
+        navigator.clipboard?.writeText(m.content).then(done, () => toast("✕", { type: "error" }));
       }),
       act(m.pinned ? L.qp.unpin : L.qp.pin, m.pinned ? "★" : "☆", () => {
         m.pinned = !m.pinned;
@@ -8533,7 +8717,7 @@ function snipEditor() {
           snip.editing = null;
           save();
           renderSnippets();
-          toast(L.qp.saved);
+          toast(L.qp.saved, { type: "success" });
         },
       }),
     ),
@@ -9739,7 +9923,7 @@ function lkStartPick() {
     }
     const rec = lkStore(el, { manual: true });
     lkEnforce(rec);
-    toast(L.lk.picked);
+    toast(L.lk.picked, { type: "success" });
     lkStopPick();
   };
   const onKey = (e) => e.key === "Escape" && lkStopPick();
