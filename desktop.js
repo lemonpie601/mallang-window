@@ -100,7 +100,7 @@ const L = KO
       docs: "Marinara 문서",
       shortcuts: "단축키",
       controlCenter: "빠른 설정",
-      setSearch: "설정 검색",
+      setSearch: "설정 검색…",
       setSearchClear: "검색어 지우기",
       setNoResult: "맞는 설정이 없어요",
       setOverview: "전체",
@@ -494,7 +494,7 @@ const L = KO
       docs: "Marinara documentation",
       shortcuts: "Shortcuts",
       controlCenter: "Quick Settings",
-      setSearch: "Search settings",
+      setSearch: "Search settings…",
       setSearchClear: "Clear search",
       setNoResult: "No matching settings",
       setOverview: "Overview",
@@ -6302,7 +6302,16 @@ function mountCustomize(win) {
     enterkeyhint: "search",
   });
   const clearBtn = h("button", { type: "button", class: "mdos-set-search-clear", "aria-label": L.setSearchClear, title: L.setSearchClear, svg: LIGHT_GLYPHS.close });
+  // Section switches cross-fade the pane (View Transitions) when the
+  // browser has them, motion is allowed and the window is on screen.
   const show = (id) => {
+    if (doc.startViewTransition && !reducedMotion() && root.isConnected && pane.childElementCount && win.rec.section !== id) {
+      doc.startViewTransition(() => render(id));
+      return;
+    }
+    render(id);
+  };
+  const render = (id) => {
     if (!SECTION_BUILDERS[id]) id = "overview";
     pane.removeAttribute("aria-live");
     win.rec.section = id;
@@ -8188,6 +8197,7 @@ function toast(text, { type = "info", action, duration } = {}) {
           },
         })
       : null,
+    h("button", { type: "button", class: "mdos-toast-close", "aria-label": KO ? "알림 닫기" : "Dismiss", svg: LIGHT_GLYPHS.close, onclick: () => dismissToast(t) }),
   );
   const t = { el, timer: 0, left: duration ?? (type === "error" ? 5000 : action ? 4500 : 2600), started: 0 };
   // Swipe sideways to dismiss (any pointer); a short drag springs back.

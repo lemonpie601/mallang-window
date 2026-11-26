@@ -35,6 +35,7 @@ const cut = (from, to) => {
 const toastJs = [
   cut("function h(tag", "\nconst raf").replace(/\nconst raf$/, ""),
   "const raf = (fn) => requestAnimationFrame(fn);",
+  cut("const LIGHT_GLYPHS = {", "\n};"),
   cut("// Toasts, stacked like Sonner", "  return () => dismissToast(t);\n}"),
 ].join("\n");
 
@@ -50,7 +51,7 @@ const ICON_APPS = [
 ];
 const BASE = `
   html.mdos.mdos body { margin: 0; padding: 16px; background: var(--mdos-page, #eee) !important; color: var(--mdos-fg); font: 14px/1.4 system-ui, sans-serif; }
-  html { --primary: #0a84ff; --border: var(--mdos-sep); --background: var(--mdos-win-bg); --foreground: var(--mdos-fg); }
+  html { --mdos-accent: #0a84ff; --primary: #0a84ff; --border: var(--mdos-sep); --background: var(--mdos-win-bg); --foreground: var(--mdos-fg); }
   .mari-window button, [data-lorebook-entry-row-id] button, .mari-editor-panel button { border: 0; background: none; padding: 4px; }
   .mari-window__header { padding: var(--mari-window-header-padding, 8px 12px); background: var(--mari-window-header-bg); }
   .mari-drawer__header { padding: var(--mari-drawer-header-padding, 12px 16px); background: var(--mari-drawer-header-bg); }
@@ -79,6 +80,7 @@ const storyList = [...stories.matchAll(/<template data-story="([^"]+)"([^>]*)>([
   phoneOnly: /data-phone-only/.test(m[2]),
   desktopOnly: /data-desktop-only/.test(m[2]),
   run: /data-run="([^"]+)"/.exec(m[2])?.[1],
+  htmlAttrs: (/data-html="([^"]+)"/.exec(m[2])?.[1] || "").split(" ").filter(Boolean).map((a) => a.split("=")),
 }));
 
 fs.mkdirSync(OUT, { recursive: true });
@@ -99,6 +101,7 @@ for (const story of storyList.filter((s) => s.name.includes(filter))) {
     await page.addStyleTag({ content: css });
     await page.addStyleTag({ content: lateCss });
     await page.addStyleTag({ content: BASE });
+    if (story.htmlAttrs.length) await page.evaluate((attrs) => attrs.forEach(([k, val]) => document.documentElement.setAttribute(k, val ?? "")), story.htmlAttrs);
     if (v.phone) await page.evaluate(() => document.querySelectorAll("[data-narrow-on-phone]").forEach((el) => el.classList.add("mdos-set--narrow")));
     if (story.run === "toasts") {
       await page.addScriptTag({

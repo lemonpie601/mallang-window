@@ -4104,5 +4104,350 @@ html.mdos-touch.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell[data-mh-
   border-bottom-right-radius: 0 !important;
   border-bottom-width: 0 !important;
 }
+
+/* ══════════════ motion: springs (CSS linear()) ══════════════ */
+/* Physics-based easing sampled into linear() (damped springs; Chrome's
+   "physics based easing" guide). --mdos-spring settles without overshoot
+   (sheets, panels); --mdos-spring-pop overshoots ~1% (toasts, chips).
+   Browsers without linear() keep the cubic-bezier tokens. Only transforms
+   use them: an overshooting opacity would flicker. */
+html.mdos {
+  --mdos-spring: var(--mdos-ease-spring);
+  --mdos-spring-pop: var(--mdos-ease-spring);
+  --mdos-spring-dur: 360ms;
+}
+@supports (transition-timing-function: linear(0, 1)) {
+  html.mdos {
+    --mdos-spring: linear(0, 0.0114, 0.0414, 0.0846, 0.1368, 0.1945, 0.2551, 0.3166, 0.3774, 0.4363, 0.4926, 0.5456, 0.5951, 0.6409, 0.6829, 0.7212, 0.7558, 0.787, 0.8149, 0.8398, 0.8619, 0.8814, 0.8985, 0.9135, 0.9266, 0.938, 0.9478, 0.9563, 0.9636, 0.9698, 0.9751, 0.9797, 0.9835, 0.9867, 0.9894, 0.9916, 0.9934, 0.995, 0.9962, 0.9972, 1);
+    --mdos-spring-pop: linear(0, 0.0182, 0.0653, 0.1317, 0.2096, 0.2933, 0.3781, 0.4609, 0.5394, 0.612, 0.6779, 0.7366, 0.7882, 0.8327, 0.8707, 0.9026, 0.929, 0.9506, 0.9679, 0.9815, 0.9919, 0.9998, 1.0054, 1.0093, 1.0118, 1.0132, 1.0138, 1.0137, 1.0132, 1.0123, 1.0113, 1.0102, 1.009, 1.0078, 1.0067, 1.0057, 1.0048, 1.0039, 1.0032, 1.0025, 1);
+    --mdos-spring-dur: 490ms;
+  }
+}
+html.mdos-touch:not(.mdos-tablet) :is(.mari-window[data-presentation="sheet"], aside[data-component="RightPanelMobile"], [data-component="Modal"] .mari-modal-panel) {
+  transition: translate var(--mdos-spring-dur) var(--mdos-spring);
+}
+html.mdos-touch:not(.mdos-tablet) #mdos-cc {
+  transition:
+    opacity 167ms linear,
+    transform var(--mdos-spring-dur) var(--mdos-spring),
+    translate var(--mdos-spring-dur) var(--mdos-spring);
+}
+.mdos-toast {
+  transition:
+    translate var(--mdos-spring-dur) var(--mdos-spring-pop),
+    scale var(--mdos-spring-dur) var(--mdos-spring-pop),
+    opacity 250ms ease;
+}
+html.mdos :is(.mdos-chip, .mdos-cs-chip, .mdos-qs-pill, .mdos-qs-stat, .mdos-ov-row) {
+  transition:
+    background-color 120ms ease,
+    box-shadow 120ms ease,
+    scale var(--mdos-spring-dur) var(--mdos-spring-pop);
+}
+html.mdos :is(.mdos-chip, .mdos-cs-chip, .mdos-qs-pill, .mdos-qs-stat):active {
+  scale: 0.96;
+  transition-duration: 120ms, 120ms, 90ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.mdos :is(.mdos-chip, .mdos-cs-chip, .mdos-qs-pill, .mdos-qs-stat):active {
+    scale: none;
+  }
+  .mdos-toast {
+    transition: opacity 150ms linear;
+  }
+}
+
+/* ══════════════ view transitions (settings) ══════════════ */
+/* desktop.js wraps section switches in document.startViewTransition: the
+   pane cross-fades and slides a little; the rest of the page holds still. */
+.mdos-set-pane {
+  view-transition-name: mdos-set-pane;
+}
+::view-transition-old(mdos-set-pane) {
+  animation: 140ms ease-in both mdos-vt-out;
+}
+::view-transition-new(mdos-set-pane) {
+  animation: var(--mdos-spring-dur, 360ms) var(--mdos-spring, ease-out) both mdos-vt-in;
+}
+@keyframes mdos-vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes mdos-vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(mdos-set-pane),
+  ::view-transition-new(mdos-set-pane) {
+    animation: none;
+  }
+}
+
+/* ══════════════ Vercel Web Interface Guidelines pass ══════════════ */
+/* Hit targets >= 44px on touch: grow the box where the layout allows it,
+   otherwise an invisible ::after extends the hit area. */
+html.mdos-touch :is(.mdos-chip, .mdos-cs-chip, .mdos-qs-pill, .mdos-set-nav-item, .mdos-seg-btn) {
+  min-height: 44px;
+}
+html.mdos-touch .mdos-set--narrow .mdos-set-nav-item {
+  min-height: 44px;
+  flex-basis: 44px;
+}
+html.mdos-touch :is(.mdos-help-btn, .mdos-set-search-clear, .mdos-toast-action, .mdos-toast-close, .mdos-qs-link, .mari-window[data-presentation="sheet"] .mari-window__control, .mari-right-panel-header button) {
+  position: relative;
+}
+html.mdos-touch :is(.mdos-help-btn, .mdos-set-search-clear, .mdos-toast-action, .mdos-toast-close, .mdos-qs-link, .mari-window[data-presentation="sheet"] .mari-window__control, .mari-right-panel-header button)::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  translate: -50% -50%;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header .mari-editor-action:not(.mari-editor-tab) {
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+}
+/* No double-tap zoom delay, no grey tap flash on our controls. */
+html.mdos :is(#mdos-cc, .mdos-set, #mdos-toasts, .mdos-cs-jump) :is(button, label, input, select, [role="button"]) {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Scroll stays inside panels and sheets (no page bounce behind them). */
+html.mdos :is(#mdos-cc, .mdos-set-pane, .mdos-set-nav, .mdos-help-pop, .mdos-cs-jump),
+html.mdos-touch :is(.mari-window[data-presentation="sheet"] .mari-window__body, section[data-component="RightPanel"] [data-panel-key], [data-component="Modal"] .mari-modal-panel) {
+  overscroll-behavior: contain;
+}
+/* Numbers line up when they change. */
+html.mdos :is(.mdos-qs-stat-val, .mdos-cs-chip small, .mdos-set-range output, .mdos-qs-link, .mari-drawer__count, .mdos-chip) {
+  font-variant-numeric: tabular-nums;
+}
+/* Titles wrap evenly; help text avoids lone last words. */
+html.mdos :is(.mdos-set-group > h3, .mdos-set-cap, .mdos-qs-title, .mari-window__title, .mari-right-panel-header h2) {
+  text-wrap: balance;
+}
+html.mdos :is(.mdos-set-hint, .mdos-help-pop, .mdos-toast-text, .mdos-ov-desc) {
+  text-wrap: pretty;
+}
+/* Native controls follow the theme (scrollbars, selects, checkboxes). */
+html.mdos[data-theme="light"] {
+  color-scheme: light;
+}
+html.mdos:not([data-theme="light"]) {
+  color-scheme: dark;
+}
+html.mdos .mdos-set .mdos-cc-select {
+  color: var(--mdos-fg, #1d1d1f);
+  background-color: var(--mdos-field, var(--mdos-card-raised, #fff));
+}
+/* Hover/press raise contrast, never lower it. */
+html.mdos :is(.mdos-ov-row, .mdos-set-result):active {
+  background: var(--mdos-fill-2, rgba(0, 0, 0, 0.08));
+}
+/* Toast close (desktop.js): a tap alternative to swiping. */
+.mdos-toast-close {
+  all: unset;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin: -4px -6px -4px 0;
+  border-radius: 50%;
+  color: var(--mdos-fg-2, #6e6e73);
+  cursor: pointer;
+}
+.mdos-toast-close:hover {
+  color: var(--mdos-fg, #1d1d1f);
+  background: var(--mdos-fill, rgba(0, 0, 0, 0.05));
+}
+.mdos-toast-close:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0078d4);
+  outline-offset: 1px;
+}
+.mdos-toast-close svg {
+  width: 9px;
+  height: 9px;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+
+/* ══════════════ chat list patterns (messaging apps) ══════════════ */
+/* Built on Marinara's own markers, no :has() (this area repaints while a
+   reply streams): data-grouped on a message that continues the previous
+   one, its corner classes (rounded-*-md) for the place in a group,
+   .mari-typing-indicator, .rpg-streaming, .mari-send-failed and
+   .mari-message-swipes. */
+
+/* Groups: air between senders, tight inside a group. */
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message:not([data-grouped]) {
+  padding-top: 10px !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .mari-message[data-grouped] {
+  padding-top: 0 !important;
+}
+/* Joined corners, like Messages: the corners that face the neighbour in
+   the same group shrink. User bubbles carry Marinara's group classes. */
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="user"] .mari-message-content.rounded-br-md {
+  border-bottom-right-radius: 4px !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="user"] .mari-message-content.rounded-r-md {
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="user"] .mari-message-content.rounded-tr-md {
+  border-top-right-radius: 4px !important;
+}
+/* Their side: paragraphs of one message are a group too. */
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content > .space-y-1\.5 > :not(:last-child) {
+  border-bottom-left-radius: 4px !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content > .space-y-1\.5 > :not(:first-child) {
+  border-top-left-radius: 4px !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message[data-grouped] .mari-message-content > :first-child,
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message[data-grouped] .mari-message-content > .space-y-1\.5 > :first-child {
+  border-top-left-radius: 4px !important;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content:is(.rounded-bl-md, .rounded-l-md) > :last-child,
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] [data-message-role="assistant"] .mari-message-content:is(.rounded-bl-md, .rounded-l-md) > .space-y-1\.5 > :last-child {
+  border-bottom-left-radius: 4px !important;
+}
+
+/* Date dividers: a small pill that sticks to the top while you scroll
+   through that day. */
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .relative.my-4.flex.items-center {
+  position: sticky !important;
+  top: 8px;
+  z-index: 3;
+  justify-content: center;
+  margin-block: 14px !important;
+  pointer-events: none;
+}
+html.mdos[data-mdos-convo="messages"] [data-chat-mode="conversation"] .relative.my-4.flex.items-center > .mari-conversation-transcript-chrome-text {
+  padding: 3px 10px;
+  border-radius: var(--mdos-r-pill, 999px);
+  color: var(--mdos-fg-2) !important;
+  background: color-mix(in srgb, var(--mdos-cv-bg, var(--mdos-win-bg)) 82%, transparent);
+  box-shadow: var(--mdos-shadow-1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Typing: Marinara's "is typing" row as a grey bubble with bouncing dots. */
+html.mdos [data-chat-mode="conversation"] .mari-typing-indicator {
+  width: fit-content;
+  margin: 6px 0 4px 46px;
+  padding: 9px 14px !important;
+  border-radius: 18px 18px 18px 4px;
+  background: var(--mdos-cv-bubble-them, var(--mdos-bubble-other, rgba(0, 0, 0, 0.06)));
+  color: var(--mdos-fg-2);
+}
+html.mdos .mari-typing-indicator .mari-typing-dots > * {
+  animation: mdos-typing 1.2s var(--mdos-ease-in-out, ease-in-out) infinite;
+}
+html.mdos .mari-typing-indicator .mari-typing-dots > :nth-child(2) {
+  animation-delay: 0.15s;
+}
+html.mdos .mari-typing-indicator .mari-typing-dots > :nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes mdos-typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+/* Roleplay: the passage being written gets a soft accent edge. */
+html.mdos [data-chat-mode="roleplay"] .mari-rp-bubble.rpg-streaming {
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--mdos-accent, #0078d4) 55%, transparent) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.mdos .mari-typing-indicator .mari-typing-dots > * {
+    animation: none;
+  }
+}
+
+/* Failed reply: a red-tinted notice with a real retry button. */
+html.mdos .mari-send-failed {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  margin-top: 6px !important;
+  padding: 5px 6px 5px 10px;
+  border-radius: var(--mdos-r-pill, 999px);
+  color: var(--mdos-danger, #ce2c31) !important;
+  background: color-mix(in srgb, var(--mdos-danger, #ce2c31) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mdos-danger, #ce2c31) 25%, transparent);
+  font-size: 12px !important;
+  font-weight: 600;
+}
+html.mdos .mari-send-failed > svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+html.mdos .mari-send-failed .mari-send-failed__text {
+  color: inherit !important;
+}
+html.mdos .mari-send-failed .mari-link {
+  padding: 3px 10px;
+  border-radius: var(--mdos-r-pill, 999px);
+  color: #fff !important;
+  background: var(--mdos-danger, #ce2c31);
+  text-decoration: none !important;
+  font-weight: 700;
+}
+html.mdos .mari-send-failed .mari-link:focus-visible {
+  outline: 2px solid var(--mdos-danger, #ce2c31);
+  outline-offset: 2px;
+}
+html.mdos .mari-send-failed > span[aria-hidden] {
+  display: none;
+}
+
+/* Swipes ("2 / 5"): one compact pill, arrows as round buttons. */
+html.mdos .mari-message-swipes {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--mdos-r-pill, 999px);
+  background: var(--mdos-fill, rgba(0, 0, 0, 0.05));
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+html.mdos .mari-message-swipes > button {
+  width: 26px;
+  height: 26px;
+  border-radius: 50% !important;
+}
+html.mdos .mari-message-swipes > button:hover {
+  background: var(--mdos-fill-2, rgba(0, 0, 0, 0.08)) !important;
+}
+html.mdos .mari-message-swipes .mari-swipe-input input {
+  width: 2.2ch;
+  text-align: right;
+  background: transparent !important;
+  border: 0 !important;
+}
+html.mdos-touch .mari-message-swipes > button {
+  width: 36px;
+  height: 36px;
+}
 `,
 ].join("\n");
