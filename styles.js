@@ -4082,9 +4082,12 @@ html.mdos-calm .marinara-chat-input-shell[data-mh-composer] {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
-/* Desktop: fill the gap under the card (the container's bottom padding). */
-html.mdos-desktop [data-mdos-win] .chat-input-container.chat-input-container {
-  background: linear-gradient(to top, var(--mdos-composer-under) 14px, transparent 14px) !important;
+/* Desktop: everything under the card's top edge is filled (the gap under
+   it and the character-count row), so nothing scrolls through below the
+   card; only the card itself is see-through. */
+html.mdos-desktop :is(.chat-input-container, .mari-roleplay-input-column > .mari-chat-input).chat-input-container,
+html.mdos-desktop .mari-roleplay-input-column > .mari-chat-input {
+  background: linear-gradient(to bottom, transparent 28px, var(--mdos-composer-under) 28px) !important;
 }
 /* Tablets keep the card floating; the gap under it is filled. */
 html.mdos-tablet.mdos-touch .chat-input-container.chat-input-container {
@@ -4448,6 +4451,67 @@ html.mdos .mari-message-swipes .mari-swipe-input input {
 html.mdos-touch .mari-message-swipes > button {
   width: 36px;
   height: 36px;
+}
+
+/* ══════════════ empty widgets ══════════════ */
+/* A widget with nothing to show says why, small and centred, with one
+   action — instead of one grey sentence floating in a big card. */
+.mdos-wg-empty--rich {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  max-width: 260px;
+  cursor: default;
+}
+.mdos-wg-empty--rich .mdos-wg-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 2px;
+  border-radius: var(--mdos-r-2, 14px);
+  color: var(--mdos-widget-ink-2, currentColor);
+  background: color-mix(in srgb, var(--mdos-widget-ink, #000) 7%, transparent);
+}
+.mdos-wg-empty--rich[data-why="noExt"] .mdos-wg-empty-icon,
+.mdos-wg-empty--rich[data-why="noRead"] .mdos-wg-empty-icon {
+  color: var(--mdos-warning, #ab6400);
+  background: color-mix(in srgb, var(--mdos-warning, #ab6400) 12%, transparent);
+}
+.mdos-wg-empty--rich .mdos-wg-empty-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.mdos-wg-empty--rich b {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mdos-widget-ink, inherit);
+  text-wrap: balance;
+}
+.mdos-wg-empty--rich small {
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--mdos-widget-ink-2, inherit);
+  text-wrap: pretty;
+}
+.mdos-wg-empty-btn {
+  all: unset;
+  margin-top: 4px;
+  padding: 6px 12px;
+  border-radius: var(--mdos-r-pill, 999px);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mdos-widget-ink, inherit);
+  background: color-mix(in srgb, var(--mdos-widget-ink, #000) 8%, transparent);
+  cursor: var(--mdos-cur-ptr, pointer);
+}
+.mdos-wg-empty-btn:hover {
+  background: color-mix(in srgb, var(--mdos-widget-ink, #000) 13%, transparent);
+}
+.mdos-wg-empty-btn:focus-visible {
+  outline: 2px solid var(--mdos-accent, #0078d4);
+  outline-offset: 2px;
 }
 `,
 ].join("\n");

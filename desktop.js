@@ -187,6 +187,12 @@ const L = KO
       ledgerMore: "많이",
       lockerEmpty: "모아 둔 확장 버튼이 없어요",
       creditsEmpty: "홈을 한 번 열면 크레딧이 여기 표시돼요",
+      creditsNoExt: "크레딧 확장을 찾지 못했어요",
+      creditsNoExtHint: "크레딧 확장이 켜져 있는지 확인한 뒤 홈을 열어 주세요.",
+      creditsNoRead: "크레딧 카드를 읽지 못했어요",
+      creditsNoReadHint: "크레딧 확장이 업데이트돼서 카드 모양이 바뀌었을 수 있어요.",
+      creditsWait: "아직 크레딧을 읽지 않았어요",
+      creditsRetry: "다시 읽기",
       pickPhoto: "사진을 골라 주세요",
       notePlaceholder: "메모를 적어 보세요",
       ddayDefault: "최애 생일",
@@ -581,6 +587,12 @@ const L = KO
       ledgerMore: "More",
       lockerEmpty: "No extension buttons gathered yet",
       creditsEmpty: "Open Home once to load your credits here",
+      creditsNoExt: "Credit extension not found",
+      creditsNoExtHint: "Check that the credit extension is on, then open Home.",
+      creditsNoRead: "Couldn't read the credit cards",
+      creditsNoReadHint: "The credit extension may have changed its card layout in an update.",
+      creditsWait: "Credits not read yet",
+      creditsRetry: "Read again",
       pickPhoto: "Choose a photo",
       notePlaceholder: "Write a note",
       ddayDefault: "Bias birthday",
@@ -3898,7 +3910,7 @@ function widgetParts(w) {
       // All credit cards as a list, synced from the credit extension.
       const c = state.credits;
       const head = h("div", { class: "mdos-wg-label mdos-cr-head" }, h("span", { text: L.widgetNames.credits }), c?.total ? h("b", { text: c.total }) : null);
-      if (!c?.rows?.length) return [head, h("div", { class: "mdos-wg-empty", text: L.creditsEmpty })];
+      if (!c?.rows?.length) return [head, creditsEmptyView()];
       const max = w.size === "l" ? 8 : w.size === "m" ? 3 : 4;
       return [
         head,
@@ -3922,7 +3934,7 @@ function widgetParts(w) {
       // extension's own card id, so it survives reordering there).
       const rows = state.credits?.rows || [];
       const r = rows.find((x) => x.id && x.id === w.card) || rows[0];
-      if (!r) return [h("div", { class: "mdos-wg-label", text: L.widgetNames.credit }), h("div", { class: "mdos-wg-empty", text: L.creditsEmpty })];
+      if (!r) return [h("div", { class: "mdos-wg-label", text: L.widgetNames.credit }), creditsEmptyView()];
       return [
         h("div", { class: "mdos-wg-label mdos-crd-brand", text: r.brand }),
         r.sub ? h("div", { class: "mdos-wg-sub mdos-crd-sub", text: r.sub }) : null,
@@ -3949,7 +3961,7 @@ function ledgerBody(w, d) {
   const l = w.size === "l";
   const title = view === "summary" ? L.widgetNames.ledger : L.ledgerViews[view];
   const head = h("div", { class: "mdos-wg-label mdos-lg-head" }, h("span", { text: title }), d?.month ? h("em", { text: d.month }) : null);
-  if (!d?.total) return [head, h("div", { class: "mdos-wg-empty", text: L.creditsEmpty })];
+  if (!d?.total) return [head, creditsEmptyView()];
   const total = (small) => h("div", { class: `mdos-lg-total${small ? " is-small" : ""}` }, h("b", { text: d.total }), d.usd && !small ? h("span", { text: d.usd }) : null);
   const chip = (note) =>
     d.chip
@@ -4226,6 +4238,33 @@ function watchCreditNulls(home) {
   });
   mo.observe(home, { childList: true, subtree: true, characterData: true });
   nullObservers.add(mo);
+}
+// Empty credit / ledger widgets say why they are empty (no extension, cards
+// it can't read, or simply not read yet) and offer to read again.
+function creditsEmptyView() {
+  const home = doc.getElementById("mac-credit-home");
+  const why = !home ? "noExt" : home.querySelector(".mlh-crcard, .mlh-rcptcard") ? "wait" : "noRead";
+  const title = why === "noExt" ? L.creditsNoExt : why === "noRead" ? L.creditsNoRead : L.creditsWait;
+  const hint = why === "noExt" ? L.creditsNoExtHint : why === "noRead" ? L.creditsNoReadHint : L.creditsEmpty;
+  return h(
+    "div",
+    { class: "mdos-wg-empty mdos-wg-empty--rich", "data-why": why },
+    h("span", { class: "mdos-wg-empty-icon", svg: svg(why === "wait" ? "reload" : "info") }),
+    h("b", { text: title }),
+    h("small", { text: hint }),
+    h("button", {
+      type: "button",
+      class: "mdos-wg-empty-btn",
+      text: L.creditsRetry,
+      onclick: (e) => {
+        e.stopPropagation();
+        creditSig = "";
+        scrapeCredits();
+        renderWidgets();
+        if (!state.credits?.rows?.length && !state.ledger?.total) toast(title, { type: why === "wait" ? "info" : "error" });
+      },
+    }),
+  );
 }
 let creditSig = "";
 function scrapeCredits() {
