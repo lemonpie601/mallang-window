@@ -4055,12 +4055,10 @@ html.mdos-calm .mdos-toast {
 }
 
 /* ══════════════ composer: frosted card, closed bottom ══════════════ */
-/* Every composer (conversation, roleplay, game) is a slightly see-through
-   card: the chat shows faintly behind it, blurred so it never competes
-   with what you type. The strip under the card used to be transparent,
-   so messages scrolled visibly through the gap below it; that strip is
-   now filled with the page colour (desktop) or folded into the card
-   itself (phones, where the card runs to the bottom edge). */
+/* Every composer (conversation, roleplay, game) is a see-through card
+   (about 70%): the chat shows softly behind it, blurred so it never
+   competes with what you type. On phones the card runs to the bottom
+   edge, so nothing scrolls through a gap below it. */
 html.mdos {
   --mdos-composer-under: var(--mdos-win-bg, #fff);
 }
@@ -4068,12 +4066,12 @@ html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area {
   --mdos-composer-under: var(--mdos-paper);
 }
 html.mdos .marinara-chat-input-shell[data-mh-composer] {
-  background: color-mix(in srgb, var(--mdos-win-bg, #fff) 92%, transparent) !important;
+  background: color-mix(in srgb, var(--mdos-win-bg, #fff) 72%, transparent) !important;
   backdrop-filter: blur(18px) saturate(1.3) !important;
   -webkit-backdrop-filter: blur(18px) saturate(1.3) !important;
 }
 html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell[data-mh-composer] {
-  background: color-mix(in srgb, var(--mdos-paper-2) 92%, transparent) !important;
+  background: color-mix(in srgb, var(--mdos-paper-2) 70%, transparent) !important;
   backdrop-filter: blur(18px) saturate(1.15) !important;
   -webkit-backdrop-filter: blur(18px) saturate(1.15) !important;
 }
@@ -4082,12 +4080,16 @@ html.mdos-calm .marinara-chat-input-shell[data-mh-composer] {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
-/* Desktop: everything under the card's top edge is filled (the gap under
-   it and the character-count row), so nothing scrolls through below the
-   card; only the card itself is see-through. */
-html.mdos-desktop :is(.chat-input-container, .mari-roleplay-input-column > .mari-chat-input).chat-input-container,
-html.mdos-desktop .mari-roleplay-input-column > .mari-chat-input {
-  background: linear-gradient(to bottom, transparent 28px, var(--mdos-composer-under) 28px) !important;
+/* Desktop: the space around the card stays see-through (the chat or its
+   background picture shows there, as before). */
+/* Buttons that float just above the roleplay card (Marinara's or another
+   extension's) get a frosted chip so they stay readable over the text. */
+html.mdos .mari-roleplay-input-column button:not(.marinara-chat-input-shell *, .marinara-chat-input-shell) {
+  background: color-mix(in srgb, var(--mdos-paper-2, var(--mdos-win-bg, #fff)) 94%, transparent) !important;
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow: var(--mdos-shadow-1) !important;
+  opacity: 1 !important;
 }
 /* Tablets keep the card floating; the gap under it is filled. */
 html.mdos-tablet.mdos-touch .chat-input-container.chat-input-container {

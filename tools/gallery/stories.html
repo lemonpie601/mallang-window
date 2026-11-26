@@ -147,3 +147,26 @@
     </div></div>
   </div>
 </template>
+
+<!-- ── Roleplay composer (book look) with floating round buttons above ── -->
+<template data-story="composer-rp" data-width="640" data-desktop-only data-html="data-mdos-rp=book">
+  <div data-mdos-win="main" data-chat-mode="roleplay" class="rpg-chat-area" style="position:relative;height:300px;overflow:hidden;background:var(--mdos-paper);color:var(--mdos-ink)">
+    <div style="padding:18px 22px;display:grid;gap:12px;font-size:16px;line-height:1.7">
+      <p style="margin:0">"Called it. Heard him three shops away before we even saw his face. Eat your ice cream before it turns into soup, squirt—we're getting that cauldron next."</p>
+      <p style="margin:0">텁지근한 탓에 피트의 손바닥은 살짝 땀이 배어 따뜻했고, 두 사람 손목에 나란히 감긴 개암나무 실이 흔들렸다.</p>
+      <p style="margin:0">텁지근한 탓에 피트의 손바닥은 살짝 땀이 배어 따뜻했고, 두 사람 손목에 나란히 감긴 개암나무 실이 흔들렸다.</p>
+    </div>
+    <div style="position:absolute;inset:auto 0 0 0">
+      <div class="mari-roleplay-input-column" style="max-width:600px;margin:0 auto">
+        <div style="display:flex;gap:8px;padding:0 4px 6px"><button style="width:34px;height:34px;border-radius:50%;border:0">“</button><button style="width:34px;height:34px;border-radius:50%;border:0">✱</button><button style="width:34px;height:34px;border-radius:50%;border:0">▣</button></div>
+        <div class="mari-chat-input chat-input-container">
+          <div class="marinara-chat-input-shell" data-mh-composer style="display:flex">
+            <textarea data-chat-composer class="mari-chat-input-textarea" rows="1" placeholder="응답을 입력, / 입력 시 명령어" style="border:0;background:none;resize:none;font:inherit;color:inherit;outline:none"></textarea>
+            <button style="width:34px;height:34px;border-radius:50%;border:0">+</button><span style="flex:1"></span><button style="width:34px;height:34px;border-radius:50%;border:0;background:#4b5e7a;color:#fff">↑</button>
+          </div>
+          <div class="mcc-meter" style="text-align:right;font-size:12px;padding:4px 6px">입력 0 · 공미포 0 · 단어 0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
