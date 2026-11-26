@@ -267,6 +267,13 @@ html.mdos-touch [data-settings-switch-thumb] {
   --tw-ring-color: transparent !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
 }
+/* Tailwind 4 moves the thumb with the translate property; reset it so
+   only our transform applies (both together pushed it off the track). */
+html.mdos-touch [data-settings-switch-thumb] {
+  translate: none !important;
+  transform: none;
+  transition: transform 180ms ease !important;
+}
 html.mdos-touch input:checked + [data-settings-switch-track] [data-settings-switch-thumb] {
   transform: translateX(18px) !important;
 }
@@ -300,6 +307,7 @@ html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-component="Ri
 
 /* Fields: taller, rounder, filled. */
 html.mdos-touch :is(.mari-window[data-presentation="sheet"], [data-component="RightPanel"], aside[data-component="MobileDetailSheet"]) :is(.mari-chrome-field, select, input[type="text"], input[type="number"], input[type="search"], textarea) {
+  min-width: 0;
   border-radius: 12px !important;
   font-size: 16px; /* no iOS zoom on focus */
 }
@@ -310,16 +318,72 @@ html.mdos-touch [data-chat-settings-search] {
   border: 0 !important;
 }
 
-/* ── 6. Editor tabs (character, lorebook…) as pills ─────────── */
+/* ── 6. Editor header (character, persona, preset, lorebook) ─── */
+/* Row 1: back, avatar, name. Row 2: compact actions. Row 3: a full-width
+   strip of section tabs that scrolls sideways (Marinara caps it at 8rem). */
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav {
+  gap: 8px !important;
+  padding: 18px 14px 10px !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header .mari-editor-action:not(.mari-editor-tab) {
+  width: 38px !important;
+  min-width: 38px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: var(--mdos-sh-fill) !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header .mari-editor-action--primary:not(.mari-editor-tab) {
+  background: var(--mdos-sh-acc) !important;
+  color: #fff !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header .mari-editor-action:not(.mari-editor-tab) svg {
+  width: 18px;
+  height: 18px;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-actions {
+  gap: 6px !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-navigation {
+  order: 9;
+  width: 100% !important;
+  max-width: none !important;
+  flex: 1 0 100% !important;
+  overflow: visible !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-navigation-compact {
+  display: none !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-navigation-tabs {
+  display: flex !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-tab-label {
+  display: inline !important;
+}
+
+/* ── 7. Editor tabs as pills ──────────────────────────────────── */
 html.mdos-touch:not(.mdos-tablet) .mari-editor-navigation-tabs {
   gap: 6px !important;
   overflow-x: auto;
   scrollbar-width: none;
+  padding: 1px 1px 2px;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-navigation-tabs::-webkit-scrollbar {
+  display: none;
 }
 html.mdos-touch:not(.mdos-tablet) .mari-editor-tab {
-  flex: none;
-  min-height: 34px;
-  padding: 0 14px !important;
+  flex: none !important;
+  gap: 6px;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 13px !important;
+  font-size: 13px !important;
+  font-weight: 600;
   border-radius: 999px !important;
   border: 0 !important;
   background: var(--mdos-sh-card) !important;
@@ -335,7 +399,7 @@ html.mdos-touch:not(.mdos-tablet) .mari-editor-navigation-select {
   border-radius: 12px !important;
 }
 
-/* ── 7. Modals on a phone = bottom sheets ───────────────────── */
+/* ── 8. Modals on a phone = bottom sheets ───────────────────── */
 html.mdos-touch:not(.mdos-tablet) [data-component="Modal"] {
   align-items: flex-end !important;
 }
