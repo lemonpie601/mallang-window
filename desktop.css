@@ -547,6 +547,56 @@ html[data-mdos-icon-style="dark"] .mdos-app-icon:not(.has-image) {
     0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
+/* Line styles, after clean settings-app icon sets (Tabler-like): one
+   line glyph, a quiet tile, no gloss.
+   line    — grey rounded tile, text-coloured glyph
+   duotone — the app colour at low strength behind a glyph in that colour
+   outline — no fill, a hairline ring and a coloured glyph
+   mono    — solid text-coloured tile, glyph in the page colour */
+html[data-mdos-icon-style="line"] .mdos-app-icon:not(.has-image, .has-host-image),
+html[data-mdos-icon-style="duotone"] .mdos-app-icon:not(.has-image, .has-host-image),
+html[data-mdos-icon-style="outline"] .mdos-app-icon:not(.has-image, .has-host-image),
+html[data-mdos-icon-style="mono"] .mdos-app-icon:not(.has-image, .has-host-image) {
+  box-shadow: none;
+}
+html[data-mdos-icon-style="line"] .mdos-app-icon:not(.has-image, .has-host-image) {
+  color: var(--mdos-fg, #1d1d1f);
+  background: color-mix(in srgb, var(--mdos-fg, #1d1d1f) 7%, var(--mdos-card-raised, #fff));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--mdos-fg, #1d1d1f) 8%, transparent);
+}
+html[data-mdos-icon-style="duotone"] .mdos-app-icon:not(.has-image, .has-host-image) {
+  color: color-mix(in srgb, var(--g2) 88%, var(--mdos-fg, #000));
+  background: color-mix(in srgb, var(--g1) 22%, var(--mdos-card-raised, #fff));
+}
+html[data-mdos-icon-style="outline"] .mdos-app-icon:not(.has-image, .has-host-image) {
+  color: var(--g2);
+  background: var(--mdos-card-raised, #fff);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--g2) 45%, transparent);
+}
+html[data-mdos-icon-style="mono"] .mdos-app-icon:not(.has-image, .has-host-image) {
+  color: var(--mdos-card-raised, #fff);
+  background: var(--mdos-fg, #1d1d1f);
+}
+/* Dark theme: the deep colour sinks into dark tiles, so the glyph and ring
+   use the light one. */
+html:not([data-theme="light"])[data-mdos-icon-style="duotone"] .mdos-app-icon:not(.has-image, .has-host-image) {
+  color: color-mix(in srgb, var(--g1) 85%, #fff);
+  background: color-mix(in srgb, var(--g2) 30%, var(--mdos-card-raised, #2a2a2e));
+}
+html:not([data-theme="light"])[data-mdos-icon-style="outline"] .mdos-app-icon:not(.has-image, .has-host-image) {
+  color: var(--g1);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--g1) 55%, transparent);
+}
+html:is([data-mdos-icon-style="line"], [data-mdos-icon-style="duotone"], [data-mdos-icon-style="outline"], [data-mdos-icon-style="mono"]) .mdos-app-icon:not(.has-image, .has-host-image) svg {
+  width: 52%;
+  height: 52%;
+  stroke-width: 1.7;
+  filter: none;
+}
+html:is([data-mdos-icon-style="line"], [data-mdos-icon-style="duotone"], [data-mdos-icon-style="outline"], [data-mdos-icon-style="mono"]) .mdos-icon-letter {
+  color: inherit;
+}
+
 /* ── Dock ────────────────────────────────────────────────────── */
 
 #mdos-dock {

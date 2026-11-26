@@ -41,6 +41,13 @@ const toastJs = [
 // BASE: the page around a story, plus a few of Marinara's own rules the
 // mocks need (header/drawer padding from its CSS variables, Tailwind's
 // button reset, the primary colour) since its stylesheet is not loaded.
+// Icon drawings for the icon story: ICONS, FLUENT and their two helpers.
+const iconJs = [cut("const ICONS = {", "\n};"), cut("const FLUENT = {", "\n};"), cut("const fluentSvg", "\nconst LOGO").replace(/\nconst LOGO$/, "")].join("\n");
+const ICON_STYLES = ["fluent", "gradient", "glass", "pastel", "tinted", "dark", "line", "duotone", "outline", "mono"];
+const ICON_APPS = [
+  ["chat", "#6ef08d", "#17a84d"], ["roleplay", "#ffd36b", "#ff8a3d"], ["game", "#c49bff", "#7a3ff2"], ["characters", "#7ad7ff", "#2f7cf2"],
+  ["lorebooks", "#ff9d7a", "#e5533d"], ["presets", "#9aa6bb", "#4f5a70"], ["settings", "#c9ced8", "#868d9b"], ["notes", "#ffe680", "#f2b705"],
+];
 const BASE = `
   html.mdos.mdos body { margin: 0; padding: 16px; background: var(--mdos-page, #eee) !important; color: var(--mdos-fg); font: 14px/1.4 system-ui, sans-serif; }
   html { --primary: #0a84ff; --border: var(--mdos-sep); --background: var(--mdos-win-bg); --foreground: var(--mdos-fg); }
@@ -70,6 +77,7 @@ const storyList = [...stories.matchAll(/<template data-story="([^"]+)"([^>]*)>([
   width: Number(/data-width="(\d+)"/.exec(m[2])?.[1] || 760),
   phoneWidth: Number(/data-phone-width="(\d+)"/.exec(m[2])?.[1] || 390),
   phoneOnly: /data-phone-only/.test(m[2]),
+  desktopOnly: /data-desktop-only/.test(m[2]),
   run: /data-run="([^"]+)"/.exec(m[2])?.[1],
 }));
 
@@ -81,6 +89,7 @@ const errors = [];
 for (const story of storyList.filter((s) => s.name.includes(filter))) {
   for (const v of VARIANTS) {
     if (story.phoneOnly && !v.phone) continue;
+    if (story.desktopOnly && v.phone) continue;
     const width = (v.phone ? story.phoneWidth : story.width) + 32;
     const page = await browser.newPage({ viewport: { width, height: 760 }, deviceScaleFactor: 2, hasTouch: v.phone });
     page.on("pageerror", (e) => errors.push(`${story.name}/${v.id}: ${e.message}`));
@@ -104,9 +113,24 @@ for (const story of storyList.filter((s) => s.name.includes(filter))) {
       await page.waitForTimeout(500);
       await page.setViewportSize({ width, height: 260 });
     }
+    if (story.run === "icons") {
+      // One row per icon style, each in its own frame so the html-level
+      // data-mdos-icon-style can differ per row.
+      await page.addScriptTag({ content: `${iconJs}\nwindow.__icon = (n) => fluentSvg(n) + svg(n);` });
+      await page.evaluate(({ styles, apps, theme, css }) => {
+        const icons = apps.map(([n, g1, g2]) => `<span class="mdos-app-icon has-fluent" style="--g1:${g1};--g2:${g2};width:44px;height:44px;display:inline-grid;place-items:center;border-radius:var(--mdos-shape, 22%);overflow:hidden">${window.__icon(n)}</span>`).join("");
+        document.body.innerHTML = styles
+          .map((st) => `<div style="display:flex;align-items:center;gap:12px;margin:6px 0"><code style="width:70px;font-size:12px">${st}</code><iframe data-st="${st}" style="border:0;width:440px;height:56px;background:transparent"></iframe></div>`)
+          .join("");
+        for (const f of document.querySelectorAll("iframe")) {
+          f.srcdoc = `<html class="mdos mdos-desktop" data-theme="${theme}" data-mdos-icon-style="${f.dataset.st}"><head><style>${css}</style><style>html,body{margin:0;background:transparent!important}body{display:flex;gap:10px;padding:6px}</style></head><body>${icons}</body></html>`;
+        }
+      }, { styles: ICON_STYLES, apps: ICON_APPS, theme: v.theme, css: css + "\n" + lateCss });
+      await page.waitForTimeout(400);
+    }
     await page.waitForTimeout(150);
     const file = `${story.name}--${v.id}.png`;
-    const target = story.run ? page : page.locator("body > *").first();
+    const target = story.run === "toasts" ? page : story.run === "icons" ? page.locator("body") : page.locator("body > *").first();
     await target.screenshot({ path: path.join(OUT, file) });
     made.push({ story: story.name, variant: v.id, file });
     await page.close();
