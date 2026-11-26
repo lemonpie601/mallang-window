@@ -80,8 +80,8 @@ html.mdos-touch .mari-right-panel-header > .absolute.inset-x-0.bottom-0 {
 }
 html.mdos-touch .mari-window[data-presentation="sheet"] .mari-window__control,
 html.mdos-touch .mari-right-panel-header button[aria-label] {
-  width: 34px !important;
-  height: 34px !important;
+  width: 30px !important;
+  height: 30px !important;
   border-radius: 50% !important;
   color: var(--mdos-sh-fg) !important;
   background: var(--mdos-sh-fill) !important;
@@ -102,15 +102,15 @@ html.mdos-touch section[data-component="RightPanel"] [data-panel-key] {
 html.mdos-touch .mari-window[data-presentation="sheet"] .marinara-chat-popover__scroll {
   padding: 4px 12px 16px !important;
 }
-html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer {
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer:not([data-mdos-empty]) {
   --mari-drawer-bg: var(--mdos-sh-card);
   --mari-drawer-header-bg: var(--mdos-sh-card);
   --mari-drawer-border: transparent;
-  --mari-drawer-header-padding: 14px 16px;
+  --mari-drawer-header-padding: 11px 14px;
   --mari-drawer-title-color: var(--mdos-sh-fg);
   --mari-drawer-count-bg: var(--mdos-sh-fill);
   --mari-drawer-count-text: var(--mdos-sh-fg2);
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   overflow: hidden;
   border: 0 !important;
   border-radius: 16px;
@@ -131,6 +131,12 @@ html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__count {
   border-radius: 999px !important;
   font-size: 11px !important;
   font-weight: 700;
+}
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer[data-mdos-empty] {
+  margin: 0;
+  border: 0 !important;
+  box-shadow: none;
+  background: none !important;
 }
 html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__body {
   border-top: 1px solid var(--mdos-sh-sep);
@@ -155,10 +161,10 @@ html.mdos-touch .mdos-cs-chip {
   flex: none;
   display: grid;
   gap: 1px;
-  min-width: 56px;
-  max-width: 120px;
-  padding: 7px 12px;
-  border-radius: 12px;
+  min-width: 0;
+  max-width: 110px;
+  padding: 5px 10px;
+  border-radius: 10px;
   background: var(--mdos-sh-card);
   box-shadow: 0 0 0 1px var(--mdos-sh-sep);
   color: var(--mdos-sh-fg);
@@ -168,7 +174,7 @@ html.mdos-touch .mdos-cs-chip b {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
 }
 html.mdos-touch .mdos-cs-chip small {
