@@ -380,6 +380,16 @@
 | `theme.css` | 창 안쪽 색과 컨트롤 모양, 롤플 배경 제거 |
 | `layout.css` | 창 안쪽 배치: 채팅 목록 툴바, 두 칸 설정, 캐릭터 아이콘 격자 |
 | `home.css` | 홈 = 바탕화면, 유리 위젯, 내 위젯과 편집 모드 |
-| `styles.js` | 예전 `apps.css`(대화·롤플·게임 앱, 입력창, 모델 선택창, 대사 색)와 `touch.css`(휴대폰·태블릿)를 담은 스크립트. `desktop.js`가 다른 CSS 뒤에 `<style>`로 넣어요 |
+| `styles.js` | 예전 `apps.css`(대화·롤플·게임 앱, 입력창, 모델 선택창, 대사 색), `touch.css`(휴대폰·태블릿), 모바일 시트·토스트 CSS를 담은 스크립트. `desktop.js`가 다른 CSS 뒤에 `<style>`로 넣어요 |
+| `dist/marinara-desktop.min.css` | 위 CSS 다섯 개를 합쳐 압축한 파일. manifest는 이것만 불러요. 직접 고치지 말고 `tools/build-css.py`로 만들어요 |
+| `tools/build-css.py` | CSS 합치기·압축. 주석과 빈칸만 빼고 규칙은 그대로 둬요 |
 
-마리나라는 확장의 CSS(manifest의 `cssPath` 파일을 합친 것)를 **256 KiB**까지만 받아요. 넘으면 가져올 때 `Validation Error`가 나요. 그래서 CSS가 커진 2.18부터 가져오기가 실패했고, 2.20.1부터는 마지막 두 스타일시트를 `styles.js` 안에 넣었어요(스크립트는 크기 제한이 없어요). 지금 manifest의 CSS는 약 150 KB예요. `styles.js` 안의 CSS는 그냥 CSS로 고치면 되고, 백틱(`)과 `${`만 쓰면 안 돼요.
+마리나라는 확장의 CSS(manifest의 `cssPath` 파일을 합친 것)를 **256 KiB**까지만 받아요. 넘으면 가져올 때 `Validation Error`가 나요. 그래서 CSS가 커진 2.18부터 가져오기가 실패했고, 2.20.1부터는 마지막 두 스타일시트를 `styles.js` 안에 넣었어요(스크립트는 크기 제한이 없어요). `styles.js` 안의 CSS는 그냥 CSS로 고치면 되고, 백틱(`)과 `${`만 쓰면 안 돼요.
+
+이제 manifest는 CSS 원본 대신 압축본 `dist/marinara-desktop.min.css` 하나만 불러요. 원본(약 239 KB)에서 주석과 빈칸을 빼면 약 180 KB라 80 KB쯤 여유가 생겨요. **CSS 파일을 고친 뒤에는 꼭 다시 만들어 주세요**(안 하면 고친 게 반영되지 않아요):
+
+```bash
+python3 tools/build-css.py
+```
+
+`python3 tools/build-css.py --check`는 압축본이 원본과 다르거나 256 KiB를 넘으면 실패해요.

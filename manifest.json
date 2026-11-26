@@ -18,11 +18,7 @@
       "desktop.js"
     ],
     "cssPath": [
-      "desktop.css",
-      "theme.css",
-      "layout.css",
-      "home.css",
-      "win11.css"
+      "dist/marinara-desktop.min.css"
     ]
   }
 }
