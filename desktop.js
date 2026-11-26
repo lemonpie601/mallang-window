@@ -7453,15 +7453,8 @@ function sheetJumps() {
   if (!sheet) return void (jumpSig = "");
   const body = sheet.querySelector(".mari-window__body");
   if (!body) return;
-  // Sections with no visible header (hidden by mode, popped out, empty) are
-  // tagged so sheets.css leaves them flat instead of drawing an empty card.
-  const drawers = [];
-  for (const d of sheet.querySelectorAll(".mari-drawer")) {
-    const head = d.querySelector(":scope > .mari-drawer__header");
-    const empty = !head || head.offsetHeight === 0;
-    if (empty !== d.hasAttribute("data-mdos-empty")) d.toggleAttribute("data-mdos-empty", empty);
-    if (!empty && d.dataset.chatSettingsSection) drawers.push(d);
-  }
+  // Sections without a header (popped out into their own window) get no chip.
+  const drawers = [...sheet.querySelectorAll(".mari-drawer[data-chat-settings-section]")].filter((d) => d.querySelector(":scope > .mari-drawer__header"));
   let bar = sheet.querySelector(":scope > .mdos-cs-jump");
   if (drawers.length < 3) return void bar?.remove();
   const info = drawers.map((d) => {

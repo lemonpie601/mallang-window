@@ -102,7 +102,10 @@ html.mdos-touch section[data-component="RightPanel"] [data-panel-key] {
 html.mdos-touch .mari-window[data-presentation="sheet"] .marinara-chat-popover__scroll {
   padding: 4px 12px 16px !important;
 }
-html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer:not([data-mdos-empty]) {
+/* No overflow:hidden here: the drawers are flex items, and clipping drops
+   their minimum height to 0, so long open sections (chat summary) were
+   squashed to a line. flex-shrink: 0 keeps every section its full height. */
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer {
   --mari-drawer-bg: var(--mdos-sh-card);
   --mari-drawer-header-bg: var(--mdos-sh-card);
   --mari-drawer-border: transparent;
@@ -110,8 +113,8 @@ html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer:not([data-m
   --mari-drawer-title-color: var(--mdos-sh-fg);
   --mari-drawer-count-bg: var(--mdos-sh-fill);
   --mari-drawer-count-text: var(--mdos-sh-fg2);
+  flex-shrink: 0 !important;
   margin: 0 0 8px;
-  overflow: hidden;
   border: 0 !important;
   border-radius: 16px;
   background: var(--mdos-sh-card) !important;
@@ -132,11 +135,8 @@ html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__count {
   font-size: 11px !important;
   font-weight: 700;
 }
-html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer[data-mdos-empty] {
-  margin: 0;
-  border: 0 !important;
-  box-shadow: none;
-  background: none !important;
+html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__header {
+  border-radius: 16px;
 }
 html.mdos-touch .mari-window[data-presentation="sheet"] .mari-drawer__body {
   border-top: 1px solid var(--mdos-sh-sep);
@@ -362,6 +362,40 @@ html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-nav
 }
 html.mdos-touch:not(.mdos-tablet) .mari-editor-header--with-nav .mari-editor-tab-label {
   display: inline !important;
+}
+
+/* Preset sections and lorebook entries: the name gets its own full-width
+   line above the row of small controls instead of a sliver between them. */
+html.mdos-touch:not(.mdos-tablet) .mari-editor-panel > div.flex.min-w-0.items-center,
+html.mdos-touch:not(.mdos-tablet) [data-lorebook-entry-row-id] > div.group.flex {
+  flex-wrap: wrap !important;
+  row-gap: 6px !important;
+}
+html.mdos-touch:not(.mdos-tablet) .mari-editor-panel > div.flex.min-w-0.items-center > span.min-w-0.flex-1.truncate.font-medium {
+  order: -1;
+  flex: 1 0 100% !important;
+  padding: 0 4px;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  line-height: 1.35;
+}
+html.mdos-touch:not(.mdos-tablet) [data-lorebook-entry-row-id] > div.group.flex > [data-mari-field$=".name"] {
+  order: -1;
+  flex: 1 0 100% !important;
+  min-width: 0 !important;
+}
+html.mdos-touch:not(.mdos-tablet) [data-lorebook-entry-row-id] > div.group.flex > [data-mari-field$=".name"] input {
+  height: 30px;
+  padding: 0 4px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  text-overflow: ellipsis;
 }
 
 /* ── 7. Editor tabs as pills ──────────────────────────────────── */
