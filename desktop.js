@@ -100,6 +100,27 @@ const L = KO
       docs: "Marinara 문서",
       shortcuts: "단축키",
       controlCenter: "빠른 설정",
+      setSearch: "설정 검색",
+      setSearchClear: "검색어 지우기",
+      setNoResult: "맞는 설정이 없어요",
+      setOverview: "전체",
+      setGroupApp: "앱 전체",
+      setGroupChat: "채팅",
+      setGroupInfo: "정보",
+      helpLabel: "설명 보기",
+      qsWindows: "창",
+      qsWinNone: "열린 창이 없어요",
+      qsWinCaption: "열림",
+      qsExt: "확장",
+      qsExtSub: "보관함에 둔 항목",
+      qsLocker: "보관함",
+      qsTheme: "테마",
+      qsThemeSync: "테마 라이브러리를 따라가요",
+      qsThemeOwn: "직접 고른 색을 써요",
+      qsAccentCap: "강조색",
+      qsQuick: "빠른 스위치",
+      qsAll: (n) => `전체 ${n}개`,
+      qsFold: "접기",
       tooLarge: "이미지가 너무 커요. 더 작은 이미지를 골라 주세요.",
       storageFull: "확장 저장 공간(1MB)이 거의 찼어요. 배경화면이나 사진·아이콘 이미지를 몇 개 지워 주세요.",
       badUrl: "https:// 로 시작하는 이미지 주소만 쓸 수 있어요.",
@@ -473,6 +494,27 @@ const L = KO
       docs: "Marinara documentation",
       shortcuts: "Shortcuts",
       controlCenter: "Quick Settings",
+      setSearch: "Search settings",
+      setSearchClear: "Clear search",
+      setNoResult: "No matching settings",
+      setOverview: "Overview",
+      setGroupApp: "Whole app",
+      setGroupChat: "Chat",
+      setGroupInfo: "Info",
+      helpLabel: "Show explanation",
+      qsWindows: "Windows",
+      qsWinNone: "No windows open",
+      qsWinCaption: "open",
+      qsExt: "Extensions",
+      qsExtSub: "Items in the locker",
+      qsLocker: "locker",
+      qsTheme: "Theme",
+      qsThemeSync: "Following the theme library",
+      qsThemeOwn: "Using your own colours",
+      qsAccentCap: "accent",
+      qsQuick: "Quick switches",
+      qsAll: (n) => `All ${n}`,
+      qsFold: "Less",
       tooLarge: "That image is too large. Please pick a smaller one.",
       storageFull: "Extension storage (1 MB) is nearly full. Remove a wallpaper, photo or icon image first.",
       badUrl: "Only image addresses starting with https:// are supported.",
@@ -3451,6 +3493,50 @@ function segmented(options, value, onChange) {
   return el;
 }
 
+// Small separate pill chips for short option lists ("4  6  10  [5]").
+function chips(options, value, onChange) {
+  const el = h("div", { class: "mdos-chips", role: "radiogroup" });
+  for (const [id, label] of options) {
+    el.append(
+      h("button", {
+        type: "button",
+        role: "radio",
+        class: "mdos-chip",
+        "aria-checked": String(value === id),
+        "data-v": id,
+        text: label,
+        onclick: () => {
+          for (const b of el.children) b.setAttribute("aria-checked", String(b.dataset.v === id));
+          onChange(id);
+        },
+      }),
+    );
+  }
+  return el;
+}
+// A small round "?" that toggles a little popover with the explanation.
+function help(text) {
+  const btn = h("button", { type: "button", class: "mdos-help-btn", "aria-label": L.helpLabel, "aria-expanded": "false", text: "?" });
+  const pop = h("span", { class: "mdos-help-pop", role: "tooltip", text });
+  const wrap = h("span", { class: "mdos-help" }, btn, pop);
+  const close = (e) => {
+    if (e?.target && wrap.contains(e.target) && e.type === "pointerdown") return;
+    if (e?.type === "keydown" && e.key !== "Escape") return;
+    wrap.classList.remove("is-open");
+    btn.setAttribute("aria-expanded", "false");
+    doc.removeEventListener("pointerdown", close, true);
+    doc.removeEventListener("keydown", close, true);
+  };
+  btn.addEventListener("click", () => {
+    if (wrap.classList.contains("is-open")) return close();
+    wrap.classList.add("is-open");
+    btn.setAttribute("aria-expanded", "true");
+    doc.addEventListener("pointerdown", close, true);
+    doc.addEventListener("keydown", close, true);
+  });
+  return wrap;
+}
+
 function openIconEditor(app, anchor) {
   const custom = state.icons[app.id] || {};
   const preview = h("div", { class: "mdos-iconed-preview" });
@@ -5722,6 +5808,14 @@ function settingSelect(key, options, onChange) {
   for (const [v, label] of options) el.append(h("option", { value: v, text: label, selected: state[key] === v }));
   return el;
 }
+// Short lists become chips, long ones stay a drop-down.
+function settingChoice(key, options, onChange) {
+  if (options.length > 5) return settingSelect(key, options, onChange);
+  return chips(options, state[key], (v) => {
+    updateSetting(key, v);
+    onChange?.(v);
+  });
+}
 function accentRow() {
   return h(
     "div",
@@ -5930,41 +6024,111 @@ function toggleCC(forceOpen, section) {
 }
 function buildCC() {
   const card = (title, ...kids) => h("section", { class: "mdos-cc-card" }, title ? h("h3", { text: title }) : null, ...kids);
-  // Windows 11 Quick Settings: a grid of toggle tiles, then the details,
-  // then a footer with settings and power.
-  const tile = ({ key, label, icon, run, onChange }) => {
-    const btn = h(
+  const sectionName = (id) => SET_SECTIONS.find((sec) => sec[0] === id)?.[1]() || "";
+  const closeIcon = LIGHT_GLYPHS.close;
+  const powerIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5v8"/><path d="M7.2 6.6a7.5 7.5 0 1 0 9.6 0"/></svg>';
+
+  // Header: app icon and title on the left, settings and close on the right.
+  const head = h(
+    "header",
+    { class: "mdos-qs-head" },
+    h("span", { class: "mdos-qs-head-icon", svg: LOGO }),
+    h("h2", { class: "mdos-qs-title", text: L.controlCenter }),
+    h(
+      "span",
+      { class: "mdos-qs-head-actions" },
+      h("button", { type: "button", class: "mdos-start-btn", "aria-label": L.openSettings, title: L.openSettings, svg: svg("settings"), onclick: () => (closeCC(), openApp("customize")) }),
+      h("button", { type: "button", class: "mdos-start-btn", "aria-label": L.close, title: L.close, svg: closeIcon, onclick: () => closeCC() }),
+    ),
+  );
+
+  // Status cards: icon tile, title and caption, then a big value on the right.
+  const stat = ({ icon, g, title, sub, value, cap, section }) =>
+    h(
       "button",
-      {
-        type: "button",
-        class: "mdos-qs-tile",
-        title: label,
-        "aria-pressed": key ? String(!!state[key]) : null,
-        onclick: () => {
-          if (run) return run();
-          const next = !state[key];
-          updateSetting(key, next);
-          onChange?.(next);
-          btn.setAttribute("aria-pressed", String(next));
-        },
-      },
-      h("span", { class: "mdos-qs-tile-btn", svg: svg(icon) }),
-      h("span", { class: "mdos-qs-tile-label", text: label }),
+      { type: "button", class: "mdos-qs-stat", onclick: () => toggleCC(false, section) },
+      h("span", { class: "mdos-qs-stat-icon", style: `--g1:${g[0]};--g2:${g[1]}`, svg: svg(icon) }),
+      h("span", { class: "mdos-qs-stat-text" }, h("b", { text: title }), h("small", { text: sub })),
+      h("span", { class: "mdos-qs-stat-val" }, h("strong", { text: value }), h("small", { text: cap })),
     );
-    return btn;
+  let lockerCount = 0;
+  try {
+    lockerCount = lockerItems().length;
+  } catch {}
+  const openCount = winIds().filter(windowVisible).length;
+  const accentName = ACCENTS.find((a) => a.id === state.accent)?.name || "";
+  const stats = h(
+    "section",
+    { class: "mdos-qs-stats" },
+    stat({ icon: "launchpad", g: ["#7ad7ff", "#2f7cf2"], title: L.qsWindows, sub: focused ? windowTitle(focused) || L.qsWinNone : L.qsWinNone, value: String(openCount), cap: L.qsWinCaption, section: "dock" }),
+    stat({ icon: "locker", g: ["#ffd36b", "#ff8a3d"], title: L.qsExt, sub: L.qsExtSub, value: String(lockerCount), cap: L.qsLocker, section: "home" }),
+    stat({ icon: "brush", g: ["#ff7ab0", "#b25cff"], title: L.qsTheme, sub: state.themeSync ? L.qsThemeSync : L.qsThemeOwn, value: accentName, cap: L.qsAccentCap, section: "appearance" }),
+  );
+
+  // Quick switches: the boolean settings, six at first, all of them on request.
+  const SWITCHES = [
+    ["themeSync", L.themeSync, "appearance", (on) => on && updateSetting("accent", "theme")],
+    ["dockAutohide", L.autohide, "dock"],
+    ["realGlass", L.realGlass, "performance"],
+    ["reduceTransparency", L.reduceTransparency, "performance"],
+    ["reduceMotion", L.reduceMotion, "performance"],
+    ["bootSplash", L.bootSplash, "performance"],
+    ["dockRecents", L.recents, "dock"],
+    ["iconView", L.iconView, "appearance"],
+    ["showCredits", L.showCredits, "home"],
+    ["showFeed", L.showFeed, "home"],
+    ["sceneBarTop", L.sceneBarTop, "chat", () => syncSoon()],
+    ["quickPalette", L.quickPaletteOn, "chat", () => syncSoon()],
+  ];
+  const switchRows = SWITCHES.map(([key, label, section, onChange]) =>
+    h(
+      "label",
+      { class: "mdos-qs-row mdos-cc-toggle" },
+      h("span", { class: "mdos-qs-row-text" }, h("span", { text: label }), h("small", { text: sectionName(section) })),
+      h("input", {
+        type: "checkbox",
+        role: "switch",
+        checked: !!state[key],
+        onchange: (e) => {
+          updateSetting(key, e.target.checked);
+          onChange?.(e.target.checked);
+        },
+      }),
+    ),
+  );
+  const CAP = 6;
+  let expanded = false;
+  const list = h("div", { class: "mdos-qs-list" });
+  const more = h("button", { type: "button", class: "mdos-qs-link" });
+  const paint = () => {
+    list.replaceChildren(...(expanded ? switchRows : switchRows.slice(0, CAP)));
+    more.textContent = expanded ? L.qsFold : L.qsAll(switchRows.length);
+    more.hidden = switchRows.length <= CAP;
   };
-  const tiles = [
-    { key: "themeSync", label: L.themeSync, icon: "brush", onChange: (on) => on && updateSetting("accent", "theme") },
-    { key: "dockAutohide", label: L.autohide, icon: "launchpad" },
-    { key: "realGlass", label: L.realGlass, icon: "wallpaper" },
+  more.addEventListener("click", () => {
+    expanded = !expanded;
+    paint();
+  });
+  paint();
+  const quick = h("section", { class: "mdos-qs-quick" }, h("div", { class: "mdos-qs-quick-head" }, h("h3", { text: L.qsQuick }), more), list);
+
+  // Actions stay one tap away as a compact row of pills.
+  const pill = ({ label, icon, run }) =>
+    h("button", { type: "button", class: "mdos-qs-pill", title: label, onclick: run }, h("span", { svg: svg(icon) }), h("span", { text: label }));
+  const pills = [
     isDesktop() ? { label: L.focusSession, icon: "star", run: () => (closeCC(), setFocusMode(true)) } : null,
     { label: L.editWidgets, icon: "widgets", run: () => setEditMode(true) },
     isDesktop() ? { label: L.tile, icon: "classic", run: tileWindows } : null,
   ].filter(Boolean);
+
   ccEl = h(
     "div",
     { id: "mdos-cc", role: "dialog", "aria-label": L.controlCenter },
-    h("section", { class: "mdos-qs-tiles" }, ...tiles.map(tile)),
+    isTouch() ? h("div", { class: "mdos-qs-grip", "aria-hidden": "true" }) : null,
+    head,
+    stats,
+    quick,
+    h("section", { class: "mdos-qs-pills" }, ...pills.map(pill)),
     card(L.accent, accentRow()),
     card(L.wallpaper, wallpaperSwatches()),
     card(
@@ -5980,12 +6144,7 @@ function buildCC() {
       "div",
       { class: "mdos-qs-foot" },
       h("span", { class: "mdos-qs-foot-name" }, h("span", { svg: LOGO }), h("span", { text: "Marinara" })),
-      h(
-        "span",
-        { class: "mdos-qs-foot-actions" },
-        h("button", { type: "button", class: "mdos-start-btn", "aria-label": L.openSettings, title: L.openSettings, svg: svg("settings"), onclick: () => { closeCC(); openApp("customize"); } }),
-        h("button", { type: "button", class: "mdos-start-btn", "aria-label": L.classic, title: L.classic, svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5v8"/><path d="M7.2 6.6a7.5 7.5 0 1 0 9.6 0"/></svg>', onclick: () => setEnabled(false) }),
-      ),
+      h("span", { class: "mdos-qs-foot-actions" }, h("button", { type: "button", class: "mdos-start-btn", "aria-label": L.classic, title: L.classic, svg: powerIcon, onclick: () => setEnabled(false) })),
     ),
     isTouch() ? h("button", { type: "button", class: "mdos-cc-btn mdos-cc-done", text: L.done, onclick: () => closeCC() }) : null,
   );
@@ -6016,18 +6175,150 @@ function openSettings(section) {
 function mountCustomize(win) {
   const nav = h("nav", { class: "mdos-set-nav", "aria-label": L.settingsTitle });
   const pane = h("div", { class: "mdos-set-pane" });
-  const group = (title, ...kids) => h("section", { class: "mdos-set-group" }, title ? h("h3", { text: title }) : null, ...kids);
+  // Group cards. Hints flagged for folding turn into a "?" next to the title.
+  const group = (title, ...kids) => {
+    const folded = title ? kids.filter((k) => k?.dataset?.fold) : [];
+    return h(
+      "section",
+      { class: "mdos-set-group" },
+      title ? h("h3", {}, h("span", { class: "mdos-set-title", text: title }), folded.length ? help(folded.map((k) => k.textContent).join("\n")) : null) : null,
+      folded.length ? kids.filter((k) => !folded.includes(k)) : kids,
+    );
+  };
   const row = (label, control) => h("div", { class: "mdos-set-row" }, h("span", { text: label }), control);
-  const hint = (text) => h("p", { class: "mdos-set-hint", text });
+  const hint = (text, fold) => h("p", { class: "mdos-set-hint", text, "data-fold": fold ? "1" : null });
   const btn = (text, onclick, primary) => h("button", { type: "button", class: `mdos-btn${primary ? " mdos-btn--primary" : ""}`, text, onclick });
+  const searchInput = h("input", {
+    type: "text",
+    class: "mdos-set-search-input",
+    placeholder: L.setSearch,
+    "aria-label": L.setSearch,
+    autocomplete: "off",
+    spellcheck: "false",
+    enterkeyhint: "search",
+  });
+  const clearBtn = h("button", { type: "button", class: "mdos-set-search-clear", "aria-label": L.setSearchClear, title: L.setSearchClear, svg: LIGHT_GLYPHS.close });
   const show = (id) => {
+    if (!SECTION_BUILDERS[id]) id = "overview";
     win.rec.section = id;
     save();
+    searchInput.value = "";
+    clearBtn.classList.remove("is-on");
     for (const b of nav.children) b.setAttribute("aria-current", String(b.dataset.section === id));
-    pane.replaceChildren(...(SECTION_BUILDERS[id] || SECTION_BUILDERS.appearance)());
+    pane.replaceChildren(...SECTION_BUILDERS[id]());
     pane.scrollTop = 0;
   };
+  // Search index: every section is built once, off screen, the first time it
+  // is needed (typing or the overview). Built nodes are only read, never mounted.
+  const ROW_SEL = ".mdos-set-title, .mdos-set-row > span:first-child, .mdos-cc-toggle > span:first-child, .mdos-field-label";
+  let index = null;
+  const buildIndex = () => {
+    if (index) return index;
+    index = { items: [], desc: new Map() };
+    for (const [id, labelOf] of SET_SECTIONS) {
+      const sec = labelOf();
+      let nodes = [];
+      try {
+        nodes = SECTION_BUILDERS[id]();
+      } catch {}
+      const box = h("div", {}, nodes.filter(Boolean));
+      const titles = [];
+      const labels = [];
+      const seen = new Set();
+      for (const el of box.querySelectorAll(ROW_SEL)) {
+        const label = el.textContent.trim();
+        if (!label || seen.has(label)) continue;
+        seen.add(label);
+        const title = el.classList.contains("mdos-set-title");
+        (title ? titles : labels).push(label);
+        index.items.push({ id, sec, label, title, key: `${label} ${sec}`.toLowerCase() });
+      }
+      const parts = titles.filter((t) => t !== sec);
+      index.desc.set(id, (parts.length ? parts : labels).slice(0, 6).join(" · "));
+    }
+    return index;
+  };
+  const flash = (el) => {
+    el.classList.add("mdos-set-flash");
+    marinara.setTimeout(() => el.classList.remove("mdos-set-flash"), 1600);
+  };
+  const openHit = (hit) => {
+    show(hit.id);
+    const el = [...pane.querySelectorAll(ROW_SEL)].find((e) => e.textContent.trim() === hit.label);
+    const target = el && (hit.title ? el.closest(".mdos-set-group") : el.parentElement);
+    if (!target) return;
+    target.scrollIntoView({ block: "center", behavior: reducedMotion() ? "auto" : "smooth" });
+    flash(target);
+  };
+  const runSearch = () => {
+    const q = searchInput.value.trim().toLowerCase();
+    clearBtn.classList.toggle("is-on", !!searchInput.value);
+    if (!q) return show(win.rec.section || "overview");
+    for (const b of nav.children) b.setAttribute("aria-current", "false");
+    const hits = buildIndex().items.filter((it) => it.key.includes(q)).slice(0, 60);
+    pane.replaceChildren(
+      hits.length
+        ? h(
+            "section",
+            { class: "mdos-set-group mdos-set-results" },
+            ...hits.map((hit) =>
+              h(
+                "button",
+                { type: "button", class: "mdos-set-result", onclick: () => openHit(hit) },
+                h("span", { class: "mdos-set-result-label", text: hit.label }),
+                h("span", { class: "mdos-set-result-crumb", text: hit.sec }),
+              ),
+            ),
+          )
+        : hint(L.setNoResult),
+    );
+    pane.scrollTop = 0;
+  };
+  searchInput.addEventListener("input", runSearch);
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || !searchInput.value) return;
+    e.stopPropagation();
+    searchInput.value = "";
+    runSearch();
+  });
+  clearBtn.addEventListener("click", () => {
+    searchInput.value = "";
+    runSearch();
+    searchInput.focus();
+  });
+  // Overview: grouped cards, one row per section with a preview of what's inside.
+  const overview = () => {
+    const { desc } = buildIndex();
+    const GROUPS = [
+      [L.setGroupApp, ["appearance", "wallpaper", "home", "dock", "performance"]],
+      [L.setGroupChat, ["chat", "youtube"]],
+      [L.setGroupInfo, ["about"]],
+    ];
+    return GROUPS.map(([title, ids]) =>
+      h(
+        "section",
+        { class: "mdos-set-block" },
+        h("h3", { class: "mdos-set-cap", text: title }),
+        h(
+          "div",
+          { class: "mdos-set-list" },
+          ...ids.map((id) => {
+            const [, labelOf, icon, g1, g2] = SET_SECTIONS.find((sec) => sec[0] === id);
+            return h(
+              "button",
+              { type: "button", class: "mdos-ov-row", onclick: () => show(id) },
+              appIcon({ id: `set:${id}`, icon, g: [g1, g2] }),
+              h("span", { class: "mdos-ov-label", text: labelOf() }),
+              h("span", { class: "mdos-ov-desc", text: desc.get(id) || "" }),
+              h("span", { class: "mdos-ov-chev", svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>' }),
+            );
+          }),
+        ),
+      ),
+    );
+  };
   const SECTION_BUILDERS = {
+    overview,
     appearance: () => {
       const status = h("p", { class: "mdos-set-hint" });
       fetch("/api/themes", { credentials: "same-origin" })
@@ -6040,26 +6331,26 @@ function mountCustomize(win) {
         .catch(() => (status.textContent = ""));
       return [
         group(
-          null,
+          L.themeAccent,
           settingToggle("themeSync", L.themeSync, (on) => {
             if (on) updateSetting("accent", "theme");
             show("appearance");
           }),
           status,
-          hint(L.themeSyncHint),
+          hint(L.themeSyncHint, true),
         ),
         group(L.accent, accentRow()),
         group(
           L.customize,
-          row(L.iconStyle, settingSelect("iconStyle", Object.entries(L.iconStyles))),
-          row(L.iconShape, settingSelect("iconShape", Object.entries(L.iconShapes))),
+          row(L.iconStyle, settingChoice("iconStyle", Object.entries(L.iconStyles))),
+          row(L.iconShape, settingChoice("iconShape", Object.entries(L.iconShapes))),
           settingToggle("iconView", L.iconView),
           h("div", { class: "mdos-row" }, btn(L.editIcons, () => openIconPicker())),
         ),
         group(
           L.cursor,
-          row(L.cursor, settingSelect("cursor", Object.entries(L.cursors), () => show("appearance"))),
-          !["system", "custom"].includes(state.cursor) ? row(L.cursorSize, settingSelect("cursorSize", Object.entries(L.cursorSizes))) : null,
+          row(L.cursor, settingChoice("cursor", Object.entries(L.cursors), () => show("appearance"))),
+          !["system", "custom"].includes(state.cursor) ? row(L.cursorSize, settingChoice("cursorSize", Object.entries(L.cursorSizes))) : null,
           state.cursor === "custom"
             ? h(
                 "div",
@@ -6071,7 +6362,7 @@ function mountCustomize(win) {
                 ),
               )
             : null,
-          hint(L.cursorHint),
+          hint(L.cursorHint, true),
         ),
       ];
     },
@@ -6117,7 +6408,7 @@ function mountCustomize(win) {
     ],
     chat: () => [
       ...chatDesignSection(win, { group, row, hint, btn, rerender: () => show("chat") }),
-      group(L.chatTools, settingToggle("sceneBarTop", L.sceneBarTop, () => syncSoon()), settingToggle("quickPalette", L.quickPaletteOn, () => syncSoon()), hint(L.chatToolsHint)),
+      group(L.chatTools, settingToggle("sceneBarTop", L.sceneBarTop, () => syncSoon()), settingToggle("quickPalette", L.quickPaletteOn, () => syncSoon()), hint(L.chatToolsHint, true)),
     ],
     dock: () => [
       group(
@@ -6189,22 +6480,33 @@ function mountCustomize(win) {
       ),
     ],
   };
-  for (const [id, label, icon, g1, g2] of SET_SECTIONS) {
+  for (const [id, label, icon, g1, g2] of [["overview", () => L.setOverview, "launchpad", "#7ad7ff", "#4f8cff"], ...SET_SECTIONS]) {
     nav.append(
       h(
         "button",
-        { type: "button", class: "mdos-set-nav-item", "data-section": id, onclick: () => show(id) },
+        { type: "button", class: "mdos-set-nav-item", "data-section": id, title: label(), onclick: () => show(id) },
         appIcon({ id: `set:${id}`, icon, g: [g1, g2] }),
         h("span", { text: label() }),
       ),
     );
   }
-  win.body.append(h("div", { class: "mdos-set" }, nav, pane));
+  const side = h(
+    "div",
+    { class: "mdos-set-side" },
+    h("div", { class: "mdos-set-search" }, h("span", { class: "mdos-set-search-icon", svg: svg("search") }), searchInput, clearBtn),
+    nav,
+  );
+  const root = h("div", { class: "mdos-set" }, side, pane);
+  win.body.append(root);
+  // Narrow windows: the nav turns into an icon tab strip under the search bar.
+  if (typeof ResizeObserver === "function") {
+    new ResizeObserver((entries) => root.classList.toggle("mdos-set--narrow", entries[0].contentRect.width < 640)).observe(root);
+  }
   win.refresh = () => {
     if (win.rec.section && nav.querySelector(`[aria-current="true"]`)?.dataset.section !== win.rec.section) show(win.rec.section);
   };
   win.openSection = show;
-  show(win.rec.section || "appearance");
+  show(win.rec.section || "overview");
 }
 
 // Chat design: presets, controls and a live preview; changes also apply to
@@ -6307,7 +6609,7 @@ function chatDesignSection(win, { group, row, hint, btn, rerender }) {
             }),
           ),
         ),
-        row(L.convoStyle, settingSelect("convoStyle", [["messages", L.convoMessages], ["marinara", L.convoMarinara]])),
+        row(L.convoStyle, settingChoice("convoStyle", [["messages", L.convoMessages], ["marinara", L.convoMarinara]])),
       ),
       group(
         L.font,
@@ -6363,7 +6665,7 @@ function chatDesignSection(win, { group, row, hint, btn, rerender }) {
             }),
           ),
         ),
-        row(L.rpStyle, settingSelect("rpStyle", [["book", L.rpBook], ["night", L.rpNight], ["clean", L.rpClean]], () => rerender())),
+        row(L.rpStyle, settingChoice("rpStyle", [["book", L.rpBook], ["night", L.rpNight], ["clean", L.rpClean]], () => rerender())),
       ),
       group(
         L.font,
