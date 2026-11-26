@@ -43,7 +43,7 @@ const toastJs = [
 // button reset, the primary colour) since its stylesheet is not loaded.
 // Icon drawings for the icon story: ICONS, FLUENT and their two helpers.
 const iconJs = [cut("const ICONS = {", "\n};"), cut("const FLUENT = {", "\n};"), cut("const fluentSvg", "\nconst LOGO").replace(/\nconst LOGO$/, "")].join("\n");
-const ICON_STYLES = ["fluent", "gradient", "glass", "pastel", "tinted", "dark", "line", "duotone", "outline", "mono"];
+const ICON_STYLES = ["fluent", "gradient", "glass", "pastel", "tinted", "dark", "line", "duotone", "outline", "mono", "glyph", "glyphMono"];
 const ICON_APPS = [
   ["chat", "#6ef08d", "#17a84d"], ["roleplay", "#ffd36b", "#ff8a3d"], ["game", "#c49bff", "#7a3ff2"], ["characters", "#7ad7ff", "#2f7cf2"],
   ["lorebooks", "#ff9d7a", "#e5533d"], ["presets", "#9aa6bb", "#4f5a70"], ["settings", "#c9ced8", "#868d9b"], ["notes", "#ffe680", "#f2b705"],
