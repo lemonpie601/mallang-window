@@ -4082,14 +4082,22 @@ html.mdos-calm .marinara-chat-input-shell[data-mh-composer] {
 }
 /* Desktop: the space around the card stays see-through (the chat or its
    background picture shows there, as before). */
-/* Buttons that float just above the roleplay card (Marinara's or another
-   extension's) get a frosted chip so they stay readable over the text. */
-html.mdos .mari-roleplay-input-column button:not(.marinara-chat-input-shell *, .marinara-chat-input-shell) {
-  background: color-mix(in srgb, var(--mdos-paper-2, var(--mdos-win-bg, #fff)) 94%, transparent) !important;
-  backdrop-filter: blur(10px) saturate(1.2);
-  -webkit-backdrop-filter: blur(10px) saturate(1.2);
-  box-shadow: var(--mdos-shadow-1) !important;
+/* The pinned quick-palette buttons above the card (.mdos-qp-chips) live
+   inside the composer, and the composer's own blur stops theirs from
+   seeing the page: so they get a nearly solid face instead of a frosted
+   one, in the page or paper colour. */
+html.mdos .marinara-chat-input-shell[data-mh-composer] > .mdos-qp-chips > button.mdos-qp-chip {
+  background: var(--mdos-win-bg, #fff) !important;
+  box-shadow: var(--mdos-shadow-2) !important;
   opacity: 1 !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell[data-mh-composer] > .mdos-qp-chips > button.mdos-qp-chip {
+  color: var(--mdos-ink-2) !important;
+  background: var(--mdos-paper-2) !important;
+}
+html.mdos .marinara-chat-input-shell[data-mh-composer] > .mdos-qp-chips > button.mdos-qp-chip:hover {
+  color: #fff !important;
+  background: var(--mdos-accent, #0078d4) !important;
 }
 /* Tablets keep the card floating; the gap under it is filled. */
 html.mdos-tablet.mdos-touch .chat-input-container.chat-input-container {
