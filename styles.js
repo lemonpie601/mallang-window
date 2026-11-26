@@ -4053,5 +4053,56 @@ html.mdos-touch:not(.mdos-tablet) .mdos-toast[data-leaving] {
 html.mdos-calm .mdos-toast {
   transition: opacity 150ms linear;
 }
+
+/* ══════════════ composer: frosted card, closed bottom ══════════════ */
+/* Every composer (conversation, roleplay, game) is a slightly see-through
+   card: the chat shows faintly behind it, blurred so it never competes
+   with what you type. The strip under the card used to be transparent,
+   so messages scrolled visibly through the gap below it; that strip is
+   now filled with the page colour (desktop) or folded into the card
+   itself (phones, where the card runs to the bottom edge). */
+html.mdos {
+  --mdos-composer-under: var(--mdos-win-bg, #fff);
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area {
+  --mdos-composer-under: var(--mdos-paper);
+}
+html.mdos .marinara-chat-input-shell[data-mh-composer] {
+  background: color-mix(in srgb, var(--mdos-win-bg, #fff) 92%, transparent) !important;
+  backdrop-filter: blur(18px) saturate(1.3) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.3) !important;
+}
+html.mdos:is([data-mdos-rp="book"], [data-mdos-rp="night"]) .rpg-chat-area .marinara-chat-input-shell[data-mh-composer] {
+  background: color-mix(in srgb, var(--mdos-paper-2) 92%, transparent) !important;
+  backdrop-filter: blur(18px) saturate(1.15) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.15) !important;
+}
+html.mdos-no-blur .marinara-chat-input-shell[data-mh-composer],
+html.mdos-calm .marinara-chat-input-shell[data-mh-composer] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* Desktop: fill the gap under the card (the container's bottom padding). */
+html.mdos-desktop [data-mdos-win] .chat-input-container.chat-input-container {
+  background: linear-gradient(to top, var(--mdos-composer-under) 14px, transparent 14px) !important;
+}
+/* Tablets keep the card floating; the gap under it is filled. */
+html.mdos-tablet.mdos-touch .chat-input-container.chat-input-container {
+  background: linear-gradient(to top, var(--mdos-composer-under) max(34px, calc(env(safe-area-inset-bottom, 0px) + 18px)), transparent 0) !important;
+}
+/* Phones: no gap under the card; the card's own bottom padding
+   keeps its buttons clear of the home indicator. */
+html.mdos-touch.mdos-touch:not(.mdos-tablet) :is(.chat-input-container, .mari-chat-input).chat-input-container,
+html.mdos-touch.mdos-touch:not(.mdos-tablet) [data-chat-mode] .mari-roleplay-input-column > .mari-chat-input {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+html.mdos-touch.mdos-touch:not(.mdos-tablet) .marinara-chat-input-shell[data-mh-composer] {
+  margin-bottom: 0 !important;
+  padding-bottom: max(30px, calc(env(safe-area-inset-bottom, 0px) + 22px)) !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  border-bottom-width: 0 !important;
+}
 `,
 ].join("\n");

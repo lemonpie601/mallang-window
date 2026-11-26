@@ -87,3 +87,25 @@
 
 <!-- ── App icons in every icon style (one shot per style) ── -->
 <template data-story="icons" data-width="560" data-run="icons" data-desktop-only></template>
+
+<!-- ── Composer over the chat (frosted card, closed bottom) ── -->
+<template data-story="composer" data-width="560" data-phone-width="390">
+  <div data-mdos-win="main" data-chat-mode="conversation" style="position:relative;height:300px;overflow:hidden;background:var(--mdos-win-bg)">
+    <div style="padding:16px;display:grid;gap:10px;font-size:15px">
+      <p style="margin:0">창밖으로 비가 내리기 시작했다. 그는 찻잔을 내려놓고 조용히 웃었다.</p>
+      <p style="margin:0">"오늘은 여기서 쉬어 가요." 낮은 목소리가 빗소리에 섞였다.</p>
+      <p style="margin:0">창밖으로 비가 내리기 시작했다. 그는 찻잔을 내려놓고 조용히 웃었다.</p>
+      <p style="margin:0">"오늘은 여기서 쉬어 가요." 낮은 목소리가 빗소리에 섞였다.</p>
+      <p style="margin:0">창밖으로 비가 내리기 시작했다. 그는 찻잔을 내려놓고 조용히 웃었다.</p>
+      <p style="margin:0">"오늘은 여기서 쉬어 가요." 낮은 목소리가 빗소리에 섞였다.</p>
+    </div>
+    <div class="mari-chat-input chat-input-container" style="position:absolute;left:0;right:0;bottom:0;padding:0 12px 14px">
+      <div class="marinara-chat-input-shell" data-mh-composer style="display:flex;border:1px solid">
+        <textarea data-chat-composer rows="1" placeholder="메시지 보내기" style="border:0;background:none;resize:none;font:inherit;color:inherit;outline:none"></textarea>
+        <button style="width:34px;height:34px;border-radius:50%;border:0">+</button>
+        <span style="flex:1"></span>
+        <button style="width:34px;height:34px;border-radius:50%;border:0;background:var(--mdos-accent,#0a84ff);color:#fff">↑</button>
+      </div>
+    </div>
+  </div>
+</template>

@@ -42,7 +42,7 @@ const toastJs = [
 // mocks need (header/drawer padding from its CSS variables, Tailwind's
 // button reset, the primary colour) since its stylesheet is not loaded.
 // Icon drawings for the icon story: ICONS, FLUENT and their two helpers.
-const iconJs = [cut("const ICONS = {", "\n};"), cut("const FLUENT = {", "\n};"), cut("const fluentSvg", "\nconst LOGO").replace(/\nconst LOGO$/, "")].join("\n");
+const iconJs = [cut("const ICONS = {", "\n};"), cut("const FLUENT = {", "\n};"), cut("const SOLID_GEAR", "\nconst LOGO").replace(/\nconst LOGO$/, "")].join("\n");
 const ICON_STYLES = ["fluent", "gradient", "glass", "pastel", "tinted", "dark", "line", "duotone", "outline", "mono", "glyph", "glyphMono"];
 const ICON_APPS = [
   ["chat", "#6ef08d", "#17a84d"], ["roleplay", "#ffd36b", "#ff8a3d"], ["game", "#c49bff", "#7a3ff2"], ["characters", "#7ad7ff", "#2f7cf2"],
@@ -116,9 +116,9 @@ for (const story of storyList.filter((s) => s.name.includes(filter))) {
     if (story.run === "icons") {
       // One row per icon style, each in its own frame so the html-level
       // data-mdos-icon-style can differ per row.
-      await page.addScriptTag({ content: `${iconJs}\nwindow.__icon = (n) => fluentSvg(n) + svg(n);` });
+      await page.addScriptTag({ content: `${iconJs}\nwindow.__icon = (n) => fluentSvg(n) + solidSvg(n) + svg(n);` });
       await page.evaluate(({ styles, apps, theme, css }) => {
-        const icons = apps.map(([n, g1, g2]) => `<span class="mdos-app-icon has-fluent" style="--g1:${g1};--g2:${g2};width:44px;height:44px;display:inline-grid;place-items:center;border-radius:var(--mdos-shape, 22%);overflow:hidden">${window.__icon(n)}</span>`).join("");
+        const icons = apps.map(([n, g1, g2]) => `<span class="mdos-app-icon has-fluent has-solid" style="--g1:${g1};--g2:${g2};width:44px;height:44px;display:inline-grid;place-items:center;border-radius:var(--mdos-shape, 22%);overflow:hidden">${window.__icon(n)}</span>`).join("");
         document.body.innerHTML = styles
           .map((st) => `<div style="display:flex;align-items:center;gap:12px;margin:6px 0"><code style="width:70px;font-size:12px">${st}</code><iframe data-st="${st}" style="border:0;width:440px;height:56px;background:transparent"></iframe></div>`)
           .join("");

@@ -597,6 +597,31 @@ html:is([data-mdos-icon-style="line"], [data-mdos-icon-style="duotone"], [data-m
   color: inherit;
 }
 
+/* Solid drawings (desktop.js SOLID): filled shapes with cut-outs. Hidden
+   unless a solid style is on; then they replace the line glyph.
+   duotone — secondary shapes faded, on a tinted tile
+   mono    — solid glyph on a solid text-coloured tile
+   glyph   — solid glyph in the app colour, no tile
+   (line, outline and glyphMono keep the line glyph.) */
+.mdos-app-icon > .mdos-si {
+  display: none;
+}
+html:is([data-mdos-icon-style="duotone"], [data-mdos-icon-style="mono"], [data-mdos-icon-style="glyph"]) .mdos-app-icon.has-solid:not(.has-image, .has-host-image) > svg:not(.mdos-fi, .mdos-si) {
+  display: none;
+}
+html:is([data-mdos-icon-style="duotone"], [data-mdos-icon-style="mono"], [data-mdos-icon-style="glyph"]) .mdos-app-icon.has-solid:not(.has-image, .has-host-image) > .mdos-si {
+  display: block;
+  width: 58%;
+  height: 58%;
+}
+html[data-mdos-icon-style="glyph"] .mdos-app-icon.has-solid:not(.has-image, .has-host-image) > .mdos-si {
+  width: 84%;
+  height: 84%;
+}
+html[data-mdos-icon-style="duotone"] .mdos-si-s {
+  opacity: 0.45;
+}
+
 /* Glyph only: no tile at all, just a larger line glyph — in the app's
    colour (glyph) or the text colour (glyphMono). Like Fluent, the icon
    stands on the wallpaper or window by itself. */

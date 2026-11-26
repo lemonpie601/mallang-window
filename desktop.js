@@ -136,7 +136,7 @@ const L = KO
       customize: "꾸미기",
       iconStyle: "아이콘 스타일",
       iconShape: "아이콘 모양",
-      iconStyles: { fluent: "Fluent (Windows 11)", gradient: "그라데이션", glass: "유리", pastel: "파스텔", tinted: "틴트", dark: "다크", line: "라인 (회색 타일)", duotone: "투톤", outline: "외곽선", mono: "흑백", glyph: "선만 (색)", glyphMono: "선만 (흑백)" },
+      iconStyles: { fluent: "Fluent (Windows 11)", gradient: "그라데이션", glass: "유리", pastel: "파스텔", tinted: "틴트", dark: "다크", line: "라인 (회색 타일)", duotone: "솔리드 투톤", outline: "외곽선", mono: "솔리드 흑백", glyph: "솔리드 (배경 없음)", glyphMono: "선만 (배경 없음)" },
       iconShapes: { squircle: "둥근 모서리", circle: "원", rounded: "작은 모서리" },
       cursor: "마우스 포인터",
       cursorSize: "포인터 크기",
@@ -530,7 +530,7 @@ const L = KO
       customize: "Customize",
       iconStyle: "Icon style",
       iconShape: "Icon shape",
-      iconStyles: { fluent: "Fluent (Windows 11)", gradient: "Gradient", glass: "Glass", pastel: "Pastel", tinted: "Tinted", dark: "Dark", line: "Line (grey tile)", duotone: "Duotone", outline: "Outline", mono: "Mono", glyph: "Glyph only (colour)", glyphMono: "Glyph only (mono)" },
+      iconStyles: { fluent: "Fluent (Windows 11)", gradient: "Gradient", glass: "Glass", pastel: "Pastel", tinted: "Tinted", dark: "Dark", line: "Line (grey tile)", duotone: "Solid duotone", outline: "Outline", mono: "Solid mono", glyph: "Solid (no tile)", glyphMono: "Line (no tile)" },
       iconShapes: { squircle: "Rounded", circle: "Circle", rounded: "Slightly rounded" },
       cursor: "Mouse pointer",
       cursorSize: "Pointer size",
@@ -996,6 +996,50 @@ const FLUENT = {
   compass: '<circle class="b" cx="16" cy="17" r="13"/><circle class="a" cx="16" cy="16" r="13"/><path class="l" d="M5 13.5a11.3 11.3 0 0 1 19.6-5.4A13 13 0 0 0 5 13.5z"/><path class="w" d="m21.9 10.1-3.4 8.4-8.4 3.4 3.4-8.4z"/><circle class="b" cx="16" cy="16" r="1.8"/>',
   play: '<rect class="b" x="2.5" y="7" width="27" height="20" rx="6"/><rect class="a" x="2.5" y="5.5" width="27" height="20" rx="6"/><path class="w" d="M13 11.4a1 1 0 0 1 1.5-.9l7 4.1a1 1 0 0 1 0 1.8l-7 4.1a1 1 0 0 1-1.5-.9z"/>',
   locker: '<path class="b" d="M6.5 5h19l3 7H3.5z"/><rect class="a" x="3.5" y="11" width="25" height="17" rx="3"/><rect class="w" x="12" y="15.5" width="8" height="2.6" rx="1.3"/><path class="l" d="M3.5 14a3 3 0 0 1 3-3h19a3 3 0 0 1 3 3z"/>',
+};
+// Solid icon set: filled shapes with cut-outs, a second drawing beside the
+// line glyphs (svg) and the Fluent colour icons (fluentSvg). Each icon is
+// p (main shapes), s (secondary shapes, faded in the duotone style) and
+// k (cut-outs). They render through masks, so cut-outs are truly empty and
+// the icon works on a tile or straight on the wallpaper.
+const SOLID_GEAR = (() => {
+  let teeth = "";
+  for (let a = 0; a < 360; a += 45) teeth += `<rect x="10.4" y="1.8" width="3.2" height="5" rx="1.2" transform="rotate(${a} 12 12)"/>`;
+  return teeth + '<circle cx="12" cy="12" r="7.4"/>';
+})();
+const SOLID = {
+  home: { p: '<path d="M12 2.8 2.6 10.4a1 1 0 0 0 .6 1.8H5V20a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 20v-7.8h1.8a1 1 0 0 0 .6-1.8z"/>', k: '<rect x="9.5" y="14" width="5" height="7.5" rx="1"/>' },
+  chat: { p: '<path d="M12 3.2c5.2 0 9.3 3.5 9.3 7.9S17.2 19 12 19c-1 0-2-.1-2.9-.4l-4.8 2.6 1.2-4.2C4 15.6 2.7 13.5 2.7 11.1c0-4.4 4.1-7.9 9.3-7.9z"/>', k: '<circle cx="8" cy="11.1" r="1.4"/><circle cx="12" cy="11.1" r="1.4"/><circle cx="16" cy="11.1" r="1.4"/>' },
+  roleplay: { p: '<path d="M2.5 5.3c3.2-1.2 6.4-.9 9 .9v14.5c-2.6-1.6-5.8-1.9-9-.8z"/>', s: '<path d="M21.5 5.3c-3.2-1.2-6.4-.9-9 .9v14.5c2.6-1.6 5.8-1.9 9-.8z"/>' },
+  game: { p: '<path d="M7.2 6.8h9.6a5 5 0 0 1 4.9 6l-.7 3.5a2.9 2.9 0 0 1-4.9 1.4L14.4 16H9.6l-1.7 1.7a2.9 2.9 0 0 1-4.9-1.4l-.7-3.5a5 5 0 0 1 4.9-6z"/>', k: '<rect x="5.6" y="10.6" width="4.2" height="1.6" rx=".8"/><rect x="6.9" y="9.3" width="1.6" height="4.2" rx=".8"/><circle cx="15.6" cy="10.4" r="1.1"/><circle cx="17.6" cy="12.6" r="1.1"/>' },
+  characters: { p: '<circle cx="9" cy="8" r="3.6"/><path d="M2.4 19.4c.6-3.7 3.3-5.9 6.6-5.9s6 2.2 6.6 5.9a1 1 0 0 1-1 1.2H3.4a1 1 0 0 1-1-1.2z"/>', s: '<circle cx="16.8" cy="7.4" r="3"/><path d="M15.4 13.2c3.4-.3 6 1.8 6.4 5.2a1 1 0 0 1-1 1.1h-3.3c-.2-2.4-.9-4.5-2.1-6.3z"/>' },
+  personas: { p: '<path d="M2.8 5.6c3.1 1.3 6.1 1.3 9.2 0 3.1 1.3 6.1 1.3 9.2 0v5.8c0 5.6-4.1 9.9-9.2 9.9s-9.2-4.3-9.2-9.9z"/>', k: '<rect x="6.3" y="9.4" width="3.8" height="2" rx="1"/><rect x="13.9" y="9.4" width="3.8" height="2" rx="1"/><path d="M8.6 14.6h6.8a3.4 3.4 0 0 1-6.8 0z"/>' },
+  lorebooks: { p: '<path d="M6.6 2.8H19a1 1 0 0 1 1 1V18H6.6a1.6 1.6 0 0 0-1.6 1.6V4.4a1.6 1.6 0 0 1 1.6-1.6z"/>', s: '<path d="M6.6 19.2H20v2H6.6a1 1 0 0 1 0-2z"/>', k: '<rect x="9" y="6.4" width="7.5" height="1.8" rx=".9"/><rect x="9" y="9.8" width="5" height="1.8" rx=".9"/>' },
+  presets: { p: '<path d="M6.5 2.5h7.8L19.5 7.7V20a1.5 1.5 0 0 1-1.5 1.5H6.5A1.5 1.5 0 0 1 5 20V4a1.5 1.5 0 0 1 1.5-1.5z"/>', s: '<path d="M14.3 2.5v4.7a.5.5 0 0 0 .5.5h4.7z"/>', k: '<rect x="8" y="11.4" width="8.4" height="1.8" rx=".9"/><rect x="8" y="15" width="5.6" height="1.8" rx=".9"/>' },
+  connections: { p: '<rect x="7.4" y="2.4" width="2.4" height="5.6" rx="1.2"/><rect x="14.2" y="2.4" width="2.4" height="5.6" rx="1.2"/><path d="M5.8 7.4h12.4v3.4a6.2 6.2 0 0 1-12.4 0z"/>', s: '<path d="M10.8 16.4h2.4v2.2a3 3 0 0 1-3 3H8.6v-2.4h1.6a.6.6 0 0 0 .6-.6z"/>' },
+  agents: { p: '<path d="M11 2.6l2.3 6.4 6.4 2.3-6.4 2.3L11 20l-2.3-6.4-6.4-2.3 6.4-2.3z"/>', s: '<path d="M19 14.6l1 2.4 2.4 1-2.4 1-1 2.4-1-2.4-2.4-1 2.4-1z"/>' },
+  settings: { p: SOLID_GEAR, k: '<circle cx="12" cy="12" r="3"/>' },
+  search: { p: '<circle cx="10.5" cy="10.5" r="7.6"/>', s: '<path d="M15.6 17.7l2.1-2.1 3.6 3.6a1.5 1.5 0 0 1-2.1 2.1z"/>', k: '<circle cx="10.5" cy="10.5" r="4.6"/>' },
+  launchpad: { p: '<rect x="3" y="3" width="8" height="8" rx="2.2"/><rect x="13" y="13" width="8" height="8" rx="2.2"/>', s: '<rect x="13" y="3" width="8" height="8" rx="2.2"/><rect x="3" y="13" width="8" height="8" rx="2.2"/>' },
+  widgets: { p: '<rect x="3" y="3" width="8" height="8" rx="2.2"/><rect x="13" y="13" width="8" height="8" rx="2.2"/>', s: '<circle cx="17" cy="7" r="4"/><rect x="3" y="13" width="8" height="8" rx="4"/>' },
+  wallpaper: { p: '<rect x="2.5" y="4" width="19" height="16" rx="3"/>', k: '<circle cx="8.3" cy="9.2" r="1.9"/><path d="M4.5 18l5-5 3.4 3.4 2.6-2.6 4 4z"/>' },
+  classic: { p: '<rect x="2.5" y="4" width="19" height="16" rx="3"/>', k: '<rect x="4.6" y="9" width="14.8" height="9" rx="1.4"/>', s: '<circle cx="6" cy="6.5" r=".9"/>' },
+  reload: { p: '<path d="M12 3.6a8.4 8.4 0 1 0 8.4 8.4h-2.8A5.6 5.6 0 1 1 12 6.4z"/>', s: '<path d="M11.2 1.6v7.6l5.2-3.8z"/>' },
+  info: { p: '<circle cx="12" cy="12" r="9.4"/>', k: '<rect x="10.9" y="10.4" width="2.2" height="7" rx="1.1"/><circle cx="12" cy="7.4" r="1.4"/>' },
+  sliders: { p: '<rect x="2.8" y="2.8" width="18.4" height="18.4" rx="5"/>', k: '<rect x="6.5" y="8" width="11" height="1.8" rx=".9"/><rect x="6.5" y="14.2" width="11" height="1.8" rx=".9"/><circle cx="10" cy="8.9" r="2.4"/><circle cx="14.5" cy="15.1" r="2.4"/>' },
+  brush: { p: '<path d="M15.2 2.9a1.6 1.6 0 0 1 2.2 0l3.7 3.7a1.6 1.6 0 0 1 0 2.2l-7.6 7.6-5.9-5.9z"/>', s: '<path d="M6.8 11.4l5.8 5.8-1.1 1.1a4.6 4.6 0 0 1-4.6 1.1c-1.2-.4-2.5-.2-3.6.5l-.6.4.4-.6c.7-1.1.9-2.4.5-3.6a4.6 4.6 0 0 1 1.1-4.6z"/>' },
+  notes: { p: '<rect x="4" y="3.5" width="16" height="18" rx="2.6"/>', s: '<rect x="7" y="1.6" width="2" height="4" rx="1"/><rect x="15" y="1.6" width="2" height="4" rx="1"/>', k: '<rect x="7.4" y="9.6" width="9.2" height="1.8" rx=".9"/><rect x="7.4" y="13.2" width="9.2" height="1.8" rx=".9"/><rect x="7.4" y="16.8" width="5.6" height="1.8" rx=".9"/>' },
+  compass: { p: '<circle cx="12" cy="12" r="9.4"/>', k: '<circle cx="12" cy="12" r="7.2"/>', s: '<path d="M16 8l-2.3 5.7L8 16l2.3-5.7z"/>' },
+  play: { p: '<rect x="1.8" y="4.8" width="20.4" height="14.4" rx="4.4"/>', k: '<path d="M10 8.9v6.2a.6.6 0 0 0 .9.5l5.1-3.1a.6.6 0 0 0 0-1l-5.1-3.1a.6.6 0 0 0-.9.5z"/>' },
+  locker: { p: '<path d="M3.5 10h17v9a2.5 2.5 0 0 1-2.5 2.5H6A2.5 2.5 0 0 1 3.5 19z"/>', s: '<path d="M5.6 3.5h12.8l2.4 5H3.2z"/>', k: '<rect x="9.2" y="13.2" width="5.6" height="1.9" rx=".95"/>' },
+};
+let solidSeq = 0;
+const solidSvg = (name) => {
+  const d = SOLID[name];
+  if (!d) return "";
+  const id = `mdos-si-${++solidSeq}`;
+  const k = d.k || "";
+  return `<svg class="mdos-si" viewBox="0 0 24 24" aria-hidden="true"><defs><mask id="${id}p" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><g fill="#fff">${d.p}</g><g fill="#000">${k}</g></mask>${d.s ? `<mask id="${id}s" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><g fill="#fff">${d.s}</g><g fill="#000">${k}</g></mask>` : ""}</defs><rect width="24" height="24" fill="currentColor" mask="url(#${id}p)"/>${d.s ? `<rect class="mdos-si-s" width="24" height="24" fill="currentColor" mask="url(#${id}s)"/>` : ""}</svg>`;
 };
 const fluentSvg = (name) =>
   FLUENT[name] ? `<svg class="mdos-fi" viewBox="0 0 32 32" aria-hidden="true">${FLUENT[name]}</svg>` : "";
@@ -1535,8 +1579,9 @@ function appIcon(app) {
   } else {
     // Both drawings ship: the Fluent colour icon (default style) and the
     // single-colour glyph the other icon styles put on a tile.
-    el.innerHTML = fluentSvg(app.icon) + svg(app.icon);
+    el.innerHTML = fluentSvg(app.icon) + solidSvg(app.icon) + svg(app.icon);
     if (FLUENT[app.icon]) el.classList.add("has-fluent");
+    if (SOLID[app.icon]) el.classList.add("has-solid");
   }
   return el;
 }
