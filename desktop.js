@@ -7444,6 +7444,52 @@ function watchViewBox() {
   viewBox = box;
   if (box) viewObserver.observe(box, { childList: true });
 }
+// Phone chat settings sheet: a row of section chips under the header, each
+// with its state ("3", "on", the drawer summary). Tapping one opens that
+// section and scrolls to it, like jumping between tabs.
+let jumpSig = "";
+function sheetJumps() {
+  const sheet = $once('.mari-chat-settings-drawer[data-presentation="sheet"]');
+  if (!sheet) return void (jumpSig = "");
+  const body = sheet.querySelector(".mari-window__body");
+  if (!body) return;
+  const drawers = [...sheet.querySelectorAll(".mari-drawer[data-chat-settings-section]")];
+  let bar = sheet.querySelector(":scope > .mdos-cs-jump");
+  if (drawers.length < 3) return void bar?.remove();
+  const info = drawers.map((d) => {
+    const txt = (sel) => d.querySelector(`:scope > .mari-drawer__header ${sel}`)?.textContent.trim() || "";
+    const open = d.querySelector(":scope > .mari-drawer__header [data-drawer-toggle]")?.getAttribute("aria-expanded") === "true";
+    return { d, id: d.dataset.chatSettingsSection, title: txt(".mari-drawer__title"), sub: txt(".mari-drawer__count") || txt(".mari-drawer__summary"), open };
+  });
+  const sig = info.map((i) => `${i.id}|${i.title}|${i.sub}|${i.open}`).join("\n");
+  if (bar && bar.nextElementSibling === body && sig === jumpSig) return;
+  jumpSig = sig;
+  if (!bar) bar = h("nav", { class: "mdos-cs-jump", "data-exd": "", "aria-label": L.setSearch });
+  if (bar.nextElementSibling !== body) sheet.insertBefore(bar, body);
+  const keep = bar.scrollLeft;
+  bar.replaceChildren(
+    ...info.map((i) =>
+      h(
+        "button",
+        {
+          type: "button",
+          class: "mdos-cs-chip",
+          "aria-current": String(i.open),
+          onclick: () => {
+            const d = sheet.querySelector(`.mari-drawer[data-chat-settings-section="${CSS.escape(i.id)}"]`);
+            if (!d) return;
+            const toggle = d.querySelector(":scope > .mari-drawer__header [data-drawer-toggle]");
+            if (toggle?.getAttribute("aria-expanded") === "false") toggle.click();
+            raf(() => d.scrollIntoView({ block: "start", behavior: reducedMotion() ? "auto" : "smooth" }));
+          },
+        },
+        h("b", { text: i.title || i.id }),
+        i.sub ? h("small", { text: i.sub }) : null,
+      ),
+    ),
+  );
+  bar.scrollLeft = keep;
+}
 function syncSoon() {
   if (syncTimer || disposed) return;
   // At most ~10 syncs a second, even while a reply streams in.
@@ -7494,6 +7540,7 @@ function syncBody() {
   }
   toggleClass("mdos-split", split && (listOpen || performance.now() < splitHoldUntil));
   toggleClass("mdos-touch-panel", isTouch() && !!$once('[data-component="RightPanelMobile"], [data-component="MobileDetailSheet"]'));
+  if (isTouch()) sheetJumps();
   if (isTouch()) {
     placeTouchControls();
     // The open composer's height, so the folded one keeps its shape (apps.css).

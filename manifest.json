@@ -22,7 +22,8 @@
       "theme.css",
       "layout.css",
       "home.css",
-      "win11.css"
+      "win11.css",
+      "sheets.css"
     ]
   }
 }
